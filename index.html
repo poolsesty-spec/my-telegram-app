@@ -152,9 +152,29 @@
 
     <script>
         let tg = window.Telegram.WebApp;
-        tg.expand(); // Развернуть на весь экран
-        tg.MainButton.textColor = "#FFFFFF";
-        tg.MainButton.color = "#a8e0b3";
+tg.expand();
+
+// Функция для отправки данных боту
+function completeTask(taskName) {
+    // Отправляем JSON-строку боту
+    tg.sendData(JSON.stringify({
+        "action": "done",
+        "task": taskName
+    }));
+    
+    // Закрываем приложение (опционально, можно оставить открытым)
+    // tg.close(); 
+}
+
+// Находим все кнопки и вешаем на них событие
+document.querySelectorAll('.done-btn').forEach(button => {
+    button.addEventListener('click', function() {
+        const taskName = this.parentElement.querySelector('.task-name').innerText;
+        this.innerText = "Готово!";
+        this.style.background = "#d1d1d1";
+        completeTask(taskName);
+    });
+});
     </script>
 </body>
 </html>
