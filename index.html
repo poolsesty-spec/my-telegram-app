@@ -1,44 +1,98 @@
-<script>
-    let tg = window.Telegram.WebApp;
-    tg.expand();
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { background-color: #f7f3e9; font-family: -apple-system, sans-serif; margin: 0; padding: 20px; color: #333; }
+        .card { background: white; border-radius: 25px; padding: 25px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); margin-bottom: 20px; text-align: center; }
+        input, textarea { width: 100%; padding: 12px; margin: 10px 0; border-radius: 12px; border: 1px solid #ddd; box-sizing: border-box; font-size: 16px; }
+        .btn { background: #a8e0b3; color: #2e7d32; border: none; padding: 15px 30px; border-radius: 15px; font-weight: bold; width: 100%; font-size: 16px; cursor: pointer; }
+        .task-card { background: white; border-radius: 18px; padding: 15px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
+        .done { text-decoration: line-through; color: #aaa; }
+    </style>
+</head>
+<body>
 
-    // Загружаем данные из памяти телефона
-    let savedGoal = localStorage.getItem('userGoal');
-    let savedTasks = JSON.parse(localStorage.getItem('userTasks')) || [];
+    <div id="setup-screen" style="display: none;">
+        <div class="card">
+            <h2 style="margin-top:0">Настройка Eluma</h2>
+            <p style="color: #888; font-size: 14px;">Введи свою цель и задачи на день</p>
+            <input type="text" id="goalInput" placeholder="Моя главная цель...">
+            <textarea id="tasksInput" placeholder="Список задач (каждая с новой строки)"></textarea>
+            <button class="btn" onclick="saveData()">Сохранить и начать</button>
+        </div>
+    </div>
 
-    const setupSection = document.getElementById('setup-section'); // Создайте этот div в HTML для ввода
-    const dashboardSection = document.getElementById('dashboard-section'); // А этот для самого дашборда
+    <div id="main-screen" style="display: none;">
+        <div class="card">
+            <div style="font-size: 11px; color: #999; text-transform: uppercase;">Моя цель:</div>
+            <div id="display-goal" style="font-size: 20px; font-weight: 800; margin-top: 5px;"></div>
+        </div>
+        <div id="tasks-list"></div>
+        <button class="btn" style="background: #eee; color: #888; margin-top: 20px;" onclick="resetData()">Сбросить всё</button>
+    </div>
 
-    function render() {
-        if (!savedGoal) {
-            // Показываем форму ввода, если цели нет
-            document.body.innerHTML = `
-                <div style="padding: 20px; text-align: center; font-family: sans-serif;">
-                    <h2>Настройка Eluma</h2>
-                    <input id="goalInput" type="text" placeholder="Твоя главная цель" style="width: 80%; padding: 10px; margin-bottom: 10px;">
-                    <textarea id="tasksInput" placeholder="5 задач (каждая с новой строки)" style="width: 80%; height: 100px; padding: 10px;"></textarea>
-                    <button onclick="saveData()" style="background: #a8e6cf; border: none; padding: 15px 30px; border-radius: 20px; margin-top: 20px;">Начать путь</button>
-                </div>
-            `;
-        } else {
-            // Тут ваш обычный код отрисовки дашборда, который вы видели на макете
-            // Используйте savedGoal и savedTasks для заполнения полей
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand();
+
+        function loadApp() {
+            const goal = localStorage.getItem('eluma_goal');
+            const tasks = JSON.parse(localStorage.getItem('eluma_tasks') || "[]");
+
+            if (!goal) {
+                document.getElementById('setup-screen').style.display = 'block';
+                document.getElementById('main-screen').style.display = 'none';
+            } else {
+                document.getElementById('setup-screen').style.display = 'none';
+                document.getElementById('main-screen').style.display = 'block';
+                document.getElementById('display-goal').innerText = goal;
+                
+                const list = document.getElementById('tasks-list');
+                list.innerHTML = '';
+                tasks.forEach((task, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'task-card';
+                    item.innerHTML = `
+                        <span class="${task.done ? 'done' : ''}">${task.name}</span>
+                        <input type="checkbox" ${task.done ? 'checked' : ''} onchange="toggleTask(${index})" style="width: 25px;">
+                    `;
+                    list.appendChild(item);
+                });
+            }
         }
-    }
 
-    window.saveData = function() {
-        const goal = document.getElementById('goalInput').value;
-        const tasksText = document.getElementById('tasksInput').value;
-        const tasks = tasksText.split('\n').filter(t => t.trim() !== "").map(t => ({name: t, done: false}));
+        window.saveData = function() {
+            const goal = document.getElementById('goalInput').value;
+            const tasksText = document.getElementById('tasksInput').value;
+            const tasks = tasksText.split('\n').filter(t => t.trim() !== "").map(t => ({name: t, done: false}));
 
-        if (goal && tasks.length > 0) {
-            localStorage.setItem('userGoal', goal);
-            localStorage.setItem('userTasks', JSON.stringify(tasks));
-            location.reload(); // Перезагружаем, чтобы показать дашборд
-        } else {
-            alert("Заполни цель и хотя бы одну задачу!");
-        }
-    };
+            if (goal && tasks.length > 0) {
+                localStorage.setItem('eluma_goal', goal);
+                localStorage.setItem('eluma_tasks', JSON.stringify(tasks));
+                loadApp();
+            } else {
+                alert("Заполни все поля!");
+            }
+        };
 
-    render();
-</script>
+        window.toggleTask = function(index) {
+            let tasks = JSON.parse(localStorage.getItem('eluma_tasks'));
+            tasks[index].done = !tasks[index].done;
+            localStorage.setItem('eluma_tasks', JSON.stringify(tasks));
+            loadApp();
+        };
+
+        window.resetData = function() {
+            if(confirm("Удалить цель и задачи?")) {
+                localStorage.clear();
+                loadApp();
+            }
+        };
+
+        loadApp();
+    </script>
+</body>
+</html>
