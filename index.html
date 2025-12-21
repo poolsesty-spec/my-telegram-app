@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>My Goals Mini App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --bg-color: #f2eee3;
+            --card-bg: #ffffff;
+            --accent-green: #a8e0b3;
+            --text-main: #2d3436;
+            --btn-grad: linear-gradient(135deg, #a8e6cf 0%, #dcedc1 100%);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .goal-card {
+            background: var(--card-bg);
+            border-radius: 25px;
+            padding: 20px;
+            width: 90%;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            text-align: center;
+            margin-bottom: 20px;
+            border: 1px solid rgba(168, 224, 179, 0.3);
+        }
+
+        .goal-title { font-size: 0.8rem; color: #888; text-transform: uppercase; margin-bottom: 5px; }
+        .goal-text { font-size: 1.4rem; font-weight: bold; margin: 0; }
+
+        .stats-container {
+            display: flex;
+            background: var(--card-bg);
+            border-radius: 25px;
+            width: 100%;
+            padding: 15px;
+            justify-content: space-around;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .progress-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: conic-gradient(var(--accent-green) 80%, #eee 0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .progress-circle::after {
+            content: "80%";
+            position: absolute;
+            width: 65px;
+            height: 65px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .tasks-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .task-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 15px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+        }
+
+        .task-icon { font-size: 2rem; margin-bottom: 10px; }
+        .task-name { font-size: 0.9rem; font-weight: 500; margin-bottom: 10px; }
+
+        .done-btn {
+            background: var(--btn-grad);
+            border: none;
+            padding: 8px 20px;
+            border-radius: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+            width: 80%;
+        }
+
+        .done-btn:active { transform: scale(0.95); }
+    </style>
+</head>
+<body>
+
+    <div class="goal-card">
+        <p class="goal-title">Моя главная жизненная цель:</p>
+        <p class="goal-text">Внутренний Покой и Гармония</p>
+    </div>
+
+    <div class="stats-container">
+        <div>
+            <p style="color: #888; margin: 0;">Очки:</p>
+            <p style="font-size: 1.5rem; font-weight: bold; margin: 0;">1250</p>
+        </div>
+        <div class="progress-circle"></div>
+        <div style="text-align: right;">
+            <p style="color: #888; margin: 0;">Рост</p>
+            <span style="font-size: 1.5rem;">🌱</span>
+        </div>
+    </div>
+
+    <div class="tasks-grid">
+        <div class="task-card">
+            <div class="task-icon">🧘</div>
+            <div class="task-name">Медитация 15 мин</div>
+            <button class="done-btn">Сделано ✓</button>
+        </div>
+        <div class="task-card">
+            <div class="task-icon">📖</div>
+            <div class="task-name">Чтение книги</div>
+            <button class="done-btn">Сделано ✓</button>
+        </div>
+        <div class="task-card">
+            <div class="task-icon">🎯</div>
+            <div class="task-name">Тренировка фокуса</div>
+            <button class="done-btn">Сделано ✓</button>
+        </div>
+        <div class="task-card">
+            <div class="task-icon">📓</div>
+            <div class="task-name">Ведение дневника</div>
+            <button class="done-btn">Сделано ✓</button>
+        </div>
+    </div>
+
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand(); // Развернуть на весь экран
+        tg.MainButton.textColor = "#FFFFFF";
+        tg.MainButton.color = "#a8e0b3";
+    </script>
+</body>
+</html>
