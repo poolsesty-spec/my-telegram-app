@@ -1,47 +1,44 @@
 <script>
     let tg = window.Telegram.WebApp;
     tg.expand();
-    tg.headerColor = '#f7f3e9';
 
-    // Получаем данные из URL, которые передал Python-бот
-    const params = new URLSearchParams(window.location.search);
-    const goal = params.get('goal') || "Цель не установлена";
-    const points = params.get('points') || "0";
-    const tasks = JSON.parse(params.get('tasks') || "[]");
-    
-    // Заполняем поля
-    document.getElementById('goal-val').innerText = goal;
-    document.getElementById('points-val').innerText = points;
+    // Загружаем данные из памяти телефона
+    let savedGoal = localStorage.getItem('userGoal');
+    let savedTasks = JSON.parse(localStorage.getItem('userTasks')) || [];
 
-    // Считаем прогресс
-    const doneCount = tasks.filter(t => t.done).length;
-    const progress = tasks.length > 0 ? Math.round((doneCount / tasks.length) * 100) : 0;
-    document.getElementById('perc-val').innerText = progress + "%";
+    const setupSection = document.getElementById('setup-section'); // Создайте этот div в HTML для ввода
+    const dashboardSection = document.getElementById('dashboard-section'); // А этот для самого дашборда
 
-    // Рисуем карточки задач
-    const container = document.getElementById('tasks-container');
-    container.innerHTML = ''; // Очистка
-    
-    tasks.forEach(task => {
-        const card = document.createElement('div');
-        card.className = 'task-card';
-        if(task.done) card.style.opacity = '0.6';
-        
-        card.innerHTML = `
-            <span class="task-icon">${task.icon}</span>
-            <div class="task-name">${task.name}</div>
-            <button class="btn-done ${task.done ? 'completed' : ''}" ${task.done ? 'disabled' : ''}>
-                ${task.done ? 'Готово ✓' : 'Сделано'}
-            </button>
-        `;
-        
-        if(!task.done) {
-            card.querySelector('button').onclick = function() {
-                tg.sendData(JSON.stringify({action: "done", task: task.name}));
-                this.innerText = "⏳...";
-                this.disabled = true;
-            };
+    function render() {
+        if (!savedGoal) {
+            // Показываем форму ввода, если цели нет
+            document.body.innerHTML = `
+                <div style="padding: 20px; text-align: center; font-family: sans-serif;">
+                    <h2>Настройка Eluma</h2>
+                    <input id="goalInput" type="text" placeholder="Твоя главная цель" style="width: 80%; padding: 10px; margin-bottom: 10px;">
+                    <textarea id="tasksInput" placeholder="5 задач (каждая с новой строки)" style="width: 80%; height: 100px; padding: 10px;"></textarea>
+                    <button onclick="saveData()" style="background: #a8e6cf; border: none; padding: 15px 30px; border-radius: 20px; margin-top: 20px;">Начать путь</button>
+                </div>
+            `;
+        } else {
+            // Тут ваш обычный код отрисовки дашборда, который вы видели на макете
+            // Используйте savedGoal и savedTasks для заполнения полей
         }
-        container.appendChild(card);
-    });
+    }
+
+    window.saveData = function() {
+        const goal = document.getElementById('goalInput').value;
+        const tasksText = document.getElementById('tasksInput').value;
+        const tasks = tasksText.split('\n').filter(t => t.trim() !== "").map(t => ({name: t, done: false}));
+
+        if (goal && tasks.length > 0) {
+            localStorage.setItem('userGoal', goal);
+            localStorage.setItem('userTasks', JSON.stringify(tasks));
+            location.reload(); // Перезагружаем, чтобы показать дашборд
+        } else {
+            alert("Заполни цель и хотя бы одну задачу!");
+        }
+    };
+
+    render();
 </script>
