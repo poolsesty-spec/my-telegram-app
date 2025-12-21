@@ -3,190 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>My Goals Mini App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root {
-            --bg-color: #f2eee3;
-            --card-bg: #ffffff;
-            --accent-green: #a8e0b3;
-            --text-main: #2d3436;
-            --btn-grad: linear-gradient(135deg, #a8e6cf 0%, #dcedc1 100%);
-        }
-
-        body {
-            background-color: var(--bg-color);
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            color: var(--text-main);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .goal-card {
-            background: var(--card-bg);
-            border-radius: 25px;
-            padding: 20px;
-            width: 90%;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-            text-align: center;
-            margin-bottom: 20px;
-            border: 1px solid rgba(168, 224, 179, 0.3);
-        }
-
-        .goal-title { font-size: 0.8rem; color: #888; text-transform: uppercase; margin-bottom: 5px; }
-        .goal-text { font-size: 1.4rem; font-weight: bold; margin: 0; }
-
-        .stats-container {
-            display: flex;
-            background: var(--card-bg);
-            border-radius: 25px;
-            width: 100%;
-            padding: 15px;
-            justify-content: space-around;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .progress-circle {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: conic-gradient(var(--accent-green) 80%, #eee 0);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-        .progress-circle::after {
-            content: "80%";
-            position: absolute;
-            width: 65px;
-            height: 65px;
-            background: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-
-        .tasks-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            width: 100%;
-        }
-
-        .task-card {
-            background: var(--card-bg);
-            border-radius: 20px;
-            padding: 15px;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
-        }
-
-        .task-icon { font-size: 2rem; margin-bottom: 10px; }
-        .task-name { font-size: 0.9rem; font-weight: 500; margin-bottom: 10px; }
-
-        .done-btn {
-            background: var(--btn-grad);
-            border: none;
-            padding: 8px 20px;
-            border-radius: 15px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.2s;
-            width: 80%;
-        }
-
-        .done-btn:active { transform: scale(0.95); }
+        body { background-color: #f7f3e9; font-family: -apple-system, sans-serif; margin: 0; padding: 15px; color: #333; }
+        .header-card { background: white; border-radius: 25px; padding: 25px; text-align: center; box-shadow: 0 10px 20px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .goal-label { font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 600; }
+        .goal-text { font-size: 22px; font-weight: 800; margin-top: 8px; color: #2c3e50; }
+        
+        .stats-row { display: flex; background: white; border-radius: 20px; padding: 15px; justify-content: space-around; align-items: center; margin-bottom: 20px; }
+        .stat-item { text-align: center; }
+        .stat-val { font-size: 20px; font-weight: bold; display: block; color: #2c3e50; }
+        .stat-lbl { font-size: 12px; color: #888; margin-bottom: 4px; display: block; }
+        
+        .progress-circle { width: 65px; height: 65px; border-radius: 50%; border: 6px solid #e8f5e9; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #4caf50; font-size: 14px; background: white; box-shadow: inset 0 0 10px rgba(76,175,80,0.1); }
+        
+        .tasks-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .task-card { background: white; border-radius: 22px; padding: 18px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.03); transition: 0.3s; position: relative; overflow: hidden; }
+        .task-card::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 5px; background: #a8e0b3; }
+        .task-icon { font-size: 30px; margin-bottom: 10px; display: block; }
+        .task-name { font-size: 14px; font-weight: 600; color: #444; margin-bottom: 12px; height: 34px; line-height: 1.2; display: flex; align-items: center; justify-content: center; }
+        .btn-done { background: #e8f5e9; color: #2e7d32; border: none; padding: 8px 0; border-radius: 12px; font-size: 13px; font-weight: 700; width: 100%; cursor: pointer; transition: 0.2s; }
+        .btn-done:active { transform: scale(0.95); }
+        .btn-done.completed { background: #f5f5f5; color: #bbb; cursor: default; }
     </style>
 </head>
 <body>
-
-    <div class="goal-card">
-        <p class="goal-title">Моя главная жизненная цель:</p>
-        <p class="goal-text">Внутренний Покой и Гармония</p>
+    <div class="header-card">
+        <div class="goal-label">Моя главная жизненная цель:</div>
+        <div class="goal-text" id="goal-val">...</div>
     </div>
 
-    <div class="stats-container">
-        <div>
-            <p style="color: #888; margin: 0;">Очки:</p>
-            <p style="font-size: 1.5rem; font-weight: bold; margin: 0;">1250</p>
-        </div>
-        <div class="progress-circle"></div>
-        <div style="text-align: right;">
-            <p style="color: #888; margin: 0;">Рост</p>
-            <span style="font-size: 1.5rem;">🌱</span>
-        </div>
+    <div class="stats-row">
+        <div class="stat-item"><span class="stat-lbl">Очки</span><span class="stat-val" id="points-val">0</span></div>
+        <div class="progress-circle" id="perc-val">0%</div>
+        <div class="stat-item"><span class="stat-lbl">Рост</span><span class="stat-val">🌱</span></div>
     </div>
 
-    <div class="tasks-grid">
-        <div class="task-card">
-            <div class="task-icon">🧘</div>
-            <div class="task-name">Медитация 15 мин</div>
-            <button class="done-btn">Сделано ✓</button>
-        </div>
-        <div class="task-card">
-            <div class="task-icon">📖</div>
-            <div class="task-name">Чтение книги</div>
-            <button class="done-btn">Сделано ✓</button>
-        </div>
-        <div class="task-card">
-            <div class="task-icon">🎯</div>
-            <div class="task-name">Тренировка фокуса</div>
-            <button class="done-btn">Сделано ✓</button>
-        </div>
-        <div class="task-card">
-            <div class="task-icon">📓</div>
-            <div class="task-name">Ведение дневника</div>
-            <button class="done-btn">Сделано ✓</button>
-        </div>
-    </div>
+    <div class="tasks-grid" id="tasks-container"></div>
 
     <script>
-     let tg = window.Telegram.WebApp;
-tg.expand();
+        let tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.headerColor = '#f7f3e9';
 
-// Читаем параметры из URL
-const urlParams = new URLSearchParams(window.location.search);
-const goal = urlParams.get('goal') || "Цель не установлена";
-const points = urlParams.get('points') || "0";
-const tasks = JSON.parse(urlParams.get('tasks') || "[]");
+        const params = new URLSearchParams(window.location.search);
+        const tasks = JSON.parse(params.get('tasks') || "[]");
+        
+        document.getElementById('goal-val').innerText = params.get('goal') || "Цель не задана";
+        document.getElementById('points-val').innerText = params.get('points') || "0";
 
-// Заполняем дашборд данными из базы
-document.querySelector('.goal-text').innerText = goal;
-document.querySelector('.stats-container div p:last-child').innerText = points;
+        const doneCount = tasks.filter(t => t.done).length;
+        const progress = tasks.length > 0 ? Math.round((doneCount / tasks.length) * 100) : 0;
+        document.getElementById('perc-val').innerText = progress + "%";
 
-const grid = document.querySelector('.tasks-grid');
-grid.innerHTML = ''; // Очищаем старые задачи
-
-tasks.forEach(task => {
-    const card = document.createElement('div');
-    card.className = 'task-card';
-    card.innerHTML = `
-        <div class="task-icon">${task.done ? '✅' : '🎯'}</div>
-        <div class="task-name">${task.name}</div>
-        <button class="done-btn" ${task.done ? 'disabled style="background:#eee"' : ''}>
-            ${task.done ? 'Готово' : 'Сделано ✓'}
-        </button>
-    `;
-    
-    if (!task.done) {
-        card.querySelector('.done-btn').addEventListener('click', function() {
-            tg.sendData(JSON.stringify({"action": "done", "task": task.name}));
-            this.innerText = "Готово!";
-            this.disabled = true;
+        const container = document.getElementById('tasks-container');
+        tasks.forEach(task => {
+            const card = document.createElement('div');
+            card.className = 'task-card';
+            if(task.done) card.style.opacity = '0.7';
+            
+            card.innerHTML = `
+                <span class="task-icon">${task.icon}</span>
+                <div class="task-name">${task.name}</div>
+                <button class="btn-done ${task.done ? 'completed' : ''}" ${task.done ? 'disabled' : ''}>
+                    ${task.done ? 'Выполнено ✓' : 'Сделано'}
+                </button>
+            `;
+            
+            if(!task.done) {
+                card.querySelector('button').onclick = function() {
+                    tg.sendData(JSON.stringify({action: "done", task: task.name}));
+                    this.innerText = "Запись...";
+                    this.disabled = true;
+                };
+            }
+            container.appendChild(card);
         });
-    }
-    grid.appendChild(card);
-});
     </script>
 </body>
 </html>
