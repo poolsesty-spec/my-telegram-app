@@ -151,29 +151,41 @@
     </div>
 
     <script>
-        let tg = window.Telegram.WebApp;
+     let tg = window.Telegram.WebApp;
 tg.expand();
 
-// Функция для отправки данных боту
-function completeTask(taskName) {
-    // Отправляем JSON-строку боту
-    tg.sendData(JSON.stringify({
-        "action": "done",
-        "task": taskName
-    }));
-    
-    // Закрываем приложение (опционально, можно оставить открытым)
-    // tg.close(); 
-}
+// Читаем параметры из URL
+const urlParams = new URLSearchParams(window.location.search);
+const goal = urlParams.get('goal') || "Цель не установлена";
+const points = urlParams.get('points') || "0";
+const tasks = JSON.parse(urlParams.get('tasks') || "[]");
 
-// Находим все кнопки и вешаем на них событие
-document.querySelectorAll('.done-btn').forEach(button => {
-    button.addEventListener('click', function() {
-        const taskName = this.parentElement.querySelector('.task-name').innerText;
-        this.innerText = "Готово!";
-        this.style.background = "#d1d1d1";
-        completeTask(taskName);
-    });
+// Заполняем дашборд данными из базы
+document.querySelector('.goal-text').innerText = goal;
+document.querySelector('.stats-container div p:last-child').innerText = points;
+
+const grid = document.querySelector('.tasks-grid');
+grid.innerHTML = ''; // Очищаем старые задачи
+
+tasks.forEach(task => {
+    const card = document.createElement('div');
+    card.className = 'task-card';
+    card.innerHTML = `
+        <div class="task-icon">${task.done ? '✅' : '🎯'}</div>
+        <div class="task-name">${task.name}</div>
+        <button class="done-btn" ${task.done ? 'disabled style="background:#eee"' : ''}>
+            ${task.done ? 'Готово' : 'Сделано ✓'}
+        </button>
+    `;
+    
+    if (!task.done) {
+        card.querySelector('.done-btn').addEventListener('click', function() {
+            tg.sendData(JSON.stringify({"action": "done", "task": task.name}));
+            this.innerText = "Готово!";
+            this.disabled = true;
+        });
+    }
+    grid.appendChild(card);
 });
     </script>
 </body>
