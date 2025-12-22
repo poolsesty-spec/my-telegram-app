@@ -2,97 +2,240 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Eluma - Дисциплина</title>
+    <!-- Подключаем Tailwind CSS для красоты -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #f7f3e9; font-family: -apple-system, sans-serif; margin: 0; padding: 20px; color: #333; }
-        .card { background: white; border-radius: 25px; padding: 25px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); margin-bottom: 20px; text-align: center; }
-        input, textarea { width: 100%; padding: 12px; margin: 10px 0; border-radius: 12px; border: 1px solid #ddd; box-sizing: border-box; font-size: 16px; }
-        .btn { background: #a8e0b3; color: #2e7d32; border: none; padding: 15px 30px; border-radius: 15px; font-weight: bold; width: 100%; font-size: 16px; cursor: pointer; }
-        .task-card { background: white; border-radius: 18px; padding: 15px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
-        .done { text-decoration: line-through; color: #aaa; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #080a0c;
+            color: white;
+            margin: 0;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Эффект органических пикселей на фоне */
+        .pixel-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px;
+            padding: 10px;
+            opacity: 0.15;
+            filter: blur(40px);
+        }
+        .pixel {
+            aspect-ratio: 1;
+            background: #50FA7B;
+            border-radius: 20%;
+            animation: pulse 8s infinite alternate;
+        }
+        .pixel:nth-child(even) { animation-delay: 2s; background: #00f2ff; }
+
+        @keyframes pulse {
+            0% { transform: scale(0.8); opacity: 0.3; }
+            100% { transform: scale(1.2); opacity: 0.8; }
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 28px;
+        }
+
+        .neo-button {
+            background: linear-gradient(135deg, #50FA7B 0%, #00f2ff 100%);
+            color: #080a0c;
+            font-weight: 700;
+            transition: all 0.2s ease;
+        }
+
+        .neo-button:active { transform: scale(0.96); opacity: 0.9; }
+
+        .task-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .task-done {
+            background: rgba(80, 250, 123, 0.15) !important;
+            border-color: rgba(80, 250, 123, 0.4) !important;
+        }
+
+        input::placeholder { color: rgba(255,255,255,0.3); }
     </style>
 </head>
 <body>
 
-    <div id="setup-screen" style="display: none;">
-        <div class="card">
-            <h2 style="margin-top:0">Настройка Eluma</h2>
-            <p style="color: #888; font-size: 14px;">Введи свою цель и задачи на день</p>
-            <input type="text" id="goalInput" placeholder="Моя главная цель...">
-            <textarea id="tasksInput" placeholder="Список задач (каждая с новой строки)"></textarea>
-            <button class="btn" onclick="saveData()">Сохранить и начать</button>
-        </div>
-    </div>
+    <!-- Фоновые пиксели -->
+    <div class="pixel-bg" id="pixelBg"></div>
 
-    <div id="main-screen" style="display: none;">
-        <div class="card">
-            <div style="font-size: 11px; color: #999; text-transform: uppercase;">Моя цель:</div>
-            <div id="display-goal" style="font-size: 20px; font-weight: 800; margin-top: 5px;"></div>
+    <div id="app" class="max-w-md mx-auto px-6 py-8 min-h-screen flex flex-col">
+        
+        <!-- ЭКРАН 1: Настройка цели (показывается если цели нет) -->
+        <div id="setupScreen" class="hidden">
+            <div class="mb-10 mt-4">
+                <h1 class="text-4xl font-bold mb-2">Eluma</h1>
+                <p class="text-gray-400">Создай свой путь дисциплины</p>
+            </div>
+
+            <div class="space-y-6">
+                <div>
+                    <label class="text-xs uppercase tracking-widest text-emerald-400 font-bold mb-2 block">Главная цель</label>
+                    <input id="goalInput" type="text" placeholder="Например: Стать атлетом" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-emerald-500 transition-all">
+                </div>
+
+                <div>
+                    <label class="text-xs uppercase tracking-widest text-emerald-400 font-bold mb-2 block">6 ежедневных шагов</label>
+                    <div id="tasksInputs" class="grid grid-cols-1 gap-3">
+                        <!-- Тут будут 6 инпутов -->
+                    </div>
+                </div>
+
+                <button onclick="saveSettings()" class="w-full py-5 rounded-3xl neo-button mt-4 shadow-[0_10px_30px_rgba(80,250,123,0.3)]">Начать путь</button>
+            </div>
         </div>
-        <div id="tasks-list"></div>
-        <button class="btn" style="background: #eee; color: #888; margin-top: 20px;" onclick="resetData()">Сбросить всё</button>
+
+        <!-- ЭКРАН 2: Главный тренажер -->
+        <div id="mainScreen" class="hidden flex-1 flex flex-col">
+            <header class="mb-8">
+                <div class="flex justify-between items-center mb-6">
+                    <span class="text-xl font-bold tracking-tighter italic">ELUMA</span>
+                    <button onclick="resetApp()" class="text-[10px] text-gray-500 uppercase tracking-widest">Сброс</button>
+                </div>
+                
+                <div class="glass-card p-6 relative overflow-hidden">
+                    <div class="relative z-10">
+                        <label class="text-[10px] uppercase tracking-[0.3em] text-emerald-400 font-bold mb-1 block">Главная цель</label>
+                        <h2 id="displayGoal" class="text-2xl font-semibold leading-tight mb-4">...</h2>
+                        
+                        <div class="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
+                            <div id="progressBar" class="h-full bg-emerald-400 transition-all duration-700 w-0"></div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="grid grid-cols-2 gap-4 mb-10" id="tasksGrid">
+                <!-- Карточки задач вставляются здесь -->
+            </main>
+
+            <div class="mt-auto pb-4">
+                <div id="statusText" class="text-center text-sm text-gray-500 italic">Выполни все задачи на сегодня</div>
+            </div>
+        </div>
     </div>
 
     <script>
-        let tg = window.Telegram.WebApp;
-        tg.expand();
+        // Инициализация фоновых пикселей
+        const bg = document.getElementById('pixelBg');
+        for (let i = 0; i < 24; i++) {
+            const p = document.createElement('div');
+            p.className = 'pixel';
+            bg.appendChild(p);
+        }
 
-        function loadApp() {
-            const goal = localStorage.getItem('eluma_goal');
-            const tasks = JSON.parse(localStorage.getItem('eluma_tasks') || "[]");
+        let state = {
+            goal: localStorage.getItem('eluma_goal') || '',
+            tasks: JSON.parse(localStorage.getItem('eluma_tasks')) || [],
+            completed: JSON.parse(localStorage.getItem('eluma_completed')) || []
+        };
 
-            if (!goal) {
-                document.getElementById('setup-screen').style.display = 'block';
-                document.getElementById('main-screen').style.display = 'none';
+        const setupScreen = document.getElementById('setupScreen');
+        const mainScreen = document.getElementById('mainScreen');
+        const tasksInputsDiv = document.getElementById('tasksInputs');
+
+        // Создаем поля для ввода задач
+        for (let i = 0; i < 6; i++) {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.placeholder = `Шаг ${i+1}`;
+            input.className = 'task-input w-full bg-white/5 border border-white/10 p-4 rounded-xl outline-none text-sm';
+            tasksInputsDiv.appendChild(input);
+        }
+
+        function init() {
+            if (!state.goal) {
+                setupScreen.classList.remove('hidden');
+                mainScreen.classList.add('hidden');
             } else {
-                document.getElementById('setup-screen').style.display = 'none';
-                document.getElementById('main-screen').style.display = 'block';
-                document.getElementById('display-goal').innerText = goal;
-                
-                const list = document.getElementById('tasks-list');
-                list.innerHTML = '';
-                tasks.forEach((task, index) => {
-                    const item = document.createElement('div');
-                    item.className = 'task-card';
-                    item.innerHTML = `
-                        <span class="${task.done ? 'done' : ''}">${task.name}</span>
-                        <input type="checkbox" ${task.done ? 'checked' : ''} onchange="toggleTask(${index})" style="width: 25px;">
-                    `;
-                    list.appendChild(item);
-                });
+                setupScreen.classList.add('hidden');
+                mainScreen.classList.remove('hidden');
+                renderMain();
             }
         }
 
-        window.saveData = function() {
+        function saveSettings() {
             const goal = document.getElementById('goalInput').value;
-            const tasksText = document.getElementById('tasksInput').value;
-            const tasks = tasksText.split('\n').filter(t => t.trim() !== "").map(t => ({name: t, done: false}));
+            const inputs = document.querySelectorAll('.task-input');
+            const tasks = Array.from(inputs).map(i => i.value).filter(v => v !== '');
 
-            if (goal && tasks.length > 0) {
+            if (goal && tasks.length === 6) {
+                state.goal = goal;
+                state.tasks = tasks;
                 localStorage.setItem('eluma_goal', goal);
                 localStorage.setItem('eluma_tasks', JSON.stringify(tasks));
-                loadApp();
+                init();
             } else {
-                alert("Заполни все поля!");
+                alert('Пожалуйста, заполни цель и все 6 шагов для симметрии!');
             }
-        };
+        }
 
-        window.toggleTask = function(index) {
-            let tasks = JSON.parse(localStorage.getItem('eluma_tasks'));
-            tasks[index].done = !tasks[index].done;
-            localStorage.setItem('eluma_tasks', JSON.stringify(tasks));
-            loadApp();
-        };
+        function toggleTask(index) {
+            const pos = state.completed.indexOf(index);
+            if (pos === -1) state.completed.push(index);
+            else state.completed.splice(pos, 1);
+            
+            localStorage.setItem('eluma_completed', JSON.stringify(state.completed));
+            renderMain();
+        }
 
-        window.resetData = function() {
-            if(confirm("Удалить цель и задачи?")) {
+        function renderMain() {
+            document.getElementById('displayGoal').innerText = state.goal;
+            const grid = document.getElementById('tasksGrid');
+            grid.innerHTML = '';
+
+            state.tasks.forEach((task, i) => {
+                const isDone = state.completed.includes(i);
+                const card = document.createElement('div');
+                card.onclick = () => toggleTask(i);
+                card.className = `task-card glass-card p-5 flex flex-col justify-between aspect-square cursor-pointer ${isDone ? 'task-done' : ''}`;
+                card.innerHTML = `
+                    <div class="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-lg">
+                        ${isDone ? '✅' : (i + 1)}
+                    </div>
+                    <p class="text-sm font-medium leading-tight">${task}</p>
+                `;
+                grid.appendChild(card);
+            });
+
+            const progress = (state.completed.length / state.tasks.length) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+            
+            if (progress === 100) {
+                document.getElementById('statusText').innerText = "День завершен. Ты на высоте! 🔥";
+                document.getElementById('statusText').classList.add('text-emerald-400');
+            } else {
+                document.getElementById('statusText').innerText = "Осталось шагов: " + (6 - state.completed.length);
+            }
+        }
+
+        function resetApp() {
+            if(confirm('Сбросить прогресс и цель?')) {
                 localStorage.clear();
-                loadApp();
+                location.reload();
             }
-        };
+        }
 
-        loadApp();
+        init();
     </script>
 </body>
 </html>
