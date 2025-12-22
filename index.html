@@ -6,7 +6,7 @@
     <title>Eluma Cosmic Elite</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --accent: #a3e635; --bg: #1a2a2d; }
         
@@ -19,75 +19,71 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* Фоновое изображение с параллаксом */
+        /* Фоновое изображение с ПАРАЛЛАКСОМ */
         #parallaxBg {
             position: fixed;
             top: -10%; left: -10%; width: 120%; height: 120%;
             z-index: -2;
-            background-image: url('https://i.ibb.co/L9H8S7p/avatar-energy.jpg'); /* Твое изображение */
+            background-image: url('./background.jpg'); /* Твой загруженный файл */
             background-size: cover;
             background-position: center;
-            opacity: 0.6;
-            filter: brightness(0.8) contrast(1.1);
-            transition: transform 0.1s linear;
+            opacity: 0.7;
+            filter: brightness(0.9) contrast(1.1);
+            transition: transform 0.1s linear; /* для плавности параллакса */
         }
 
-        /* Эффект зернистости (Grain) */
+        /* Кинематографическое ЗЕРНО */
         .grain {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
             pointer-events: none;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3group%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/group%3E%3C/svg%3E");
-            opacity: 0.15; /* Интенсивность зерна */
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.12;
         }
 
-        /* Стеклянный стиль (Plexiglass) */
+        /* Стиль Стекла (Plexiglass) */
         .plex {
-            background: rgba(255, 255, 255, 0.07);
-            backdrop-filter: blur(25px) saturate(180%);
-            -webkit-backdrop-filter: blur(25px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 28px;
         }
 
-        /* Липкая шапка без затемнения */
+        /* Чистая шапка (без затемнения сверху) */
         .sticky-header {
             position: sticky;
             top: 0;
             z-index: 100;
             padding: 12px 18px;
-            /* Убрано затемнение фона */
         }
 
-        /* Кнопки и прогресс */
+        /* Заблокированная кнопка (нельзя отжать) */
         .btn-locked {
             background: var(--accent);
             color: #000;
-            box-shadow: 0 0 15px rgba(163, 230, 53, 0.4);
+            box-shadow: 0 0 20px rgba(163, 230, 53, 0.3);
             pointer-events: none;
             border: none;
         }
 
         input { outline: none; border: none; }
-
-        /* Плавная прокрутка для параллакса */
-        #app { position: relative; z-index: 1; }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-    <!-- Слой с картинкой фона -->
+    <!-- Слои фона -->
     <div id="parallaxBg"></div>
-    <!-- Слой с зерном -->
     <div class="grain"></div>
 
     <div id="app">
         <!-- SETUP SCREEN -->
         <div id="setupScreen" class="p-8 min-h-screen flex flex-col justify-center hidden">
-            <div class="plex p-8">
-                <h1 class="text-3xl font-black italic mb-6 tracking-tighter text-center">ELUMA</h1>
-                <input id="goalInput" type="text" placeholder="Главная цель..." class="w-full bg-black/20 p-4 rounded-2xl mb-4 text-white placeholder-white/30">
+            <div class="plex p-8 text-center">
+                <h1 class="text-3xl font-black italic mb-6 tracking-tighter">ELUMA</h1>
+                <input id="goalInput" type="text" placeholder="Главная цель..." class="w-full bg-black/30 p-4 rounded-2xl mb-4 text-white">
                 <div id="tasksInputs" class="space-y-2 mb-8"></div>
                 <button onclick="saveSettings()" class="w-full py-4 rounded-2xl bg-lime-400 text-black font-black uppercase tracking-widest">Активировать</button>
             </div>
@@ -96,44 +92,44 @@
         <!-- MAIN DASHBOARD -->
         <div id="mainScreen" class="min-h-screen flex flex-col">
             
-            <!-- Примагниченная карточка цели (БЕЗ ЗАТЕМНЕНИЯ СВЕРХУ) -->
+            <!-- Примагниченная карточка цели (БЕЗ затемнения вокруг) -->
             <div class="sticky-header">
                 <div class="plex p-4 flex items-center gap-4">
-                    <img id="userAvatar" src="https://via.placeholder.com/100?text=E" class="w-12 h-12 rounded-full border border-lime-400/30 object-cover">
+                    <img id="userAvatar" src="https://via.placeholder.com/100?text=E" class="w-12 h-12 rounded-full border border-white/20 object-cover">
                     <div class="flex-1 overflow-hidden">
-                        <p class="text-[8px] font-bold uppercase tracking-[2px] text-lime-400/60 mb-1">Current Goal</p>
+                        <p class="text-[8px] font-bold uppercase tracking-[2px] text-lime-400/70 mb-1">Pillar of Focus</p>
                         <h2 id="displayGoal" class="text-sm font-black uppercase tracking-tight truncate mb-2">...</h2>
                         <div class="w-full h-1 bg-white/10 rounded-full overflow-hidden">
-                            <div id="mainProgress" class="h-full bg-lime-400 transition-all duration-1000 shadow-[0_0_8px_#a3e635]" style="width: 0%"></div>
+                            <div id="mainProgress" class="h-full bg-lime-400 transition-all duration-1000" style="width: 0%"></div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="p-5 pt-4 flex-1">
-                <!-- СТАТИСТИКА (ДНИ СЛЕВА, ОЧКИ СПРАВА) -->
+                <!-- СТАТИСТИКА (ДНИ И ОЧКИ) -->
                 <div class="flex gap-3 mb-8 items-stretch">
-                    <!-- Дни на пути (Белый шрифт, Центрировано, Тонкая) -->
-                    <div class="plex flex-1 flex flex-col items-center justify-center p-3">
-                        <span class="text-[7px] font-bold text-white/50 uppercase tracking-[2px] mb-1">Days on Path</span>
-                        <span id="daysText" class="text-sm font-black text-white">0</span>
+                    <!-- Дни на пути (Белый шрифт, Центрировано, Узкая) -->
+                    <div class="plex flex-1 flex flex-col items-center justify-center p-2">
+                        <span class="text-[7px] font-bold text-white/40 uppercase tracking-[2px] mb-1 text-center">Days on Path</span>
+                        <span id="daysText" class="text-xs font-black text-white">0</span>
                     </div>
                     
-                    <!-- Очки (Справа, Ширина как у карточки задачи) -->
-                    <div class="plex w-[calc(50%-6px)] p-3 text-center flex flex-col items-center justify-center">
-                        <span class="text-[7px] font-bold text-lime-400/70 uppercase tracking-[2px] mb-1">Points</span>
-                        <span id="pointsText" class="text-xl font-black italic text-white leading-none">0</span>
+                    <!-- Стеклянные очки (Справа, Ширина как у задачи) -->
+                    <div class="plex w-[calc(50%-6px)] p-3 flex flex-col items-center justify-center">
+                        <span class="text-[7px] font-bold text-lime-400/80 uppercase tracking-[2px] mb-1">Discipline Points</span>
+                        <span id="pointsText" class="text-xl font-black text-white leading-none">0</span>
                     </div>
                 </div>
 
-                <!-- СЕТКА ЗАДАЧ -->
+                <!-- СЕТКА ЗАДАЧ (Без эмодзи, Текст по центру) -->
                 <div id="tasksGrid" class="grid grid-cols-2 gap-3 mb-10"></div>
 
-                <!-- НАВИГАЦИЯ -->
+                <!-- НАВИГАЦИЯ (ТРИ ТОЧКИ) -->
                 <div class="flex justify-center pb-12">
                     <button onclick="goToSettings()" class="plex w-16 h-10 rounded-full flex items-center justify-center gap-1.5 active:scale-90 transition-transform">
                         <div class="w-1 h-1 bg-white/20 rounded-full"></div>
-                        <div class="w-1 h-1 bg-lime-400 rounded-full shadow-[0_0_5px_#a3e635]"></div>
+                        <div class="w-1.5 h-1.5 bg-lime-400 rounded-full shadow-[0_0_5px_#a3e635]"></div>
                         <div class="w-1 h-1 bg-white/20 rounded-full"></div>
                     </button>
                 </div>
@@ -143,41 +139,43 @@
         <!-- SETTINGS SCREEN -->
         <div id="editScreen" class="p-6 hidden">
             <div class="flex items-center justify-between mb-8">
-                <h2 class="text-xl font-black uppercase italic tracking-tighter">System Correction</h2>
-                <button onclick="backToMain()" class="text-[9px] plex px-4 py-2 rounded-xl font-black text-lime-400">Back</button>
+                <h2 class="text-xl font-black uppercase italic tracking-tighter">Correction</h2>
+                <button onclick="backToMain()" class="text-[9px] plex px-4 py-2 rounded-xl font-black text-lime-400 uppercase">Back</button>
             </div>
             <div class="space-y-6">
                 <div class="plex p-5">
-                    <label class="text-[9px] font-bold text-gray-400 uppercase mb-2 block">Change Goal</label>
+                    <label class="text-[9px] font-bold text-gray-500 uppercase mb-2 block">Edit Main Goal</label>
                     <input id="editGoalInput" type="text" class="w-full bg-transparent border-b border-white/10 p-1 font-bold text-white">
                 </div>
                 <div class="plex p-5">
-                    <label class="text-[9px] font-bold text-gray-500 uppercase mb-4 block">Redefine Pillars</label>
+                    <label class="text-[9px] font-bold text-gray-500 uppercase mb-4 block">Edit Pillars</label>
                     <div id="editTasksInputs" class="space-y-3"></div>
                 </div>
-                <button onclick="updateSettings()" class="w-full py-5 rounded-3xl bg-lime-400 text-black font-black uppercase tracking-wider">Apply Changes</button>
+                <button onclick="updateSettings()" class="w-full py-5 rounded-3xl bg-lime-400 text-black font-black uppercase tracking-widest">Apply</button>
+                <button onclick="fullReset()" class="w-full py-2 text-[8px] text-red-500 font-bold opacity-30 mt-4 uppercase">Reset All</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Интеграция с Telegram
+        // Инициализация Telegram
         const WebApp = window.Telegram.WebApp;
         WebApp.ready();
         WebApp.expand();
 
-        // Параллакс эффект фона
+        // ЛОГИКА ПАРАЛЛАКСА
         window.addEventListener('scroll', () => {
             const scrollPos = window.pageYOffset;
             const bg = document.getElementById('parallaxBg');
-            // При скролле вниз (scrollPos растет), фон уходит вверх (отрицательный Y)
-            bg.style.transform = `translateY(${scrollPos * -0.2}px)`; 
+            // При скролле вниз (scrollPos > 0), фон движется вверх
+            bg.style.transform = `translateY(${scrollPos * -0.15}px)`; 
         });
 
         if (WebApp.initDataUnsafe?.user?.photo_url) {
             document.getElementById('userAvatar').src = WebApp.initDataUnsafe.user.photo_url;
         }
 
+        // --- СОСТОЯНИЕ ---
         let state = {
             goal: localStorage.getItem('el_goal') || '',
             tasks: JSON.parse(localStorage.getItem('el_tasks')) || [],
@@ -187,6 +185,7 @@
             lastDate: localStorage.getItem('el_last_date') || '' 
         };
 
+        // Сброс в 3 утра
         function getElumaDate() {
             let now = new Date();
             now.setHours(now.getHours() - 3); 
@@ -214,8 +213,8 @@
         const tIn = document.getElementById('tasksInputs');
         const eIn = document.getElementById('editTasksInputs');
         for (let i = 0; i < 6; i++) {
-            tIn.innerHTML += `<input type="text" placeholder="Pillar ${i+1}" class="t-in w-full bg-black/10 border border-white/5 p-3 rounded-xl text-sm mb-1 text-white">`;
-            eIn.innerHTML += `<input type="text" class="e-in w-full bg-black/10 border border-white/5 p-3 rounded-xl text-sm text-white">`;
+            tIn.innerHTML += `<input type="text" placeholder="Task ${i+1}" class="t-in w-full bg-black/20 border border-white/5 p-3 rounded-xl text-sm mb-1 text-white">`;
+            eIn.innerHTML += `<input type="text" class="e-in w-full bg-black/20 border border-white/5 p-3 rounded-xl text-sm text-white">`;
         }
 
         function init() {
@@ -231,11 +230,12 @@
         }
 
         function toggleTask(idx) {
-            if (state.completed.includes(idx)) return;
+            if (state.completed.includes(idx)) return; // Нельзя отжать!
+
             state.completed.push(idx);
             state.points += 1;
             if (state.completed.length === 6) {
-                state.points += 6;
+                state.points += 6; // Бонус
                 state.days += 1;
             }
             saveState();
@@ -256,7 +256,7 @@
                     <div class="plex p-5 flex flex-col justify-center items-center text-center min-h-[130px] active:scale-95 transition-all" onclick="toggleTask(${i})">
                         <p class="text-[11px] font-bold leading-tight mb-4 flex-1 flex items-center justify-center">${t}</p>
                         <div class="w-full py-2.5 rounded-xl text-[8px] font-black uppercase border border-white/10 ${isDone ? 'btn-locked' : 'text-lime-400 bg-white/5'}">
-                            ${isDone ? 'COMPLETED ✓' : 'EXECUTE'}
+                            ${isDone ? 'DONE' : 'EXECUTE'}
                         </div>
                     </div>
                 `;
@@ -294,6 +294,10 @@
             document.getElementById('editScreen').classList.add('hidden');
             document.getElementById('mainScreen').classList.remove('hidden');
             render();
+        }
+
+        function fullReset() {
+            if(confirm('Reset all progress?')) { localStorage.clear(); location.reload(); }
         }
 
         init();
