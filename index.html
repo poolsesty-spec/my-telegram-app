@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Eluma Elite v3</title>
+    <title>Eluma Cosmic Elite</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --accent: #a3e635; --bg: #0d0f12; }
+        :root { --accent: #a3e635; --bg: #1a2a2d; }
+        
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg);
@@ -18,166 +19,160 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        .bg-fixed {
+        /* Фоновое изображение с параллаксом */
+        #parallaxBg {
+            position: fixed;
+            top: -10%; left: -10%; width: 120%; height: 120%;
+            z-index: -2;
+            background-image: url('https://i.ibb.co/L9H8S7p/avatar-energy.jpg'); /* Твое изображение */
+            background-size: cover;
+            background-position: center;
+            opacity: 0.6;
+            filter: brightness(0.8) contrast(1.1);
+            transition: transform 0.1s linear;
+        }
+
+        /* Эффект зернистости (Grain) */
+        .grain {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
-            background: radial-gradient(circle at 50% 50%, #15181d 0%, #080a0c 100%);
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3group%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/group%3E%3C/svg%3E");
+            opacity: 0.15; /* Интенсивность зерна */
         }
-        .cloud {
-            position: absolute; filter: blur(90px); border-radius: 50%; opacity: 0.15;
-            animation: move 25s infinite alternate ease-in-out;
-        }
-        .cloud-1 { width: 300px; height: 300px; background: #2dd4bf; top: 5%; left: -5%; }
-        .cloud-2 { width: 350px; height: 350px; background: var(--accent); bottom: 10%; right: -5%; }
-        @keyframes move { 0% { transform: translate(0,0); } 100% { transform: translate(40px, 40px); } }
 
-        /* Единый стиль стекла */
+        /* Стеклянный стиль (Plexiglass) */
         .plex {
-            background: rgba(255, 255, 255, 0.04);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(25px) saturate(180%);
+            -webkit-backdrop-filter: blur(25px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.12);
             border-radius: 28px;
         }
 
-        /* Липкая шапка (без фона, чтобы карточка внутри нависала) */
+        /* Липкая шапка без затемнения */
         .sticky-header {
             position: sticky;
             top: 0;
             z-index: 100;
-            padding: 12px 20px;
-            background: rgba(13, 15, 18, 0.5); /* легкое затенение фона при скролле */
-            backdrop-filter: blur(10px);
+            padding: 12px 18px;
+            /* Убрано затемнение фона */
         }
 
-        /* Золотой слиток (вид сверху, -30% ширины) */
-        .gold-ingot {
-            width: 70%;
-            margin: 0 auto;
-            background: linear-gradient(180deg, #f9f295 0%, #e0aa3e 30%, #b88a44 70%, #867221 100%);
-            box-shadow: 
-                inset 0 1px 2px rgba(255,255,255,0.7), 
-                inset 0 -1px 3px rgba(0,0,0,0.4),
-                0 8px 16px rgba(0,0,0,0.4);
-            border-radius: 8px;
-            padding: 10px;
-            text-align: center;
-            color: #5c441a;
-            text-shadow: -1px -1px 1px rgba(0,0,0,0.3), 1px 1px 0px rgba(255,255,255,0.2);
-            text-transform: uppercase;
-            font-weight: 900;
-        }
-
-        /* Стеклянная полоска дней (тонкая) */
-        .days-bar {
-            width: 100%;
-            margin: 12px auto 0;
-            padding: 6px; /* -25% высоты */
-            border-radius: 16px;
-        }
-
+        /* Кнопки и прогресс */
         .btn-locked {
             background: var(--accent);
             color: #000;
-            box-shadow: 0 0 15px rgba(163, 230, 53, 0.3);
+            box-shadow: 0 0 15px rgba(163, 230, 53, 0.4);
             pointer-events: none;
             border: none;
         }
 
-        .hidden { display: none !important; }
+        input { outline: none; border: none; }
 
-        input { outline: none; }
+        /* Плавная прокрутка для параллакса */
+        #app { position: relative; z-index: 1; }
     </style>
 </head>
 <body>
 
-    <div class="bg-fixed"><div class="cloud cloud-1"></div><div class="cloud cloud-2"></div></div>
+    <!-- Слой с картинкой фона -->
+    <div id="parallaxBg"></div>
+    <!-- Слой с зерном -->
+    <div class="grain"></div>
 
     <div id="app">
-        <!-- ЭКРАН SETUP -->
+        <!-- SETUP SCREEN -->
         <div id="setupScreen" class="p-8 min-h-screen flex flex-col justify-center hidden">
             <div class="plex p-8">
                 <h1 class="text-3xl font-black italic mb-6 tracking-tighter text-center">ELUMA</h1>
-                <input id="goalInput" type="text" placeholder="Главная цель..." class="w-full bg-black/40 border border-white/10 p-4 rounded-2xl mb-4 text-white">
+                <input id="goalInput" type="text" placeholder="Главная цель..." class="w-full bg-black/20 p-4 rounded-2xl mb-4 text-white placeholder-white/30">
                 <div id="tasksInputs" class="space-y-2 mb-8"></div>
                 <button onclick="saveSettings()" class="w-full py-4 rounded-2xl bg-lime-400 text-black font-black uppercase tracking-widest">Активировать</button>
             </div>
         </div>
 
-        <!-- ГЛАВНЫЙ ЭКРАН -->
+        <!-- MAIN DASHBOARD -->
         <div id="mainScreen" class="min-h-screen flex flex-col">
             
-            <!-- Шапка-магнит с целью -->
+            <!-- Примагниченная карточка цели (БЕЗ ЗАТЕМНЕНИЯ СВЕРХУ) -->
             <div class="sticky-header">
                 <div class="plex p-4 flex items-center gap-4">
                     <img id="userAvatar" src="https://via.placeholder.com/100?text=E" class="w-12 h-12 rounded-full border border-lime-400/30 object-cover">
                     <div class="flex-1 overflow-hidden">
-                        <p class="text-[8px] font-bold uppercase tracking-[2px] text-lime-400/60 mb-1">Текущая цель</p>
+                        <p class="text-[8px] font-bold uppercase tracking-[2px] text-lime-400/60 mb-1">Current Goal</p>
                         <h2 id="displayGoal" class="text-sm font-black uppercase tracking-tight truncate mb-2">...</h2>
-                        <!-- Полоса прогресса в цели -->
-                        <div class="w-full h-1 bg-white/5 rounded-full overflow-hidden">
-                            <div id="mainProgress" class="h-full bg-lime-400 transition-all duration-1000" style="width: 0%"></div>
+                        <div class="w-full h-1 bg-white/10 rounded-full overflow-hidden">
+                            <div id="mainProgress" class="h-full bg-lime-400 transition-all duration-1000 shadow-[0_0_8px_#a3e635]" style="width: 0%"></div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="p-5 pt-2 flex-1">
-                <!-- Статистика -->
-                <div class="mb-10 text-center">
-                    <!-- Слиток (-30% ширины) -->
-                    <div class="gold-ingot">
-                        <div class="text-[7px] leading-none mb-1 opacity-70">Очки Дисциплины</div>
-                        <div id="pointsText" class="text-2xl leading-none italic">0</div>
+            <div class="p-5 pt-4 flex-1">
+                <!-- СТАТИСТИКА (ДНИ СЛЕВА, ОЧКИ СПРАВА) -->
+                <div class="flex gap-3 mb-8 items-stretch">
+                    <!-- Дни на пути (Белый шрифт, Центрировано, Тонкая) -->
+                    <div class="plex flex-1 flex flex-col items-center justify-center p-3">
+                        <span class="text-[7px] font-bold text-white/50 uppercase tracking-[2px] mb-1">Days on Path</span>
+                        <span id="daysText" class="text-sm font-black text-white">0</span>
                     </div>
                     
-                    <!-- Дни (Тонкая, 100% ширины) -->
-                    <div class="plex days-bar">
-                        <span class="text-[9px] font-bold text-gray-500 uppercase tracking-widest mr-1">Дней на пути к цели:</span>
-                        <span id="daysText" class="text-xs font-black text-lime-400">0</span>
+                    <!-- Очки (Справа, Ширина как у карточки задачи) -->
+                    <div class="plex w-[calc(50%-6px)] p-3 text-center flex flex-col items-center justify-center">
+                        <span class="text-[7px] font-bold text-lime-400/70 uppercase tracking-[2px] mb-1">Points</span>
+                        <span id="pointsText" class="text-xl font-black italic text-white leading-none">0</span>
                     </div>
                 </div>
 
-                <!-- Сетка задач -->
+                <!-- СЕТКА ЗАДАЧ -->
                 <div id="tasksGrid" class="grid grid-cols-2 gap-3 mb-10"></div>
 
-                <!-- Настройки -->
+                <!-- НАВИГАЦИЯ -->
                 <div class="flex justify-center pb-12">
                     <button onclick="goToSettings()" class="plex w-16 h-10 rounded-full flex items-center justify-center gap-1.5 active:scale-90 transition-transform">
                         <div class="w-1 h-1 bg-white/20 rounded-full"></div>
-                        <div class="w-1 h-1 bg-lime-400 rounded-full"></div>
+                        <div class="w-1 h-1 bg-lime-400 rounded-full shadow-[0_0_5px_#a3e635]"></div>
                         <div class="w-1 h-1 bg-white/20 rounded-full"></div>
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- SETTINGS -->
+        <!-- SETTINGS SCREEN -->
         <div id="editScreen" class="p-6 hidden">
             <div class="flex items-center justify-between mb-8">
-                <h2 class="text-xl font-black uppercase italic">Коррекция</h2>
-                <button onclick="backToMain()" class="text-[9px] plex px-4 py-2 rounded-xl font-black">Назад</button>
+                <h2 class="text-xl font-black uppercase italic tracking-tighter">System Correction</h2>
+                <button onclick="backToMain()" class="text-[9px] plex px-4 py-2 rounded-xl font-black text-lime-400">Back</button>
             </div>
             <div class="space-y-6">
                 <div class="plex p-5">
-                    <label class="text-[9px] font-bold text-gray-500 uppercase mb-2 block">Редактировать цель</label>
-                    <input id="editGoalInput" type="text" class="w-full bg-transparent border-b border-white/10 p-1 font-bold">
+                    <label class="text-[9px] font-bold text-gray-400 uppercase mb-2 block">Change Goal</label>
+                    <input id="editGoalInput" type="text" class="w-full bg-transparent border-b border-white/10 p-1 font-bold text-white">
                 </div>
                 <div class="plex p-5">
-                    <label class="text-[9px] font-bold text-gray-500 uppercase mb-4 block">Задачи дня</label>
+                    <label class="text-[9px] font-bold text-gray-500 uppercase mb-4 block">Redefine Pillars</label>
                     <div id="editTasksInputs" class="space-y-3"></div>
                 </div>
-                <button onclick="updateSettings()" class="w-full py-5 rounded-2xl bg-lime-400 text-black font-black uppercase">Сохранить</button>
-                <button onclick="fullReset()" class="w-full py-2 text-[8px] text-red-500 font-bold opacity-30 mt-4">Полный сброс</button>
+                <button onclick="updateSettings()" class="w-full py-5 rounded-3xl bg-lime-400 text-black font-black uppercase tracking-wider">Apply Changes</button>
             </div>
         </div>
     </div>
 
     <script>
+        // Интеграция с Telegram
         const WebApp = window.Telegram.WebApp;
         WebApp.ready();
         WebApp.expand();
+
+        // Параллакс эффект фона
+        window.addEventListener('scroll', () => {
+            const scrollPos = window.pageYOffset;
+            const bg = document.getElementById('parallaxBg');
+            // При скролле вниз (scrollPos растет), фон уходит вверх (отрицательный Y)
+            bg.style.transform = `translateY(${scrollPos * -0.2}px)`; 
+        });
 
         if (WebApp.initDataUnsafe?.user?.photo_url) {
             document.getElementById('userAvatar').src = WebApp.initDataUnsafe.user.photo_url;
@@ -194,7 +189,7 @@
 
         function getElumaDate() {
             let now = new Date();
-            now.setHours(now.getHours() - 3); // Сброс в 3 утра
+            now.setHours(now.getHours() - 3); 
             return now.toDateString();
         }
 
@@ -219,8 +214,8 @@
         const tIn = document.getElementById('tasksInputs');
         const eIn = document.getElementById('editTasksInputs');
         for (let i = 0; i < 6; i++) {
-            tIn.innerHTML += `<input type="text" placeholder="Действие ${i+1}" class="t-in w-full bg-black/30 border border-white/5 p-3 rounded-xl text-sm mb-1 text-white">`;
-            eIn.innerHTML += `<input type="text" class="e-in w-full bg-black/30 border border-white/5 p-3 rounded-xl text-sm text-white">`;
+            tIn.innerHTML += `<input type="text" placeholder="Pillar ${i+1}" class="t-in w-full bg-black/10 border border-white/5 p-3 rounded-xl text-sm mb-1 text-white">`;
+            eIn.innerHTML += `<input type="text" class="e-in w-full bg-black/10 border border-white/5 p-3 rounded-xl text-sm text-white">`;
         }
 
         function init() {
@@ -258,10 +253,10 @@
             state.tasks.forEach((t, i) => {
                 const isDone = state.completed.includes(i);
                 grid.innerHTML += `
-                    <div class="plex p-5 flex flex-col justify-center items-center text-center min-h-[130px]" onclick="toggleTask(${i})">
+                    <div class="plex p-5 flex flex-col justify-center items-center text-center min-h-[130px] active:scale-95 transition-all" onclick="toggleTask(${i})">
                         <p class="text-[11px] font-bold leading-tight mb-4 flex-1 flex items-center justify-center">${t}</p>
                         <div class="w-full py-2.5 rounded-xl text-[8px] font-black uppercase border border-white/10 ${isDone ? 'btn-locked' : 'text-lime-400 bg-white/5'}">
-                            ${isDone ? 'Завершено ✓' : 'Выполнить'}
+                            ${isDone ? 'COMPLETED ✓' : 'EXECUTE'}
                         </div>
                     </div>
                 `;
@@ -299,10 +294,6 @@
             document.getElementById('editScreen').classList.add('hidden');
             document.getElementById('mainScreen').classList.remove('hidden');
             render();
-        }
-
-        function fullReset() {
-            if(confirm('Сбросить всё?')) { localStorage.clear(); location.reload(); }
         }
 
         init();
