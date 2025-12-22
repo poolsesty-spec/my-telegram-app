@@ -3,15 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <title>Eluma Elite Ultimate</title>
-    
+    <title>Eluma Stable Elite</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
-    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --accent: #a3e635; --bg: #1a2a2d; }
         body {
@@ -21,7 +16,6 @@
             margin: 0;
             overflow-x: hidden;
             -webkit-tap-highlight-color: transparent;
-            min-height: 100vh;
         }
 
         #parallaxBg {
@@ -60,7 +54,7 @@
             padding: 12px 18px;
         }
 
-        .accent-text { color: var(--accent); opacity: 0.9; }
+        .accent-text { color: var(--accent); }
 
         .btn-locked {
             background: var(--accent);
@@ -80,286 +74,222 @@
     <div class="grain"></div>
 
     <div id="app">
-        
-        <!-- SETUP SCREEN -->
+        <!-- SETUP -->
         <div id="setupScreen" class="p-8 min-h-screen flex flex-col justify-center hidden">
-            <div class="plex p-8 text-center">
+            <div class="plex p-8 text-center shadow-2xl">
                 <h1 class="text-3xl font-black italic mb-6 tracking-tighter accent-text">ELUMA</h1>
-                <input id="goalInput" type="text" placeholder="Главная цель..." class="w-full bg-black bg-opacity-30 p-4 rounded-2xl mb-4 text-white">
+                <input id="goalInput" type="text" placeholder="Ваша главная цель..." class="w-full bg-black/30 p-4 rounded-2xl mb-4 text-white placeholder-white/40">
                 <div id="tasksInputs" class="space-y-2 mb-8"></div>
                 <button onclick="saveSettings()" class="w-full py-4 rounded-2xl bg-lime-400 text-black font-black uppercase tracking-widest active:scale-95 transition-all">Активировать</button>
             </div>
         </div>
 
-        <!-- DASHBOARD -->
-        <div id="mainScreen" class="min-h-screen flex flex-col hidden">
+        <!-- MAIN -->
+        <div id="mainScreen" class="min-h-screen flex flex-col">
             <div class="sticky-header">
                 <div class="plex p-4 flex items-center gap-4">
-                    <img id="userAvatar" src="https://via.placeholder.com/100?text=E" class="w-12 h-12 rounded-full border border-white border-opacity-20 object-cover">
+                    <img id="userAvatar" src="https://via.placeholder.com/100?text=E" class="w-12 h-12 rounded-full border border-white/20 object-cover">
                     <div class="flex-1 overflow-hidden">
-                        <p class="text-xs font-bold uppercase tracking-widest accent-text mb-1 text-left" style="font-size: 8px; letter-spacing: 2px;">Главная цель</p>
-                        <h2 id="displayGoal" class="text-sm font-black uppercase tracking-tight truncate mb-2 text-left">...</h2>
-                        <div class="w-full h-1 bg-white bg-opacity-10 rounded-full overflow-hidden">
-                            <div id="mainProgress" class="h-full bg-lime-400 transition-all duration-1000" style="width: 0%; box-shadow: 0 0 10px #a3e635;"></div>
+                        <p class="text-[8px] font-bold uppercase tracking-[2px] accent-text mb-1 text-left">Главная цель</p>
+                        <h2 id="displayGoal" class="text-sm font-black uppercase tracking-tight truncate mb-2 text-left text-white">...</h2>
+                        <div class="w-full h-1 bg-white/10 rounded-full overflow-hidden">
+                            <div id="mainProgress" class="h-full bg-lime-400 transition-all duration-1000 shadow-[0_0_10px_#a3e635]" style="width: 0%"></div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="p-5 pt-4 flex-1">
+                <!-- СТАТИСТИКА -->
                 <div class="grid grid-cols-2 gap-3 mb-8">
-                    <div class="plex flex flex-col items-center justify-center p-4" style="min-height: 90px;">
-                        <span class="font-bold uppercase accent-text mb-2" style="font-size: 7px; letter-spacing: 2px;">Дней на пути</span>
+                    <div class="plex flex flex-col items-center justify-center p-4 min-h-[90px]">
+                        <span class="text-[7px] font-bold uppercase tracking-[2px] accent-text mb-2 text-center">Дней на пути</span>
                         <span id="daysText" class="text-xl font-black text-white">0</span>
                     </div>
-                    <div class="plex flex flex-col items-center justify-center p-4" style="min-height: 90px;">
-                        <span class="font-bold uppercase accent-text mb-2" style="font-size: 7px; letter-spacing: 2px;">Очки дисциплины</span>
+                    <div class="plex flex flex-col items-center justify-center p-4 min-h-[90px]">
+                        <span class="text-[7px] font-bold uppercase tracking-[2px] accent-text mb-2 text-center">Очки дисциплины</span>
                         <span id="pointsText" class="text-xl font-black text-white leading-none">0</span>
                     </div>
                 </div>
+
                 <div id="tasksGrid" class="grid grid-cols-2 gap-3 mb-10 text-left"></div>
+
+                <!-- НАВИГАЦИЯ -->
                 <div class="flex justify-center pb-12">
-                    <button onclick="goToSettings()" class="plex w-16 h-10 rounded-full flex items-center justify-center gap-1 active:scale-90 transition-transform" style="gap: 6px;">
-                        <div class="w-1 h-1 bg-white bg-opacity-20 rounded-full"></div>
-                        <div class="rounded-full bg-lime-400" style="width: 6px; height: 6px; box-shadow: 0 0 5px #a3e635;"></div>
-                        <div class="w-1 h-1 bg-white bg-opacity-20 rounded-full"></div>
+                    <button onclick="goToSettings()" class="plex w-16 h-10 rounded-full flex items-center justify-center gap-1.5 active:scale-90 transition-transform">
+                        <div class="w-1 h-1 bg-white/20 rounded-full"></div>
+                        <div class="w-1.5 h-1.5 bg-lime-400 rounded-full shadow-[0_0_5px_#a3e635]"></div>
+                        <div class="w-1 h-1 bg-white/20 rounded-full"></div>
                     </button>
                 </div>
             </div>
         </div>
 
         <!-- SETTINGS -->
-        <div id="editScreen" class="p-6 hidden text-left">
+        <div id="editScreen" class="p-6 hidden">
             <div class="flex items-center justify-between mb-8">
                 <h2 class="text-xl font-black uppercase italic accent-text">Настройки</h2>
-                <button onclick="backToMain()" class="plex px-4 py-2 rounded-xl font-black accent-text uppercase" style="font-size: 9px;">Назад</button>
+                <button onclick="backToMain()" class="text-[9px] plex px-4 py-2 rounded-xl font-black accent-text uppercase">Назад</button>
             </div>
             <div class="space-y-6">
-                <div class="plex p-5">
-                    <label class="text-gray-500 font-bold uppercase mb-2 block" style="font-size: 9px;">Редактировать цель</label>
-                    <input id="editGoalInput" type="text" class="w-full bg-transparent border-b border-white border-opacity-10 p-1 font-bold text-white">
+                <div class="plex p-5 text-left">
+                    <label class="text-[9px] font-bold text-gray-500 uppercase mb-2 block">Новая цель</label>
+                    <input id="editGoalInput" type="text" class="w-full bg-transparent border-b border-white/10 p-1 font-bold text-white">
                 </div>
-                <div class="plex p-5">
-                    <label class="text-gray-500 font-bold uppercase mb-4 block" style="font-size: 9px;">Задачи</label>
+                <div class="plex p-5 text-left">
+                    <label class="text-[9px] font-bold text-gray-500 uppercase mb-4 block">Задачи</label>
                     <div id="editTasksInputs" class="space-y-3"></div>
                 </div>
-                <button onclick="updateSettings()" class="w-full py-5 rounded-3xl bg-lime-400 text-black font-black uppercase tracking-widest">Применить</button>
-                <button onclick="fullReset()" class="w-full py-2 text-red-500 font-bold opacity-30 mt-4 uppercase" style="font-size: 8px;">Полный сброс</button>
+                <button onclick="updateSettings()" class="w-full py-5 rounded-3xl bg-lime-400 text-black font-black uppercase tracking-widest">Сохранить</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Принудительная очистка кеша при первой загрузке
-        if (!sessionStorage.getItem('app_loaded')) {
-            sessionStorage.setItem('app_loaded', 'true');
-            const url = window.location.href.split('?')[0] + '?t=' + Date.now();
-            window.location.replace(url);
+        const WebApp = window.Telegram.WebApp;
+        WebApp.ready(); WebApp.expand();
+
+        window.addEventListener('scroll', () => {
+            const scrollPos = window.pageYOffset;
+            const bg = document.getElementById('parallaxBg');
+            if(bg) bg.style.transform = `translateY(${scrollPos * -0.15}px)`; 
+        });
+
+        if (WebApp.initDataUnsafe?.user?.photo_url) {
+            document.getElementById('userAvatar').src = WebApp.initDataUnsafe.user.photo_url;
         }
 
-        // КРИТИЧНО: Инициализация сразу при загрузке скрипта
-        (function() {
-            // Состояние
-            window.state = {
-                goal: localStorage.getItem('el_goal') || '',
-                tasks: JSON.parse(localStorage.getItem('el_tasks')) || [],
-                completed: JSON.parse(localStorage.getItem('el_completed_today')) || [],
-                points: parseInt(localStorage.getItem('el_points')) || 0,
-                days: parseInt(localStorage.getItem('el_days')) || 0,
-                lastDate: localStorage.getItem('el_last_date') || '',
-                bonusClaimedDate: localStorage.getItem('el_bonus_date') || ''
-            };
+        let state = {
+            goal: localStorage.getItem('el_goal') || '',
+            tasks: JSON.parse(localStorage.getItem('el_tasks')) || [],
+            completed: JSON.parse(localStorage.getItem('el_completed_today')) || [],
+            points: parseInt(localStorage.getItem('el_points')) || 0,
+            days: parseInt(localStorage.getItem('el_days')) || 0,
+            lastDate: localStorage.getItem('el_last_date') || '',
+            bonusClaimedDate: localStorage.getItem('el_bonus_date') || ''
+        };
 
-            // Инициализация Telegram
-            const tg = window.Telegram.WebApp;
-            tg.ready();
-            tg.expand();
-            tg.enableClosingConfirmation();
+        function getElumaDate() {
+            let now = new Date();
+            now.setHours(now.getHours() - 3); 
+            return now.toDateString();
+        }
 
-            // Устанавливаем аватар
-            if (tg.initDataUnsafe?.user?.photo_url) {
-                setTimeout(() => {
-                    const avatar = document.getElementById('userAvatar');
-                    if (avatar) avatar.src = tg.initDataUnsafe.user.photo_url;
-                }, 100);
+        function checkDailyReset() {
+            const today = getElumaDate();
+            if (state.lastDate !== today) {
+                state.completed = [];
+                state.lastDate = today;
+                saveState();
             }
+        }
 
-            // Параллакс
-            window.addEventListener('scroll', () => {
-                const scrollPos = window.pageYOffset;
-                const bg = document.getElementById('parallaxBg');
-                if (bg) bg.style.transform = `translateY(${scrollPos * -0.15}px)`; 
-            });
+        function saveState() {
+            localStorage.setItem('el_goal', state.goal);
+            localStorage.setItem('el_tasks', JSON.stringify(state.tasks));
+            localStorage.setItem('el_completed_today', JSON.stringify(state.completed));
+            localStorage.setItem('el_points', state.points);
+            localStorage.setItem('el_days', state.days);
+            localStorage.setItem('el_last_date', state.lastDate);
+            localStorage.setItem('el_bonus_date', state.bonusClaimedDate);
+        }
 
-            window.getElumaDate = function() {
-                let now = new Date();
-                now.setHours(now.getHours() - 3); 
-                return now.toDateString();
-            };
+        const tIn = document.getElementById('tasksInputs');
+        const eIn = document.getElementById('editTasksInputs');
+        for (let i = 0; i < 6; i++) {
+            tIn.innerHTML += `<input type="text" placeholder="Задача ${i+1}" class="t-in w-full bg-black/20 border border-white/5 p-3 rounded-xl text-sm mb-1 text-white">`;
+            eIn.innerHTML += `<input type="text" class="e-in w-full bg-black/20 border border-white/5 p-3 rounded-xl text-sm text-white">`;
+        }
 
-            window.checkDailyReset = function() {
-                const today = window.getElumaDate();
-                if (window.state.lastDate !== today) {
-                    window.state.completed = [];
-                    window.state.lastDate = today;
-                    window.saveState();
-                }
-            };
+        function init() {
+            checkDailyReset();
+            document.getElementById('setupScreen').classList.add('hidden');
+            document.getElementById('mainScreen').classList.add('hidden');
+            document.getElementById('editScreen').classList.add('hidden');
 
-            window.saveState = function() {
-                localStorage.setItem('el_goal', window.state.goal);
-                localStorage.setItem('el_tasks', JSON.stringify(window.state.tasks));
-                localStorage.setItem('el_completed_today', JSON.stringify(window.state.completed));
-                localStorage.setItem('el_points', window.state.points);
-                localStorage.setItem('el_days', window.state.days);
-                localStorage.setItem('el_last_date', window.state.lastDate);
-                localStorage.setItem('el_bonus_date', window.state.bonusClaimedDate);
-            };
-
-            // Подготовка полей
-            function prepareInputs() {
-                const tIn = document.getElementById('tasksInputs');
-                const eIn = document.getElementById('editTasksInputs');
-                if (!tIn || !eIn) {
-                    setTimeout(prepareInputs, 50);
-                    return;
-                }
-                tIn.innerHTML = ''; 
-                eIn.innerHTML = '';
-                for (let i = 0; i < 6; i++) {
-                    tIn.innerHTML += `<input type="text" placeholder="Шаг ${i+1}" class="t-in w-full bg-black bg-opacity-20 border border-white border-opacity-5 p-3 rounded-xl text-sm mb-1 text-white">`;
-                    eIn.innerHTML += `<input type="text" class="e-in w-full bg-black bg-opacity-20 border border-white border-opacity-5 p-3 rounded-xl text-sm text-white">`;
-                }
-            }
-
-            window.init = function() {
-                window.checkDailyReset();
-                const setup = document.getElementById('setupScreen');
-                const main = document.getElementById('mainScreen');
-                const edit = document.getElementById('editScreen');
-                
-                if (!setup || !main || !edit) return;
-
-                setup.classList.add('hidden');
-                main.classList.add('hidden');
-                edit.classList.add('hidden');
-
-                if (!window.state.goal || window.state.goal.trim() === '') {
-                    setup.classList.remove('hidden');
-                } else {
-                    main.classList.remove('hidden');
-                    window.render();
-                }
-            };
-
-            window.toggleTask = function(idx) {
-                if (window.state.completed.includes(idx)) return;
-                const today = window.getElumaDate();
-                window.state.completed.push(idx);
-                window.state.points += 1;
-                if (window.state.completed.length === 6 && window.state.bonusClaimedDate !== today) {
-                    window.state.points += 6; 
-                    window.state.days += 1;
-                    window.state.bonusClaimedDate = today;
-                }
-                window.saveState();
-                window.render();
-                
-                try {
-                    tg.HapticFeedback.impactOccurred('medium');
-                    setTimeout(() => tg.HapticFeedback.impactOccurred('light'), 100);
-                } catch(e) {}
-            };
-
-            window.render = function() {
-                const goal = document.getElementById('displayGoal');
-                const points = document.getElementById('pointsText');
-                const days = document.getElementById('daysText');
-                const grid = document.getElementById('tasksGrid');
-                const progress = document.getElementById('mainProgress');
-                
-                if (!goal || !points || !days || !grid || !progress) return;
-
-                goal.innerText = window.state.goal;
-                points.innerText = window.state.points;
-                days.innerText = window.state.days;
-                grid.innerHTML = '';
-                
-                window.state.tasks.forEach((t, i) => {
-                    const isDone = window.state.completed.includes(i);
-                    grid.innerHTML += `
-                        <div class="plex p-5 flex flex-col justify-center items-center text-center" style="min-height: 130px;" onclick="toggleTask(${i})">
-                            <p class="font-bold leading-tight mb-4 flex-1 flex items-center justify-center" style="font-size: 11px;">${t}</p>
-                            <div class="w-full rounded-xl font-black uppercase border border-white border-opacity-10 ${isDone ? 'btn-locked' : 'text-lime-400 bg-white bg-opacity-5'}" style="padding: 10px 0; font-size: 8px;">
-                                ${isDone ? 'ГОТОВО' : 'ВЫПОЛНИТЬ'}
-                            </div>
-                        </div>
-                    `;
-                });
-                progress.style.width = (window.state.completed.length / 6 * 100) + '%';
-            };
-
-            window.saveSettings = function() {
-                const g = document.getElementById('goalInput').value.trim();
-                const t = Array.from(document.querySelectorAll('.t-in')).map(i => i.value.trim()).filter(v => v !== '');
-                if (g && t.length === 6) {
-                    window.state.goal = g; 
-                    window.state.tasks = t; 
-                    window.state.lastDate = window.getElumaDate();
-                    window.saveState(); 
-                    window.init();
-                }
-            };
-
-            window.updateSettings = function() {
-                const nGoal = document.getElementById('editGoalInput').value.trim();
-                const nTasks = Array.from(document.querySelectorAll('.e-in')).map(i => i.value.trim()).filter(v => v !== '');
-                if (nGoal && nTasks.length === 6) {
-                    nTasks.forEach((task, i) => {
-                        if (task !== window.state.tasks[i]) {
-                            const idx = window.state.completed.indexOf(i);
-                            if (idx !== -1) window.state.completed.splice(idx, 1);
-                        }
-                    });
-                    window.state.goal = nGoal; 
-                    window.state.tasks = nTasks;
-                    window.saveState(); 
-                    window.backToMain();
-                }
-            };
-
-            window.goToSettings = function() {
-                document.getElementById('mainScreen').classList.add('hidden');
-                document.getElementById('editScreen').classList.remove('hidden');
-                document.getElementById('editGoalInput').value = window.state.goal;
-                const inputs = document.querySelectorAll('.e-in');
-                window.state.tasks.forEach((t, i) => inputs[i].value = t);
-            };
-
-            window.backToMain = function() {
-                document.getElementById('editScreen').classList.add('hidden');
-                document.getElementById('mainScreen').classList.remove('hidden');
-                window.render();
-            };
-
-            window.fullReset = function() {
-                if(confirm('Сбросить всё?')) {
-                    localStorage.clear();
-                    location.reload();
-                }
-            };
-
-            // ЗАПУСК
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', function() {
-                    prepareInputs();
-                    setTimeout(window.init, 100);
-                });
+            if (!state.goal) {
+                document.getElementById('setupScreen').classList.remove('hidden');
             } else {
-                prepareInputs();
-                setTimeout(window.init, 100);
+                document.getElementById('mainScreen').classList.remove('hidden');
+                render();
             }
-        })();
+        }
+
+        function toggleTask(idx) {
+            if (state.completed.includes(idx)) return;
+            const today = getElumaDate();
+            state.completed.push(idx);
+            state.points += 1;
+            if (state.completed.length === 6 && state.bonusClaimedDate !== today) {
+                state.points += 6; 
+                state.days += 1;
+                state.bonusClaimedDate = today;
+            }
+            saveState();
+            render();
+            WebApp.HapticFeedback.impactOccurred('medium');
+            setTimeout(() => WebApp.HapticFeedback.impactOccurred('light'), 100);
+        }
+
+        function render() {
+            document.getElementById('displayGoal').innerText = state.goal;
+            document.getElementById('pointsText').innerText = state.points;
+            document.getElementById('daysText').innerText = state.days;
+            const grid = document.getElementById('tasksGrid');
+            grid.innerHTML = '';
+            state.tasks.forEach((t, i) => {
+                const isDone = state.completed.includes(i);
+                grid.innerHTML += `
+                    <div class="plex p-5 flex flex-col justify-center items-center text-center min-h-[130px] active:scale-95 transition-all" onclick="toggleTask(${i})">
+                        <p class="text-[11px] font-bold leading-tight mb-4 flex-1 flex items-center justify-center">${t}</p>
+                        <div class="w-full py-2.5 rounded-xl text-[8px] font-black uppercase border border-white/10 ${isDone ? 'btn-locked' : 'text-lime-400 bg-white/5'}">
+                            ${isDone ? 'ГОТОВО' : 'ВЫПОЛНИТЬ'}
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('mainProgress').style.width = (state.completed.length / 6 * 100) + '%';
+        }
+
+        function saveSettings() {
+            const g = document.getElementById('goalInput').value.trim();
+            const t = Array.from(document.querySelectorAll('.t-in')).map(i => i.value.trim()).filter(v => v !== '');
+            if (g && t.length === 6) {
+                state.goal = g; state.tasks = t; state.lastDate = getElumaDate();
+                saveState(); init();
+            }
+        }
+
+        function updateSettings() {
+            const nGoal = document.getElementById('editGoalInput').value.trim();
+            const nTasks = Array.from(document.querySelectorAll('.e-in')).map(i => i.value.trim()).filter(v => v !== '');
+            if (nGoal && nTasks.length === 6) {
+                nTasks.forEach((task, i) => {
+                    if (task !== state.tasks[i]) {
+                        const idx = state.completed.indexOf(i);
+                        if (idx !== -1) state.completed.splice(idx, 1);
+                    }
+                });
+                state.goal = nGoal; state.tasks = nTasks;
+                saveState(); backToMain();
+            }
+        }
+
+        function goToSettings() {
+            document.getElementById('mainScreen').classList.add('hidden');
+            document.getElementById('editScreen').classList.remove('hidden');
+            document.getElementById('editGoalInput').value = state.goal;
+            const inputs = document.querySelectorAll('.e-in');
+            state.tasks.forEach((t, i) => inputs[i].value = t);
+        }
+
+        function backToMain() {
+            document.getElementById('editScreen').classList.add('hidden');
+            document.getElementById('mainScreen').classList.remove('hidden');
+            render();
+        }
+
+        init();
     </script>
 </body>
 </html>
