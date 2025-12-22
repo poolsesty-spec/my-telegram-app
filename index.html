@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Eluma Elite</title>
+    <title>Eluma Elite Anti-Cheat</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
@@ -19,7 +19,6 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* Фоновое изображение с ПАРАЛЛАКСОМ */
         #parallaxBg {
             position: fixed;
             top: -10%; left: -10%; width: 120%; height: 120%;
@@ -32,7 +31,6 @@
             transition: transform 0.1s linear;
         }
 
-        /* Кинематографическое ЗЕРНО */
         .grain {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -57,6 +55,8 @@
             padding: 12px 18px;
         }
 
+        .accent-text { color: var(--accent); opacity: 0.9; }
+
         .btn-locked {
             background: var(--accent);
             color: #000;
@@ -65,8 +65,8 @@
             border: none;
         }
 
-        input { outline: none; border: none; }
         .hidden { display: none !important; }
+        input { outline: none; border: none; }
     </style>
 </head>
 <body>
@@ -75,49 +75,49 @@
     <div class="grain"></div>
 
     <div id="app">
-        <!-- ЭКРАН ПЕРВОЙ НАСТРОЙКИ -->
+        <!-- SETUP SCREEN -->
         <div id="setupScreen" class="p-8 min-h-screen flex flex-col justify-center hidden">
             <div class="plex p-8 text-center shadow-2xl">
-                <h1 class="text-3xl font-black italic mb-6 tracking-tighter">ELUMA</h1>
-                <input id="goalInput" type="text" placeholder="Ваша главная цель..." class="w-full bg-black/30 p-4 rounded-2xl mb-4 text-white placeholder-white/40">
+                <h1 class="text-3xl font-black italic mb-6 tracking-tighter accent-text">ELUMA</h1>
+                <input id="goalInput" type="text" placeholder="Главная цель..." class="w-full bg-black/30 p-4 rounded-2xl mb-4 text-white">
                 <div id="tasksInputs" class="space-y-2 mb-8"></div>
                 <button onclick="saveSettings()" class="w-full py-4 rounded-2xl bg-lime-400 text-black font-black uppercase tracking-widest active:scale-95 transition-all">Активировать</button>
             </div>
         </div>
 
-        <!-- ГЛАВНЫЙ ЭКРАН -->
+        <!-- MAIN DASHBOARD -->
         <div id="mainScreen" class="min-h-screen flex flex-col">
             
             <div class="sticky-header">
                 <div class="plex p-4 flex items-center gap-4">
                     <img id="userAvatar" src="https://via.placeholder.com/100?text=E" class="w-12 h-12 rounded-full border border-white/20 object-cover">
-                    <div class="flex-1 overflow-hidden text-left">
-                        <p class="text-[8px] font-bold uppercase tracking-[2px] text-lime-400/70 mb-1">Главная цель</p>
+                    <div class="flex-1 overflow-hidden">
+                        <p class="text-[8px] font-bold uppercase tracking-[2px] accent-text mb-1">Главная цель</p>
                         <h2 id="displayGoal" class="text-sm font-black uppercase tracking-tight truncate mb-2">...</h2>
                         <div class="w-full h-1 bg-white/10 rounded-full overflow-hidden">
-                            <div id="mainProgress" class="h-full bg-lime-400 transition-all duration-1000" style="width: 0%"></div>
+                            <div id="mainProgress" class="h-full bg-lime-400 transition-all duration-1000 shadow-[0_0_10px_#a3e635]" style="width: 0%"></div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="p-5 pt-4 flex-1">
-                <!-- СТАТИСТИКА -->
-                <div class="flex gap-3 mb-8 items-stretch">
-                    <div class="plex flex-1 flex flex-col items-center justify-center p-3">
-                        <span class="text-[7px] font-bold text-white/40 uppercase tracking-[2px] mb-1">Дней на пути</span>
+                <!-- СТАТИСТИКА (СИММЕТРИЧНАЯ) -->
+                <div class="grid grid-cols-2 gap-3 mb-8">
+                    <div class="plex flex flex-col items-center justify-center p-4 min-h-[90px]">
+                        <span class="text-[7px] font-bold uppercase tracking-[2px] accent-text mb-2 text-center">Дней на пути</span>
                         <span id="daysText" class="text-xl font-black text-white">0</span>
                     </div>
                     
-                    <div class="plex w-[calc(50%-6px)] p-3 flex flex-col items-center justify-center">
-                        <span class="text-[7px] font-bold text-lime-400/80 uppercase tracking-[2px] mb-1">Очки дисциплины</span>
+                    <div class="plex flex flex-col items-center justify-center p-4 min-h-[90px]">
+                        <span class="text-[7px] font-bold uppercase tracking-[2px] accent-text mb-2 text-center">Очки дисциплины</span>
                         <span id="pointsText" class="text-xl font-black text-white leading-none">0</span>
                     </div>
                 </div>
 
                 <div id="tasksGrid" class="grid grid-cols-2 gap-3 mb-10 text-left"></div>
 
-                <!-- КНОПКА НАСТРОЕК -->
+                <!-- НАВИГАЦИЯ -->
                 <div class="flex justify-center pb-12">
                     <button onclick="goToSettings()" class="plex w-16 h-10 rounded-full flex items-center justify-center gap-1.5 active:scale-90 transition-transform">
                         <div class="w-1 h-1 bg-white/20 rounded-full"></div>
@@ -128,15 +128,15 @@
             </div>
         </div>
 
-        <!-- ЭКРАН НАСТРОЕК -->
+        <!-- SETTINGS SCREEN -->
         <div id="editScreen" class="p-6 hidden">
             <div class="flex items-center justify-between mb-8">
-                <h2 class="text-xl font-black uppercase italic tracking-tighter">Настройки</h2>
-                <button onclick="backToMain()" class="text-[9px] plex px-4 py-2 rounded-xl font-black text-lime-400 uppercase">Назад</button>
+                <h2 class="text-xl font-black uppercase italic accent-text">Настройки</h2>
+                <button onclick="backToMain()" class="text-[9px] plex px-4 py-2 rounded-xl font-black accent-text uppercase">Назад</button>
             </div>
             <div class="space-y-6">
                 <div class="plex p-5">
-                    <label class="text-[9px] font-bold text-gray-500 uppercase mb-2 block">Изменить цель</label>
+                    <label class="text-[9px] font-bold text-gray-500 uppercase mb-2 block">Редактировать цель</label>
                     <input id="editGoalInput" type="text" class="w-full bg-transparent border-b border-white/10 p-1 font-bold text-white">
                 </div>
                 <div class="plex p-5 text-left">
@@ -151,13 +151,11 @@
 
     <script>
         const WebApp = window.Telegram.WebApp;
-        WebApp.ready();
-        WebApp.expand();
+        WebApp.ready(); WebApp.expand();
 
         window.addEventListener('scroll', () => {
             const scrollPos = window.pageYOffset;
-            const bg = document.getElementById('parallaxBg');
-            bg.style.transform = `translateY(${scrollPos * -0.15}px)`; 
+            document.getElementById('parallaxBg').style.transform = `translateY(${scrollPos * -0.15}px)`; 
         });
 
         if (WebApp.initDataUnsafe?.user?.photo_url) {
@@ -170,7 +168,8 @@
             completed: JSON.parse(localStorage.getItem('el_completed_today')) || [],
             points: parseInt(localStorage.getItem('el_points')) || 0,
             days: parseInt(localStorage.getItem('el_days')) || 0,
-            lastDate: localStorage.getItem('el_last_date') || '' 
+            lastDate: localStorage.getItem('el_last_date') || '',
+            bonusClaimedDate: localStorage.getItem('el_bonus_date') || '' // Защита от накрутки
         };
 
         function getElumaDate() {
@@ -195,6 +194,7 @@
             localStorage.setItem('el_points', state.points);
             localStorage.setItem('el_days', state.days);
             localStorage.setItem('el_last_date', state.lastDate);
+            localStorage.setItem('el_bonus_date', state.bonusClaimedDate);
         }
 
         const tIn = document.getElementById('tasksInputs');
@@ -218,21 +218,23 @@
 
         function toggleTask(idx) {
             if (state.completed.includes(idx)) return;
-
+            
+            const today = getElumaDate();
             state.completed.push(idx);
             state.points += 1;
-            if (state.completed.length === 6) {
+
+            // Логика начисления БОНУСА и ДНЯ (только один раз в сутки)
+            if (state.completed.length === 6 && state.bonusClaimedDate !== today) {
                 state.points += 6; 
                 state.days += 1;
+                state.bonusClaimedDate = today; // Ставим метку, что за сегодня всё получено
             }
+            
             saveState();
             render();
             
-            // ДВОЙНАЯ ВИБРАЦИЯ
             WebApp.HapticFeedback.impactOccurred('medium');
-            setTimeout(() => {
-                WebApp.HapticFeedback.impactOccurred('light');
-            }, 100);
+            setTimeout(() => WebApp.HapticFeedback.impactOccurred('light'), 100);
         }
 
         function render() {
@@ -270,20 +272,14 @@
             const newTasks = Array.from(document.querySelectorAll('.e-in')).map(i => i.value).filter(v => v !== '');
 
             if (newGoal && newTasks.length === 6) {
-                // ПРОВЕРКА: Если текст задачи изменился - сбрасываем её статус
                 newTasks.forEach((task, i) => {
                     if (task !== state.tasks[i]) {
                         const indexInCompleted = state.completed.indexOf(i);
-                        if (indexInCompleted !== -1) {
-                            state.completed.splice(indexInCompleted, 1);
-                        }
+                        if (indexInCompleted !== -1) state.completed.splice(indexInCompleted, 1);
                     }
                 });
-
-                state.goal = newGoal;
-                state.tasks = newTasks;
-                saveState();
-                backToMain();
+                state.goal = newGoal; state.tasks = newTasks;
+                saveState(); backToMain();
             }
         }
 
