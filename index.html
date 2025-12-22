@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Eluma Elite Mobile Fix</title>
+    <title>Eluma Elite</title>
     
-    <!-- Скрипты -->
+    <!-- Telegram SDK - Загружаем первым -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
@@ -20,21 +20,20 @@
             margin: 0;
             overflow-x: hidden;
             -webkit-tap-highlight-color: transparent;
-            /* Исправление черного экрана на iOS */
-            min-height: 100.1vh; 
+            min-height: 100vh;
         }
 
+        /* Тот самый фон с параллаксом */
         #parallaxBg {
             position: fixed;
             top: -10%; left: -10%; width: 120%; height: 120%;
             z-index: -2;
-            /* Добавлен случайный параметр для обхода кэша */
-            background-image: url('./background.jpg?v=1.1');
+            background-image: url('./background.jpg');
             background-size: cover;
             background-position: center;
-            opacity: 0.7;
-            filter: brightness(0.8) contrast(1.1);
-            transform: translateZ(0);
+            opacity: 0.75;
+            filter: brightness(0.9) contrast(1.1);
+            transform: translate3d(0, 0, 0);
             will-change: transform;
         }
 
@@ -44,13 +43,14 @@
             z-index: -1;
             pointer-events: none;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-            opacity: 0.12;
+            opacity: 0.15;
         }
 
+        /* Прозрачное стекло */
         .plex {
             background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(25px) saturate(160%);
-            -webkit-backdrop-filter: blur(25px) saturate(160%);
+            backdrop-filter: blur(25px) saturate(180%);
+            -webkit-backdrop-filter: blur(25px) saturate(180%);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 28px;
         }
@@ -60,8 +60,6 @@
             top: 0;
             z-index: 100;
             padding: 12px 18px;
-            /* Небольшое размытие фона шапки для мобилок */
-            backdrop-filter: blur(10px);
         }
 
         .accent-text { color: var(--accent); }
@@ -69,8 +67,14 @@
         .btn-locked {
             background: var(--accent);
             color: #000;
-            box-shadow: 0 0 20px rgba(163, 230, 53, 0.4);
+            box-shadow: 0 0 15px rgba(163, 230, 53, 0.4);
             pointer-events: none;
+        }
+
+        #loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg); z-index: 999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
 
         .hidden { display: none !important; }
@@ -79,21 +83,26 @@
 </head>
 <body>
 
+    <!-- Индикатор загрузки (чтобы не было пустого экрана) -->
+    <div id="loader">
+        <div class="w-12 h-12 border-4 border-lime-400 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p class="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Eluma System Booting...</p>
+    </div>
+
     <div id="parallaxBg"></div>
     <div class="grain"></div>
 
-    <!-- Общий контейнер, который мы покажем только когда всё будет готово -->
-    <div id="app" style="opacity: 0; transition: opacity 0.3s ease;">
+    <div id="app" class="hidden">
         
         <!-- SETUP -->
         <div id="setupScreen" class="p-8 min-h-screen flex flex-col justify-center hidden">
             <div class="plex p-8 text-center">
                 <h1 class="text-3xl font-black italic mb-6 tracking-tighter accent-text">ELUMA</h1>
-                <div class="plex bg-black/20 p-4 rounded-2xl mb-4">
-                    <input id="goalInput" type="text" placeholder="Главная цель..." class="w-full text-center font-bold">
+                <div class="plex bg-black/30 p-4 rounded-2xl mb-4">
+                    <input id="goalInput" type="text" placeholder="Главная цель..." class="w-full text-center font-bold text-white">
                 </div>
                 <div id="tasksInputs" class="space-y-2 mb-8 text-left"></div>
-                <button onclick="saveSettings()" class="w-full py-4 rounded-2xl bg-lime-400 text-black font-black uppercase tracking-widest active:scale-95 transition-all">Начать путь</button>
+                <button onclick="saveSettings()" class="w-full py-4 rounded-2xl bg-lime-400 text-black font-black uppercase tracking-widest">Активировать</button>
             </div>
         </div>
 
@@ -101,26 +110,27 @@
         <div id="mainScreen" class="min-h-screen flex flex-col hidden">
             <div class="sticky-header">
                 <div class="plex p-4 flex items-center gap-4">
-                    <img id="userAvatar" src="https://via.placeholder.com/100?text=E" class="w-12 h-12 rounded-full border border-white/20 object-cover">
+                    <img id="userAvatar" src="https://via.placeholder.com/100" class="w-12 h-12 rounded-full border border-white/20 object-cover">
                     <div class="flex-1 overflow-hidden text-left">
                         <p class="text-[8px] font-bold uppercase tracking-[2px] accent-text mb-1">Главная цель</p>
                         <h2 id="displayGoal" class="text-sm font-black uppercase tracking-tight truncate mb-2">...</h2>
                         <div class="w-full h-1 bg-white/10 rounded-full overflow-hidden">
-                            <div id="mainProgress" class="h-full bg-lime-400 transition-all duration-1000" style="width: 0%"></div>
+                            <div id="mainProgress" class="h-full bg-lime-400 transition-all duration-1000 shadow-[0_0_8px_#a3e635]" style="width: 0%"></div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="p-5 pt-4 flex-1">
-                <!-- СТАТИСТИКА -->
-                <div class="grid grid-cols-2 gap-3 mb-8">
-                    <div class="plex flex flex-col items-center justify-center p-4 min-h-[90px]">
-                        <span class="text-[7px] font-bold uppercase tracking-[2px] accent-text mb-2 text-center">Дней на пути</span>
+                <!-- СТАТИСТИКА (Стеклянная симметрия) -->
+                <div class="flex gap-3 mb-8 items-stretch">
+                    <div class="plex flex-1 flex flex-col items-center justify-center p-4 min-h-[90px]">
+                        <span class="text-[7px] font-bold uppercase tracking-[2px] accent-text mb-2 text-center leading-tight">Дней на пути</span>
                         <span id="daysText" class="text-xl font-black text-white">0</span>
                     </div>
-                    <div class="plex flex flex-col items-center justify-center p-4 min-h-[90px]">
-                        <span class="text-[7px] font-bold uppercase tracking-[2px] accent-text mb-2 text-center">Очки дисциплины</span>
+                    
+                    <div class="plex w-[calc(50%-6px)] flex flex-col items-center justify-center p-4 min-h-[90px]">
+                        <span class="text-[7px] font-bold uppercase tracking-[2px] accent-text mb-2 text-center leading-tight">Очки дисциплины</span>
                         <span id="pointsText" class="text-xl font-black text-white leading-none">0</span>
                     </div>
                 </div>
@@ -131,14 +141,14 @@
                 <div class="flex justify-center pb-12">
                     <button onclick="goToSettings()" class="plex w-16 h-10 rounded-full flex items-center justify-center gap-1.5 active:scale-90 transition-transform">
                         <div class="w-1 h-1 bg-white/20 rounded-full"></div>
-                        <div class="w-1.5 h-1.5 bg-lime-400 rounded-full"></div>
+                        <div class="w-1.5 h-1.5 bg-lime-400 rounded-full shadow-[0_0_5px_#a3e635]"></div>
                         <div class="w-1 h-1 bg-white/20 rounded-full"></div>
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- SETTINGS -->
+        <!-- SETTINGS (БЕЗ КНОПКИ СБРОСА) -->
         <div id="editScreen" class="p-6 hidden">
             <div class="flex items-center justify-between mb-8 text-left">
                 <h2 class="text-xl font-black uppercase italic accent-text">Настройки</h2>
@@ -159,47 +169,32 @@
     </div>
 
     <script>
-        // Глобальные объекты
         const tg = window.Telegram.WebApp;
-        let state = {};
 
-        // 1. ПРИНУДИТЕЛЬНЫЙ ЗАПУСК
-        function bootstrap() {
-            try {
-                tg.ready();
-                tg.expand();
-                
-                // Пробуем получить аватар
-                if (tg.initDataUnsafe?.user?.photo_url) {
-                    document.getElementById('userAvatar').src = tg.initDataUnsafe.user.photo_url;
-                }
+        // Состояние приложения
+        let state = {
+            goal: localStorage.getItem('el_goal') || '',
+            tasks: JSON.parse(localStorage.getItem('el_tasks')) || [],
+            completed: JSON.parse(localStorage.getItem('el_completed_today')) || [],
+            points: parseInt(localStorage.getItem('el_points')) || 0,
+            days: parseInt(localStorage.getItem('el_days')) || 0,
+            lastDate: localStorage.getItem('el_last_date') || '',
+            bonusClaimedDate: localStorage.getItem('el_bonus_date') || ''
+        };
 
-                loadState();
-                initUI();
-                
-                // Показываем приложение с задержкой, чтобы избежать мерцания
-                setTimeout(() => {
-                    document.getElementById('app').style.opacity = '1';
-                    // Форсируем перерисовку фона
-                    window.scrollTo(0, 1);
-                    window.scrollTo(0, 0);
-                }, 100);
-
-            } catch (e) {
-                alert("Ошибка запуска. Попробуйте обновить страницу.");
-            }
+        function getElumaDate() {
+            let now = new Date();
+            now.setHours(now.getHours() - 3); // Сброс в 3 утра
+            return now.toDateString();
         }
 
-        function loadState() {
-            state = {
-                goal: localStorage.getItem('el_goal') || '',
-                tasks: JSON.parse(localStorage.getItem('el_tasks')) || [],
-                completed: JSON.parse(localStorage.getItem('el_completed_today')) || [],
-                points: parseInt(localStorage.getItem('el_points')) || 0,
-                days: parseInt(localStorage.getItem('el_days')) || 0,
-                lastDate: localStorage.getItem('el_last_date') || '',
-                bonusClaimedDate: localStorage.getItem('el_bonus_date') || ''
-            };
+        function checkDailyReset() {
+            const today = getElumaDate();
+            if (state.lastDate !== today) {
+                state.completed = [];
+                state.lastDate = today;
+                saveState();
+            }
         }
 
         function saveState() {
@@ -212,38 +207,12 @@
             localStorage.setItem('el_bonus_date', state.bonusClaimedDate);
         }
 
-        function getElumaDate() {
-            let now = new Date();
-            now.setHours(now.getHours() - 3); 
-            return now.toDateString();
-        }
-
-        function initUI() {
-            const today = getElumaDate();
-            if (state.lastDate !== today) {
-                state.completed = [];
-                state.lastDate = today;
-                saveState();
-            }
-
-            // Генерируем инпуты
-            const tIn = document.getElementById('tasksInputs');
-            const eIn = document.getElementById('editTasksInputs');
-            tIn.innerHTML = ''; eIn.innerHTML = '';
-            for (let i = 0; i < 6; i++) {
-                tIn.innerHTML += `<div class="plex bg-black/20 p-3 rounded-xl mb-1"><input type="text" placeholder="Действие ${i+1}" class="t-in w-full text-white text-sm"></div>`;
-                eIn.innerHTML += `<div class="plex bg-black/20 p-3 rounded-xl"><input type="text" class="e-in w-full bg-black/20 p-3 text-white text-sm"></div>`;
-            }
-
-            if (!state.goal) {
-                document.getElementById('setupScreen').classList.remove('hidden');
-                document.getElementById('mainScreen').classList.add('hidden');
-            } else {
-                document.getElementById('setupScreen').classList.add('hidden');
-                document.getElementById('mainScreen').classList.remove('hidden');
-                render();
-            }
-        }
+        // Параллакс
+        window.addEventListener('scroll', () => {
+            const scrollPos = window.pageYOffset;
+            const bg = document.getElementById('parallaxBg');
+            bg.style.transform = `translate3d(0, ${scrollPos * -0.12}px, 0)`; 
+        });
 
         function toggleTask(idx) {
             if (state.completed.includes(idx)) return;
@@ -251,15 +220,15 @@
             state.completed.push(idx);
             state.points += 1;
             if (state.completed.length === 6 && state.bonusClaimedDate !== today) {
-                state.points += 6; state.days += 1;
+                state.points += 6; 
+                state.days += 1;
                 state.bonusClaimedDate = today;
             }
             saveState();
             render();
-            if(tg.HapticFeedback) {
-                tg.HapticFeedback.impactOccurred('medium');
-                setTimeout(() => tg.HapticFeedback.impactOccurred('light'), 100);
-            }
+            // Двойная вибрация
+            tg.HapticFeedback.impactOccurred('medium');
+            setTimeout(() => tg.HapticFeedback.impactOccurred('light'), 100);
         }
 
         function render() {
@@ -282,12 +251,46 @@
             document.getElementById('mainProgress').style.width = (state.completed.length / 6 * 100) + '%';
         }
 
+        function init() {
+            tg.ready();
+            tg.expand();
+            checkDailyReset();
+            
+            // Аватар из ТГ
+            if (tg.initDataUnsafe?.user?.photo_url) {
+                document.getElementById('userAvatar').src = tg.initDataUnsafe.user.photo_url;
+            }
+
+            // Инпуты
+            const tIn = document.getElementById('tasksInputs');
+            const eIn = document.getElementById('editTasksInputs');
+            tIn.innerHTML = ''; eIn.innerHTML = '';
+            for (let i = 0; i < 6; i++) {
+                tIn.innerHTML += `<div class="plex bg-black/20 p-3 rounded-xl mb-1"><input type="text" placeholder="Шаг ${i+1}" class="t-in w-full text-white text-sm"></div>`;
+                eIn.innerHTML += `<input type="text" class="e-in w-full bg-black/20 border border-white/10 p-3 rounded-xl text-sm text-white">`;
+            }
+
+            if (!state.goal || state.goal.trim() === '') {
+                document.getElementById('setupScreen').classList.remove('hidden');
+                document.getElementById('mainScreen').classList.add('hidden');
+            } else {
+                document.getElementById('setupScreen').classList.add('hidden');
+                document.getElementById('mainScreen').classList.remove('hidden');
+                render();
+            }
+
+            // Убираем лоадер
+            document.getElementById('loader').classList.add('hidden');
+            document.getElementById('app').classList.remove('hidden');
+        }
+
+        // Функции настроек
         function saveSettings() {
             const g = document.getElementById('goalInput').value.trim();
             const t = Array.from(document.querySelectorAll('.t-in')).map(i => i.value.trim()).filter(v => v !== '');
             if (g && t.length === 6) {
                 state.goal = g; state.tasks = t; state.lastDate = getElumaDate();
-                saveState(); initUI();
+                saveState(); init();
             }
         }
 
@@ -320,15 +323,8 @@
             render();
         }
 
-        // Параллакс
-        window.addEventListener('scroll', () => {
-            const scrollPos = window.pageYOffset;
-            const bg = document.getElementById('parallaxBg');
-            bg.style.transform = `translate3d(0, ${scrollPos * -0.12}px, 0)`; 
-        });
-
-        // ЗАПУСК ПОСЛЕ ЗАГРУЗКИ ОКНА
-        window.addEventListener('load', bootstrap);
+        // Запуск
+        window.addEventListener('load', init);
     </script>
 </body>
 </html>
