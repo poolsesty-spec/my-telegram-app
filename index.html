@@ -8,8 +8,6 @@
     <meta http-equiv="Expires" content="0" />
     <title>Eluma Elite Ultimate</title>
     
-    <!-- Загружаем SDK Telegram -->
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     
@@ -29,7 +27,7 @@
             position: fixed;
             top: -10%; left: -10%; width: 120%; height: 120%;
             z-index: -2;
-            background-image: url('./background.jpg');
+            background: linear-gradient(135deg, #1a2a2d 0%, #2d4a4d 100%);
             background-size: cover;
             background-position: center;
             opacity: 0.7;
@@ -73,6 +71,29 @@
 
         .hidden { display: none !important; }
         input { outline: none; border: none; }
+        
+        #loader {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 1000;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(163, 230, 53, 0.3);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -80,7 +101,13 @@
     <div id="parallaxBg"></div>
     <div class="grain"></div>
 
-    <div id="app" style="display: none;"> <!-- Скрыто до загрузки скрипта -->
+    <!-- Loader -->
+    <div id="loader">
+        <div class="spinner"></div>
+        <p class="text-xs accent-text">Загрузка...</p>
+    </div>
+
+    <div id="app" style="display: none;">
         
         <!-- SETUP SCREEN -->
         <div id="setupScreen" class="p-8 min-h-screen flex flex-col justify-center hidden">
@@ -150,31 +177,10 @@
         </div>
     </div>
 
+    <!-- Загружаем Telegram SDK в конце -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
     <script>
-        // Глобальная попытка запуска
-        function startApp() {
-            const tg = window.Telegram?.WebApp;
-            if (tg) {
-                tg.ready();
-                tg.expand();
-                if (tg.initDataUnsafe?.user?.photo_url) {
-                    document.getElementById('userAvatar').src = tg.initDataUnsafe.user.photo_url;
-                }
-            }
-            document.getElementById('app').style.display = 'block';
-            init();
-        }
-
-        // Ждем загрузку скриптов и Telegram
-        let attempts = 0;
-        const checkTg = setInterval(() => {
-            attempts++;
-            if (window.Telegram?.WebApp || attempts > 20) {
-                clearInterval(checkTg);
-                startApp();
-            }
-        }, 50);
-
         // Состояние
         let state = {
             goal: localStorage.getItem('el_goal') || '',
@@ -185,6 +191,44 @@
             lastDate: localStorage.getItem('el_last_date') || '',
             bonusClaimedDate: localStorage.getItem('el_bonus_date') || ''
         };
+
+        // Инициализация Telegram WebApp
+        function initTelegram() {
+            try {
+                if (window.Telegram && window.Telegram.WebApp) {
+                    const tg = window.Telegram.WebApp;
+                    tg.ready();
+                    tg.expand();
+                    
+                    // Устанавливаем аватар, если доступен
+                    if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.photo_url) {
+                        document.getElementById('userAvatar').src = tg.initDataUnsafe.user.photo_url;
+                    }
+                    
+                    console.log('Telegram WebApp инициализирован');
+                }
+            } catch (e) {
+                console.log('Telegram WebApp недоступен, работаем в обычном режиме');
+            }
+        }
+
+        // Главная функция запуска
+        function startApp() {
+            initTelegram();
+            
+            // Скрываем loader, показываем app
+            document.getElementById('loader').style.display = 'none';
+            document.getElementById('app').style.display = 'block';
+            
+            init();
+        }
+
+        // Ждем полной загрузки DOM и запускаем
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', startApp);
+        } else {
+            startApp();
+        }
 
         window.addEventListener('scroll', () => {
             const scrollPos = window.pageYOffset;
@@ -251,10 +295,14 @@
             }
             saveState();
             render();
-            if(window.Telegram?.WebApp?.HapticFeedback) {
-                window.Telegram.WebApp.HapticFeedback.impactOccurred('medium');
-                setTimeout(() => window.Telegram.WebApp.HapticFeedback.impactOccurred('light'), 100);
-            }
+            
+            // Тактильная обратная связь
+            try {
+                if(window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+                    window.Telegram.WebApp.HapticFeedback.impactOccurred('medium');
+                    setTimeout(() => window.Telegram.WebApp.HapticFeedback.impactOccurred('light'), 100);
+                }
+            } catch(e) {}
         }
 
         function render() {
