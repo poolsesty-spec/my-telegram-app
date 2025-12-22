@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Eluma Elite</title>
-    <!-- Подключаем скрипт Телеграм для получения данных пользователя -->
+    <title>Eluma Elite v2</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
@@ -19,7 +18,6 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* Анимированный фон */
         .bg-fixed {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -27,14 +25,13 @@
             background: radial-gradient(circle at 50% 50%, #15181d 0%, #080a0c 100%);
         }
         .cloud {
-            position: absolute; filter: blur(80px); border-radius: 50%; opacity: 0.25;
+            position: absolute; filter: blur(80px); border-radius: 50%; opacity: 0.2;
             animation: move 20s infinite alternate ease-in-out;
         }
         .cloud-1 { width: 300px; height: 300px; background: #2dd4bf; top: 10%; left: -10%; }
-        .cloud-2 { width: 400px; height: 400px; background: var(--accent); bottom: 10%; right: -10%; }
-        @keyframes move { 0% { transform: translate(0,0); } 100% { transform: translate(30px, 50px); } }
+        .cloud-2 { width: 350px; height: 350px; background: var(--accent); bottom: 10%; right: -10%; }
+        @keyframes move { 0% { transform: translate(0,0); } 100% { transform: translate(30px, 40px); } }
 
-        /* Эффект стекла */
         .plex {
             background: rgba(255, 255, 255, 0.04);
             backdrop-filter: blur(15px);
@@ -42,51 +39,54 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        /* Липкая шапка */
+        /* Примагниченная шапка */
         .sticky-header {
             position: sticky;
             top: 0;
-            z-index: 50;
-            background: rgba(13, 15, 18, 0.7);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
+            z-index: 100;
+            background: rgba(13, 15, 18, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 20px;
-            margin-bottom: 10px;
+            padding: 16px 20px;
         }
 
-        /* Золотой слиток */
-        .gold-bar {
-            background: linear-gradient(135deg, #FFD700 0%, #FFB800 45%, #CC9900 100%);
+        /* Натуральный слиток золота (вид сверху) */
+        .gold-ingot {
+            width: 70%;
+            margin: 0 auto;
+            background: linear-gradient(180deg, #f9f295 0%, #e0aa3e 30%, #b88a44 70%, #867221 100%);
             box-shadow: 
-                inset 0 1px 1px rgba(255,255,255,0.5),
-                inset 0 -2px 3px rgba(0,0,0,0.3),
-                0 10px 20px rgba(204, 153, 0, 0.2);
-            border-radius: 14px;
-            color: #4a3700;
-            text-shadow: 0.5px 0.5px 0px rgba(255,255,255,0.2); /* Эффект выдавливания */
-            position: relative;
-            overflow: hidden;
+                inset 0 2px 4px rgba(255,255,255,0.7), 
+                inset 0 -2px 4px rgba(0,0,0,0.4),
+                0 6px 15px rgba(0,0,0,0.5);
+            border-radius: 6px;
+            padding: 12px 10px;
+            text-align: center;
+            /* Вдавленный текст */
+            color: #5c441a;
+            text-shadow: -1px -1px 1px rgba(0,0,0,0.4), 1px 1px 0px rgba(255,255,255,0.3);
+            text-transform: uppercase;
+            font-weight: 900;
+            letter-spacing: -0.02em;
         }
-        .gold-bar::after {
-            content: '';
-            position: absolute;
-            top: -50%; left: -50%; width: 200%; height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.2), transparent);
-            transform: rotate(45deg);
-            animation: shine 4s infinite;
-        }
-        @keyframes shine { 0% { left: -100%; } 100% { left: 100%; } }
 
-        /* Кнопки */
+        /* Суженная стеклянная полоска */
+        .days-bar {
+            width: 75%;
+            margin: 12px auto 0;
+            padding: 8px;
+            border-radius: 12px;
+        }
+
         .btn-locked {
             background: var(--accent);
             color: #000;
-            box-shadow: 0 0 20px rgba(163, 230, 53, 0.4);
+            box-shadow: 0 0 15px rgba(163, 230, 53, 0.3);
             pointer-events: none;
             border: none;
         }
-        
+
         .hidden { display: none !important; }
     </style>
 </head>
@@ -95,92 +95,87 @@
     <div class="bg-fixed"><div class="cloud cloud-1"></div><div class="cloud cloud-2"></div></div>
 
     <div id="app">
-        <!-- ЭКРАН НАСТРОЙКИ -->
+        <!-- ЭКРАН НАСТРОЙКИ (SETUP) -->
         <div id="setupScreen" class="p-8 min-h-screen flex flex-col justify-center hidden">
-            <div class="plex p-8 rounded-[32px] text-center">
-                <h1 class="text-3xl font-black italic mb-8 tracking-tighter">ELUMA</h1>
-                <input id="goalInput" type="text" placeholder="Твоя цель..." class="w-full bg-black/40 border border-white/10 p-4 rounded-2xl mb-4 outline-none text-white focus:border-lime-400">
+            <div class="plex p-8 rounded-[32px]">
+                <h1 class="text-3xl font-black italic mb-6 tracking-tighter text-center">ELUMA</h1>
+                <input id="goalInput" type="text" placeholder="Установи цель..." class="w-full bg-black/40 border border-white/10 p-4 rounded-2xl mb-4 outline-none text-white focus:border-lime-400">
                 <div id="tasksInputs" class="space-y-2 mb-8"></div>
-                <button onclick="saveSettings()" class="w-full py-4 rounded-2xl bg-lime-400 text-black font-black uppercase tracking-widest">Активировать</button>
+                <button onclick="saveSettings()" class="w-full py-4 rounded-2xl bg-lime-400 text-black font-black uppercase tracking-widest">Активировать систему</button>
             </div>
         </div>
 
-        <!-- ГЛАВНЫЙ ЭКРАН -->
+        <!-- ГЛАВНЫЙ ЭКРАН (DASHBOARD) -->
         <div id="mainScreen" class="min-h-screen flex flex-col">
-            <!-- Липкая шапка с аватаркой и целью -->
+            <!-- Примагниченная шапка -->
             <div class="sticky-header flex items-center gap-4">
-                <img id="userAvatar" src="https://via.placeholder.com/100?text=E" class="w-14 h-14 rounded-full border-2 border-lime-400/50 object-cover shadow-[0_0_15px_rgba(163,230,53,0.2)]">
-                <div class="flex-1">
-                    <p class="text-[9px] font-bold uppercase tracking-[2px] text-lime-400/70">Текущая цель</p>
-                    <h2 id="displayGoal" class="text-lg font-black uppercase tracking-tight leading-tight truncate">...</h2>
-                    <div class="w-full h-1 bg-white/5 rounded-full mt-2 overflow-hidden">
-                        <div id="mainProgress" class="h-full bg-lime-400 transition-all duration-1000" style="width: 0%"></div>
-                    </div>
+                <img id="userAvatar" src="https://via.placeholder.com/100?text=E" class="w-12 h-12 rounded-full border-2 border-lime-400/30 object-cover">
+                <div class="flex-1 overflow-hidden">
+                    <p class="text-[8px] font-bold uppercase tracking-[2px] text-lime-400/60 mb-0.5">Текущая цель</p>
+                    <h2 id="displayGoal" class="text-base font-black uppercase tracking-tight truncate">...</h2>
                 </div>
             </div>
 
-            <!-- Контентная область -->
             <div class="p-5 flex-1">
-                <!-- Статистика: Слиток и Стеклянная полоска -->
-                <div class="mb-8 flex flex-col items-center">
-                    <div class="gold-bar w-full py-4 text-center mb-3">
-                        <span class="text-xs font-bold uppercase tracking-widest opacity-60 block mb-1">Очки Дисциплины</span>
-                        <span id="pointsText" class="text-3xl font-black italic tracking-tighter">0</span>
+                <!-- СТАТИСТИКА -->
+                <div class="mb-10 pt-4">
+                    <!-- Слиток золота (на 30% уже) -->
+                    <div class="gold-ingot">
+                        <div class="text-[8px] leading-none mb-1 opacity-80">Очки Дисциплины</div>
+                        <div id="pointsText" class="text-2xl leading-none italic">0</div>
                     </div>
                     
-                    <div class="plex w-full py-3 rounded-xl text-center flex items-center justify-center gap-2">
-                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Дней на пути к цели:</span>
-                        <span id="daysText" class="text-sm font-black text-lime-400">0</span>
+                    <!-- Плашка дней (на 25% уже) -->
+                    <div class="plex days-bar text-center">
+                        <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mr-1">Дней на пути к цели:</span>
+                        <span id="daysText" class="text-xs font-black text-lime-400">0</span>
                     </div>
                 </div>
 
-                <!-- Сетка задач -->
+                <!-- СЕТКА ЗАДАЧ (Без эмодзи, центрированный текст) -->
                 <div id="tasksGrid" class="grid grid-cols-2 gap-3 mb-10"></div>
 
-                <!-- Три точки настроек -->
-                <div class="flex justify-center pb-10">
-                    <button onclick="goToSettings()" class="plex w-16 h-10 rounded-2xl flex items-center justify-center gap-1.5 active:scale-90 transition-transform">
-                        <div class="w-1 h-1 bg-white/30 rounded-full"></div>
-                        <div class="w-1.5 h-1.5 bg-lime-400 rounded-full"></div>
-                        <div class="w-1 h-1 bg-white/30 rounded-full"></div>
+                <!-- НАВИГАЦИЯ -->
+                <div class="flex justify-center pb-12">
+                    <button onclick="goToSettings()" class="plex w-14 h-8 rounded-full flex items-center justify-center gap-1 active:scale-90 transition-transform">
+                        <div class="w-1 h-1 bg-white/20 rounded-full"></div>
+                        <div class="w-1 h-1 bg-lime-400 rounded-full"></div>
+                        <div class="w-1 h-1 bg-white/20 rounded-full"></div>
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- ЭКРАН РЕДАКТИРОВАНИЯ -->
+        <!-- ЭКРАН РЕДАКТИРОВАНИЯ (SETTINGS) -->
         <div id="editScreen" class="p-6 hidden">
             <div class="flex items-center justify-between mb-8">
-                <h2 class="text-2xl font-black uppercase">Система</h2>
-                <button onclick="backToMain()" class="text-[10px] font-bold plex px-4 py-2 rounded-xl">Назад</button>
+                <h2 class="text-xl font-black uppercase italic">Коррекция</h2>
+                <button onclick="backToMain()" class="text-[10px] plex px-4 py-2 rounded-xl font-bold">Назад</button>
             </div>
             <div class="space-y-6">
                 <div class="plex p-5 rounded-2xl">
-                    <label class="text-[10px] font-bold text-gray-400 uppercase mb-2 block">Новая цель</label>
-                    <input id="editGoalInput" type="text" class="w-full bg-black/20 border-b border-white/10 p-2 outline-none">
+                    <label class="text-[9px] font-bold text-gray-500 uppercase mb-2 block">Редактировать цель</label>
+                    <input id="editGoalInput" type="text" class="w-full bg-transparent border-b border-white/10 p-2 outline-none font-bold">
                 </div>
                 <div class="plex p-5 rounded-2xl">
-                    <label class="text-[10px] font-bold text-gray-400 uppercase mb-4 block">Задачи</label>
+                    <label class="text-[9px] font-bold text-gray-500 uppercase mb-4 block">Задачи дня</label>
                     <div id="editTasksInputs" class="space-y-3"></div>
                 </div>
-                <button onclick="updateSettings()" class="w-full py-5 rounded-2xl bg-lime-400 text-black font-black uppercase">Сохранить</button>
-                <button onclick="fullReset()" class="w-full py-2 text-[9px] text-red-500 font-bold opacity-30">Обнулить всё</button>
+                <button onclick="updateSettings()" class="w-full py-5 rounded-2xl bg-lime-400 text-black font-black uppercase tracking-wider">Сохранить</button>
+                <button onclick="fullReset()" class="w-full py-2 text-[8px] text-red-500 font-bold opacity-30 mt-4 tracking-tighter">Полное обнуление системы</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Интеграция с Telegram
         const WebApp = window.Telegram.WebApp;
         WebApp.ready();
         WebApp.expand();
 
-        // Установка аватарки
         if (WebApp.initDataUnsafe?.user?.photo_url) {
             document.getElementById('userAvatar').src = WebApp.initDataUnsafe.user.photo_url;
         }
 
-        const icons = ["☀️", "🧘", "📚", "💪", "📵", "📋"];
         let state = {
             goal: localStorage.getItem('el_goal') || '',
             tasks: JSON.parse(localStorage.getItem('el_tasks')) || [],
@@ -214,7 +209,6 @@
             localStorage.setItem('el_last_date', state.lastDate);
         }
 
-        // Рендер полей
         const tIn = document.getElementById('tasksInputs');
         const eIn = document.getElementById('editTasksInputs');
         for (let i = 0; i < 6; i++) {
@@ -239,7 +233,7 @@
             state.completed.push(idx);
             state.points += 1;
             if (state.completed.length === 6) {
-                state.points += 6; // Бонус за день
+                state.points += 6;
                 state.days += 1;
             }
             saveState();
@@ -257,18 +251,14 @@
             state.tasks.forEach((t, i) => {
                 const isDone = state.completed.includes(i);
                 grid.innerHTML += `
-                    <div class="plex p-4 rounded-[24px] flex flex-col justify-between min-h-[120px]" onclick="toggleTask(${i})">
-                        <div>
-                            <div class="w-8 h-8 bg-black/40 rounded-lg flex items-center justify-center text-sm mb-3 border border-white/5">${icons[i]}</div>
-                            <p class="text-[11px] font-bold leading-tight line-clamp-2">${t}</p>
-                        </div>
-                        <div class="py-2.5 rounded-xl text-center text-[9px] font-black uppercase border border-white/10 ${isDone ? 'btn-locked' : 'text-lime-400 bg-white/5'}">
-                            ${isDone ? 'Сделано ✓' : 'Выполнить'}
+                    <div class="plex p-5 rounded-[28px] flex flex-col justify-center items-center text-center min-h-[130px] active:scale-95 transition-all" onclick="toggleTask(${i})">
+                        <p class="text-[10px] font-bold leading-tight mb-4 flex-1 flex items-center justify-center">${t}</p>
+                        <div class="w-full py-2.5 rounded-xl text-[8px] font-black uppercase border border-white/10 ${isDone ? 'btn-locked' : 'text-lime-400 bg-white/5'}">
+                            ${isDone ? 'Завершено ✓' : 'Выполнить'}
                         </div>
                     </div>
                 `;
             });
-            document.getElementById('mainProgress').style.width = (state.completed.length / 6 * 100) + '%';
         }
 
         function saveSettings() {
@@ -304,7 +294,7 @@
         }
 
         function fullReset() {
-            if(confirm('Удалить весь прогресс?')) { localStorage.clear(); location.reload(); }
+            if(confirm('Удалить всё?')) { localStorage.clear(); location.reload(); }
         }
 
         init();
