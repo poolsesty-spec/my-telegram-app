@@ -5,14 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Eluma Elite</title>
     
-    <!-- Telegram SDK - Загружаем первым -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     
     <style>
         :root { --accent: #a3e635; --bg: #0d1111; }
-        
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg);
@@ -23,7 +21,6 @@
             min-height: 100vh;
         }
 
-        /* Тот самый фон с параллаксом */
         #parallaxBg {
             position: fixed;
             top: -10%; left: -10%; width: 120%; height: 120%;
@@ -33,7 +30,7 @@
             background-position: center;
             opacity: 0.75;
             filter: brightness(0.9) contrast(1.1);
-            transform: translate3d(0, 0, 0);
+            transform: translate3d(0,0,0);
             will-change: transform;
         }
 
@@ -46,7 +43,6 @@
             opacity: 0.15;
         }
 
-        /* Прозрачное стекло */
         .plex {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(25px) saturate(180%);
@@ -71,11 +67,9 @@
             pointer-events: none;
         }
 
-        #loader {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg); z-index: 999;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-        }
+        /* Плавное появление приложения */
+        #app { opacity: 0; transition: opacity 0.5s ease; }
+        .show-app { opacity: 1 !important; }
 
         .hidden { display: none !important; }
         input { outline: none; border: none; background: transparent; color: white; }
@@ -83,26 +77,19 @@
 </head>
 <body>
 
-    <!-- Индикатор загрузки (чтобы не было пустого экрана) -->
-    <div id="loader">
-        <div class="w-12 h-12 border-4 border-lime-400 border-t-transparent rounded-full animate-spin mb-4"></div>
-        <p class="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Eluma System Booting...</p>
-    </div>
-
     <div id="parallaxBg"></div>
     <div class="grain"></div>
 
-    <div id="app" class="hidden">
-        
+    <div id="app">
         <!-- SETUP -->
         <div id="setupScreen" class="p-8 min-h-screen flex flex-col justify-center hidden">
-            <div class="plex p-8 text-center">
+            <div class="plex p-8 text-center shadow-2xl">
                 <h1 class="text-3xl font-black italic mb-6 tracking-tighter accent-text">ELUMA</h1>
-                <div class="plex bg-black/30 p-4 rounded-2xl mb-4">
-                    <input id="goalInput" type="text" placeholder="Главная цель..." class="w-full text-center font-bold text-white">
+                <div class="plex bg-black/30 p-4 rounded-2xl mb-4 text-center">
+                    <input id="goalInput" type="text" placeholder="Главная цель..." class="w-full text-center font-bold">
                 </div>
                 <div id="tasksInputs" class="space-y-2 mb-8 text-left"></div>
-                <button onclick="saveSettings()" class="w-full py-4 rounded-2xl bg-lime-400 text-black font-black uppercase tracking-widest">Активировать</button>
+                <button onclick="saveSettings()" class="w-full py-4 rounded-2xl bg-lime-400 text-black font-black uppercase tracking-widest active:scale-95">Активировать</button>
             </div>
         </div>
 
@@ -115,29 +102,27 @@
                         <p class="text-[8px] font-bold uppercase tracking-[2px] accent-text mb-1">Главная цель</p>
                         <h2 id="displayGoal" class="text-sm font-black uppercase tracking-tight truncate mb-2">...</h2>
                         <div class="w-full h-1 bg-white/10 rounded-full overflow-hidden">
-                            <div id="mainProgress" class="h-full bg-lime-400 transition-all duration-1000 shadow-[0_0_8px_#a3e635]" style="width: 0%"></div>
+                            <div id="mainProgress" class="h-full bg-lime-400 transition-all duration-1000" style="width: 0%"></div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="p-5 pt-4 flex-1">
-                <!-- СТАТИСТИКА (Стеклянная симметрия) -->
-                <div class="flex gap-3 mb-8 items-stretch">
-                    <div class="plex flex-1 flex flex-col items-center justify-center p-4 min-h-[90px]">
+                <!-- СТАТИСТИКА (Симметрично) -->
+                <div class="grid grid-cols-2 gap-3 mb-8">
+                    <div class="plex flex flex-col items-center justify-center p-4 min-h-[90px]">
                         <span class="text-[7px] font-bold uppercase tracking-[2px] accent-text mb-2 text-center leading-tight">Дней на пути</span>
-                        <span id="daysText" class="text-xl font-black text-white">0</span>
+                        <span id="daysText" class="text-xl font-black text-white italic">0</span>
                     </div>
-                    
-                    <div class="plex w-[calc(50%-6px)] flex flex-col items-center justify-center p-4 min-h-[90px]">
+                    <div class="plex flex flex-col items-center justify-center p-4 min-h-[90px]">
                         <span class="text-[7px] font-bold uppercase tracking-[2px] accent-text mb-2 text-center leading-tight">Очки дисциплины</span>
-                        <span id="pointsText" class="text-xl font-black text-white leading-none">0</span>
+                        <span id="pointsText" class="text-xl font-black text-white leading-none italic">0</span>
                     </div>
                 </div>
 
                 <div id="tasksGrid" class="grid grid-cols-2 gap-3 mb-10 text-left"></div>
 
-                <!-- НАВИГАЦИЯ -->
                 <div class="flex justify-center pb-12">
                     <button onclick="goToSettings()" class="plex w-16 h-10 rounded-full flex items-center justify-center gap-1.5 active:scale-90 transition-transform">
                         <div class="w-1 h-1 bg-white/20 rounded-full"></div>
@@ -148,52 +133,44 @@
             </div>
         </div>
 
-        <!-- SETTINGS (БЕЗ КНОПКИ СБРОСА) -->
-        <div id="editScreen" class="p-6 hidden">
-            <div class="flex items-center justify-between mb-8 text-left">
+        <!-- SETTINGS -->
+        <div id="editScreen" class="p-6 hidden text-left">
+            <div class="flex items-center justify-between mb-8">
                 <h2 class="text-xl font-black uppercase italic accent-text">Настройки</h2>
                 <button onclick="backToMain()" class="text-[9px] plex px-4 py-2 rounded-xl font-black accent-text uppercase">Назад</button>
             </div>
             <div class="space-y-6">
-                <div class="plex p-5 text-left">
-                    <label class="text-[9px] font-bold text-gray-400 uppercase mb-2 block">Новая цель</label>
+                <div class="plex p-5">
+                    <label class="text-[9px] font-bold text-gray-500 uppercase mb-2 block">Редактировать цель</label>
                     <input id="editGoalInput" type="text" class="w-full border-b border-white/10 p-1 font-bold text-white">
                 </div>
-                <div class="plex p-5 text-left">
+                <div class="plex p-5">
                     <label class="text-[9px] font-bold text-gray-500 uppercase mb-4 block">Задачи дня</label>
                     <div id="editTasksInputs" class="space-y-3"></div>
                 </div>
-                <button onclick="updateSettings()" class="w-full py-5 rounded-3xl bg-lime-400 text-black font-black uppercase tracking-widest">Сохранить</button>
+                <button onclick="updateSettings()" class="w-full py-5 rounded-3xl bg-lime-400 text-black font-black uppercase tracking-widest">Применить</button>
             </div>
         </div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
+        let state = {};
 
-        // Состояние приложения
-        let state = {
-            goal: localStorage.getItem('el_goal') || '',
-            tasks: JSON.parse(localStorage.getItem('el_tasks')) || [],
-            completed: JSON.parse(localStorage.getItem('el_completed_today')) || [],
-            points: parseInt(localStorage.getItem('el_points')) || 0,
-            days: parseInt(localStorage.getItem('el_days')) || 0,
-            lastDate: localStorage.getItem('el_last_date') || '',
-            bonusClaimedDate: localStorage.getItem('el_bonus_date') || ''
-        };
-
-        function getElumaDate() {
-            let now = new Date();
-            now.setHours(now.getHours() - 3); // Сброс в 3 утра
-            return now.toDateString();
-        }
-
-        function checkDailyReset() {
-            const today = getElumaDate();
-            if (state.lastDate !== today) {
-                state.completed = [];
-                state.lastDate = today;
-                saveState();
+        // Безопасная загрузка данных
+        function loadData() {
+            try {
+                state = {
+                    goal: localStorage.getItem('el_goal') || '',
+                    tasks: JSON.parse(localStorage.getItem('el_tasks')) || [],
+                    completed: JSON.parse(localStorage.getItem('el_completed_today')) || [],
+                    points: parseInt(localStorage.getItem('el_points')) || 0,
+                    days: parseInt(localStorage.getItem('el_days')) || 0,
+                    lastDate: localStorage.getItem('el_last_date') || '',
+                    bonusClaimedDate: localStorage.getItem('el_bonus_date') || ''
+                };
+            } catch (e) {
+                state = { goal: '', tasks: [], completed: [], points: 0, days: 0, lastDate: '', bonusClaimedDate: '' };
             }
         }
 
@@ -207,12 +184,52 @@
             localStorage.setItem('el_bonus_date', state.bonusClaimedDate);
         }
 
-        // Параллакс
-        window.addEventListener('scroll', () => {
-            const scrollPos = window.pageYOffset;
-            const bg = document.getElementById('parallaxBg');
-            bg.style.transform = `translate3d(0, ${scrollPos * -0.12}px, 0)`; 
-        });
+        function getElumaDate() {
+            let now = new Date();
+            now.setHours(now.getHours() - 3); 
+            return now.toDateString();
+        }
+
+        function bootstrap() {
+            tg.ready();
+            tg.expand();
+            
+            loadData();
+            
+            const today = getElumaDate();
+            if (state.lastDate !== today) {
+                state.completed = [];
+                state.lastDate = today;
+                saveState();
+            }
+
+            // Рендер полей
+            const tIn = document.getElementById('tasksInputs');
+            const eIn = document.getElementById('editTasksInputs');
+            if(tIn && eIn) {
+                tIn.innerHTML = ''; eIn.innerHTML = '';
+                for (let i = 0; i < 6; i++) {
+                    tIn.innerHTML += `<div class="plex bg-black/20 p-3 rounded-xl mb-1"><input type="text" placeholder="Шаг ${i+1}" class="t-in w-full text-white text-sm"></div>`;
+                    eIn.innerHTML += `<div class="plex bg-black/20 p-3 rounded-xl"><input type="text" class="e-in w-full bg-black/20 p-3 text-white text-sm"></div>`;
+                }
+            }
+
+            if (!state.goal) {
+                document.getElementById('setupScreen').classList.remove('hidden');
+                document.getElementById('mainScreen').classList.add('hidden');
+            } else {
+                document.getElementById('setupScreen').classList.add('hidden');
+                document.getElementById('mainScreen').classList.remove('hidden');
+                render();
+            }
+
+            if (tg.initDataUnsafe?.user?.photo_url) {
+                document.getElementById('userAvatar').src = tg.initDataUnsafe.user.photo_url;
+            }
+
+            // Показываем приложение
+            document.getElementById('app').classList.add('show-app');
+        }
 
         function toggleTask(idx) {
             if (state.completed.includes(idx)) return;
@@ -220,13 +237,11 @@
             state.completed.push(idx);
             state.points += 1;
             if (state.completed.length === 6 && state.bonusClaimedDate !== today) {
-                state.points += 6; 
-                state.days += 1;
+                state.points += 6; state.days += 1;
                 state.bonusClaimedDate = today;
             }
             saveState();
             render();
-            // Двойная вибрация
             tg.HapticFeedback.impactOccurred('medium');
             setTimeout(() => tg.HapticFeedback.impactOccurred('light'), 100);
         }
@@ -236,6 +251,7 @@
             document.getElementById('pointsText').innerText = state.points;
             document.getElementById('daysText').innerText = state.days;
             const grid = document.getElementById('tasksGrid');
+            if(!grid) return;
             grid.innerHTML = '';
             state.tasks.forEach((t, i) => {
                 const isDone = state.completed.includes(i);
@@ -251,46 +267,12 @@
             document.getElementById('mainProgress').style.width = (state.completed.length / 6 * 100) + '%';
         }
 
-        function init() {
-            tg.ready();
-            tg.expand();
-            checkDailyReset();
-            
-            // Аватар из ТГ
-            if (tg.initDataUnsafe?.user?.photo_url) {
-                document.getElementById('userAvatar').src = tg.initDataUnsafe.user.photo_url;
-            }
-
-            // Инпуты
-            const tIn = document.getElementById('tasksInputs');
-            const eIn = document.getElementById('editTasksInputs');
-            tIn.innerHTML = ''; eIn.innerHTML = '';
-            for (let i = 0; i < 6; i++) {
-                tIn.innerHTML += `<div class="plex bg-black/20 p-3 rounded-xl mb-1"><input type="text" placeholder="Шаг ${i+1}" class="t-in w-full text-white text-sm"></div>`;
-                eIn.innerHTML += `<input type="text" class="e-in w-full bg-black/20 border border-white/10 p-3 rounded-xl text-sm text-white">`;
-            }
-
-            if (!state.goal || state.goal.trim() === '') {
-                document.getElementById('setupScreen').classList.remove('hidden');
-                document.getElementById('mainScreen').classList.add('hidden');
-            } else {
-                document.getElementById('setupScreen').classList.add('hidden');
-                document.getElementById('mainScreen').classList.remove('hidden');
-                render();
-            }
-
-            // Убираем лоадер
-            document.getElementById('loader').classList.add('hidden');
-            document.getElementById('app').classList.remove('hidden');
-        }
-
-        // Функции настроек
         function saveSettings() {
             const g = document.getElementById('goalInput').value.trim();
             const t = Array.from(document.querySelectorAll('.t-in')).map(i => i.value.trim()).filter(v => v !== '');
             if (g && t.length === 6) {
                 state.goal = g; state.tasks = t; state.lastDate = getElumaDate();
-                saveState(); init();
+                saveState(); bootstrap();
             }
         }
 
@@ -323,8 +305,18 @@
             render();
         }
 
-        // Запуск
-        window.addEventListener('load', init);
+        window.addEventListener('scroll', () => {
+            const scrollPos = window.pageYOffset;
+            const bg = document.getElementById('parallaxBg');
+            if(bg) bg.style.transform = `translate3d(0, ${scrollPos * -0.12}px, 0)`; 
+        });
+
+        // Запуск!
+        window.onload = bootstrap;
+        // Резервный запуск через 1.5 секунды, если onload не сработал
+        setTimeout(() => {
+            if (document.getElementById('app').style.opacity === '0') bootstrap();
+        }, 1500);
     </script>
 </body>
 </html>
