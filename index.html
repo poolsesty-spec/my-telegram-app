@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Eluma - Дисциплина</title>
+    <title>Eluma Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --neon-green: #a3e635; /* Салатовый как на фото */
-            --bg-dark: #0f1715;    /* Глубокий темный с оттенком хвои */
-            --glass: rgba(255, 255, 255, 0.05);
+            --accent: #a3e635; /* Салатовый */
+            --teal: #2dd4bf;   /* Бирюзовый */
+            --bg-dark: #121418;
         }
 
         body {
@@ -22,195 +22,172 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* Органические пиксели на фоне */
-        .pixel-bg {
+        /* --- Анимированный фон (Градиентные облака) --- */
+        .bg-wrapper {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 20px;
-            padding: 20px;
-            opacity: 0.12;
-            filter: blur(50px);
-        }
-        .pixel {
-            aspect-ratio: 1;
-            background: var(--neon-green);
-            border-radius: 30%;
-            animation: float 12s infinite alternate ease-in-out;
-        }
-        .pixel:nth-child(even) { background: #22d3ee; animation-delay: 3s; }
-
-        @keyframes float {
-            0% { transform: translateY(0) rotate(0deg) scale(1); }
-            100% { transform: translateY(-40px) rotate(20deg) scale(1.4); }
+            background: radial-gradient(circle at 50% 50%, #1a1d23 0%, #0d0f12 100%);
+            overflow: hidden;
         }
 
-        /* Стекло (Glassmorphism) */
-        .glass-card {
-            background: var(--glass);
-            backdrop-filter: blur(25px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 24px;
-        }
-
-        /* Кольцо прогресса вокруг аватара */
-        .avatar-container {
-            position: relative;
-            width: 130px;
-            height: 130px;
-            margin: 0 auto 15px;
-        }
-        .progress-ring {
-            transform: rotate(-90deg);
-        }
-        .progress-ring__circle {
-            transition: stroke-dashoffset 0.6s ease;
-            stroke: var(--neon-green);
-            stroke-linecap: round;
-            filter: drop-shadow(0 0 8px var(--neon-green));
-        }
-
-        .avatar-img {
+        .cloud {
             position: absolute;
-            top: 15px; left: 15px;
-            width: 100px; height: 100px;
+            filter: blur(80px);
             border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid rgba(255,255,255,0.1);
+            opacity: 0.4;
+            animation: move 20s infinite alternate ease-in-out;
+        }
+        .cloud-1 { width: 300px; height: 300px; background: var(--teal); top: -50px; left: -100px; animation-duration: 25s; }
+        .cloud-2 { width: 400px; height: 400px; background: var(--accent); bottom: -100px; right: -50px; animation-duration: 18s; }
+        .cloud-3 { width: 250px; height: 250px; background: #4ade80; top: 40%; left: 60%; opacity: 0.2; }
+
+        @keyframes move {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(50px, 80px) scale(1.2); }
         }
 
-        /* Кнопки */
+        /* --- Эффект Plexiglass (Оргстекло) --- */
+        .plexiglass {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(25px) saturate(150%);
+            -webkit-backdrop-filter: blur(25px) saturate(150%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+        }
+
+        /* --- Кнопки и прогресс-бары --- */
+        .neon-progress {
+            background: linear-gradient(90deg, var(--teal), var(--accent));
+            box-shadow: 0 0 15px rgba(163, 230, 53, 0.4);
+        }
+
         .btn-done {
-            background: rgba(163, 230, 53, 0.1);
-            color: var(--neon-green);
+            background: rgba(163, 230, 53, 0.15);
             border: 1px solid rgba(163, 230, 53, 0.3);
-            font-size: 11px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .active-task .btn-done {
-            background: var(--neon-green);
-            color: #000;
+            color: var(--accent);
+            box-shadow: inset 0 0 10px rgba(163, 230, 53, 0.1);
+            transition: all 0.3s ease;
         }
 
-        .screen {
-            transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            position: absolute;
-            width: 100%; height: 100%;
-            top: 0; left: 0;
-            padding: 24px;
-            overflow-y: auto;
+        .btn-active {
+            background: var(--accent);
+            color: #000;
+            box-shadow: 0 0 20px rgba(163, 230, 53, 0.5);
         }
-        .hidden-screen { transform: translateY(30px); opacity: 0; pointer-events: none; }
+
+        /* --- Стилизация сетки --- */
+        .task-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 28px;
+            padding: 16px;
+            transition: transform 0.2s ease;
+        }
+        .task-card:active { transform: scale(0.96); }
+
+        .icon-box {
+            width: 48px; height: 48px;
+            border-radius: 14px;
+            background: rgba(0,0,0,0.3);
+            display: flex; items-center; justify-center;
+            border: 1px solid rgba(255,255,255,0.05);
+            margin-bottom: 12px;
+        }
+
+        /* --- Экран настроек --- */
+        .screen { transition: 0.5s ease; position: absolute; width: 100%; height: 100%; top: 0; left: 0; padding: 20px; }
+        .hidden-screen { opacity: 0; pointer-events: none; transform: scale(1.05); }
+
     </style>
 </head>
 <body>
 
-    <div class="pixel-bg" id="pixelBg"></div>
+    <div class="bg-wrapper">
+        <div class="cloud cloud-1"></div>
+        <div class="cloud cloud-2"></div>
+        <div class="cloud cloud-3"></div>
+    </div>
 
     <div id="app" class="relative w-full h-screen">
         
-        <!-- ЭКРАН 1: НАСТРОЙКА ЦЕЛИ -->
-        <div id="setupScreen" class="screen flex flex-col">
-            <h1 class="text-3xl font-black mb-2 mt-6 tracking-tighter">ELUMA</h1>
-            <p class="text-gray-400 text-sm mb-10">Программирование дисциплины</p>
-
-            <div class="space-y-4">
-                <div class="glass-card p-5">
-                    <label class="text-[10px] uppercase font-bold text-lime-400 mb-2 block">Твоя главная цель</label>
-                    <input id="goalInput" type="text" placeholder="Например: Сосредоточенность" class="w-full bg-transparent border-b border-white/20 p-2 outline-none text-xl font-bold">
+        <!-- ЭКРАН 1: НАСТРОЙКА (SETUP) -->
+        <div id="setupScreen" class="screen flex flex-col justify-center items-center">
+            <div class="plexiglass w-full max-w-sm p-8 text-center">
+                <h1 class="text-3xl font-extrabold mb-2 italic">ELUMA</h1>
+                <p class="text-gray-400 text-sm mb-8">Установи свою дисциплину</p>
+                
+                <input id="goalInput" type="text" placeholder="Главная цель..." class="w-full bg-black/30 border border-white/10 p-4 rounded-2xl mb-4 outline-none focus:border-lime-400">
+                
+                <div id="tasksInputs" class="space-y-2 mb-6">
+                    <!-- Поля для 6 задач -->
                 </div>
 
-                <div class="glass-card p-5">
-                    <label class="text-[10px] uppercase font-bold text-lime-400 mb-4 block">6 шагов к цели (каждый день)</label>
-                    <div id="tasksInputs" class="grid grid-cols-1 gap-3">
-                        <!-- JS вставит инпуты -->
-                    </div>
-                </div>
-
-                <button onclick="saveSettings()" class="w-full py-5 rounded-3xl bg-lime-400 text-black font-black uppercase tracking-widest shadow-[0_10px_40px_-10px_#a3e635]">Активировать</button>
+                <button onclick="saveSettings()" class="w-full py-4 rounded-2xl bg-lime-400 text-black font-bold uppercase tracking-widest shadow-lg">Активировать</button>
             </div>
         </div>
 
-        <!-- ЭКРАН 2: ДАШБОРД -->
-        <div id="mainScreen" class="screen hidden-screen flex flex-col">
-            <!-- Верхняя панель -->
-            <div class="flex justify-between items-center mb-6">
-                <span class="text-xs font-bold tracking-[4px] text-gray-500 uppercase">System Active</span>
-                <button onclick="openSettings()" class="p-2 opacity-50"><svg width="20" height="20" fill="white" viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg></button>
-            </div>
-
-            <!-- Аватар и Прогресс -->
-            <div class="text-center mb-8">
-                <div class="avatar-container">
-                    <svg class="progress-ring" width="130" height="130">
-                        <circle class="progress-ring__circle" stroke-width="6" fill="transparent" r="58" cx="65" cy="65"/>
-                    </svg>
-                    <!-- АВАТАР: Сюда подставится твое фото. Пока заглушка с твоим 'энерго-человеком' -->
-                    <img src="https://i.ibb.co/L9H8S7p/avatar-energy.jpg" class="avatar-img" id="userAvatar">
+        <!-- ЭКРАН 2: ДАШБОРД (DASHBOARD) -->
+        <div id="mainScreen" class="screen hidden-screen">
+            <!-- Главная карточка (Цель) -->
+            <div class="plexiglass p-6 mb-6 mt-4 relative overflow-hidden">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center text-2xl">👁️</div>
+                    <div>
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-lime-400 opacity-80">Главная цель:</p>
+                        <h2 id="displayGoal" class="text-xl font-extrabold uppercase tracking-tight">СОСРЕДОТОЧЕННОСТЬ</h2>
+                    </div>
                 </div>
-                
-                <p class="text-[10px] uppercase tracking-[3px] text-lime-400 font-bold mb-1">Главная цель</p>
-                <h2 id="displayGoal" class="text-2xl font-black uppercase tracking-tight leading-none">ЦЕЛЬ НЕ ЗАДАНА</h2>
-            </div>
-
-            <!-- Статистика -->
-            <div class="flex justify-between mb-6 px-2">
-                <div class="text-left">
-                    <p class="text-[9px] uppercase text-gray-500 font-bold">Ваш рост</p>
-                    <p class="text-sm font-bold" id="pointsText">1450 ОЧКОВ</p>
-                </div>
-                <div class="text-right">
-                    <p class="text-[9px] uppercase text-gray-500 font-bold">Прогресс дня</p>
-                    <p class="text-sm font-bold" id="dayText">12 / 30</p>
+                <div class="w-full h-2 bg-white/5 rounded-full overflow-hidden">
+                    <div id="mainProgress" class="h-full neon-progress transition-all duration-700" style="width: 45%;"></div>
                 </div>
             </div>
 
-            <!-- Сетка задач (Симметрия 2х3) -->
-            <div id="tasksGrid" class="grid grid-cols-2 gap-3 mb-10">
-                <!-- Карточки задач -->
+            <!-- Статистика роста -->
+            <div class="px-2 mb-4">
+                <div class="flex justify-between items-center mb-2">
+                    <p class="text-[11px] font-medium text-gray-400 uppercase tracking-wider">Ваш рост: <span class="text-white" id="pointsText">1450 ОЧКОВ</span> | День 12/30</p>
+                    <div class="flex gap-2 text-lime-400">📈 🌿</div>
+                </div>
+                <!-- Сегментированный бар -->
+                <div class="flex gap-1 h-2">
+                    <div class="flex-1 bg-teal-400/80 rounded-full"></div>
+                    <div class="flex-1 bg-teal-400/80 rounded-full"></div>
+                    <div class="flex-1 bg-teal-400/80 rounded-full relative">
+                        <div class="absolute -right-1 -top-1 w-3 h-3 bg-lime-400 rounded-full blur-[2px]"></div>
+                    </div>
+                    <div class="flex-1 bg-white/5 rounded-full"></div>
+                    <div class="flex-1 bg-white/5 rounded-full"></div>
+                </div>
+            </div>
+
+            <!-- Сетка задач 2x3 -->
+            <div id="tasksGrid" class="grid grid-cols-2 gap-3 mb-12">
+                <!-- Карточки будут здесь -->
+            </div>
+
+            <!-- Футер / Настройки -->
+            <div class="text-center">
+                <button onclick="resetApp()" class="text-[10px] text-gray-600 uppercase tracking-[4px] font-bold">Изменить параметры системы</button>
             </div>
         </div>
 
     </div>
 
     <script>
-        // Инициализация фона
-        const bg = document.getElementById('pixelBg');
-        for (let i = 0; i < 20; i++) {
-            const p = document.createElement('div');
-            p.className = 'pixel';
-            bg.appendChild(p);
-        }
+        // Иконки для задач (эмодзи для простоты, можно заменить на картинки)
+        const icons = ["☀️", "🧘", "📚", "💪", "📵", "📋"];
 
-        // Данные приложения
         let state = {
-            goal: localStorage.getItem('eluma_goal') || '',
-            tasks: JSON.parse(localStorage.getItem('eluma_tasks')) || [],
-            completed: JSON.parse(localStorage.getItem('eluma_completed')) || []
+            goal: localStorage.getItem('el_goal') || '',
+            tasks: JSON.parse(localStorage.getItem('el_tasks')) || [],
+            completed: JSON.parse(localStorage.getItem('el_done')) || []
         };
 
-        // Работа с кольцом прогресса
-        const circle = document.querySelector('.progress-ring__circle');
-        const radius = circle.r.baseVal.value;
-        const circumference = 2 * Math.PI * radius;
-        circle.style.strokeDasharray = `${circumference} ${circumference}`;
-        circle.style.strokeDashoffset = circumference;
-
-        function setProgress(percent) {
-            const offset = circumference - (percent / 100 * circumference);
-            circle.style.strokeDashoffset = offset;
-        }
-
-        // Поля ввода в настройках
-        const tasksInputsDiv = document.getElementById('tasksInputs');
+        // Генерация полей ввода
+        const inputsDiv = document.getElementById('tasksInputs');
         for (let i = 0; i < 6; i++) {
-            tasksInputsDiv.innerHTML += `
-                <input type="text" placeholder="Задача ${i+1}" class="task-input w-full bg-white/5 border border-white/10 p-3 rounded-xl outline-none text-sm focus:border-lime-400">
-            `;
+            inputsDiv.innerHTML += `<input type="text" placeholder="Действие ${i+1}" class="task-input w-full bg-black/20 border border-white/5 p-3 rounded-xl text-sm outline-none focus:border-teal-500">`;
         }
 
         function init() {
@@ -220,61 +197,61 @@
             } else {
                 document.getElementById('setupScreen').classList.add('hidden-screen');
                 document.getElementById('mainScreen').classList.remove('hidden-screen');
-                renderMain();
+                render();
             }
         }
 
         function saveSettings() {
             const goal = document.getElementById('goalInput').value;
-            const inputs = document.querySelectorAll('.task-input');
-            const tasks = Array.from(inputs).map(i => i.value).filter(v => v !== '');
+            const tInputs = document.querySelectorAll('.task-input');
+            const tasks = Array.from(tInputs).map(i => i.value).filter(v => v !== '');
 
             if (goal && tasks.length === 6) {
                 state.goal = goal;
                 state.tasks = tasks;
-                localStorage.setItem('eluma_goal', goal);
-                localStorage.setItem('eluma_tasks', JSON.stringify(tasks));
+                localStorage.setItem('el_goal', goal);
+                localStorage.setItem('el_tasks', JSON.stringify(tasks));
                 init();
             } else {
-                alert('Нужно заполнить цель и все 6 задач для симметрии дашборда!');
+                alert("Заполни цель и все 6 задач для симметрии!");
             }
         }
 
-        function toggleTask(index) {
-            const pos = state.completed.indexOf(index);
-            if (pos === -1) state.completed.push(index);
-            else state.completed.splice(pos, 1);
-            
-            localStorage.setItem('eluma_completed', JSON.stringify(state.completed));
-            renderMain();
+        function toggle(idx) {
+            const i = state.completed.indexOf(idx);
+            if (i === -1) state.completed.push(idx);
+            else state.completed.splice(i, 1);
+            localStorage.setItem('el_done', JSON.stringify(state.completed));
+            render();
         }
 
-        function renderMain() {
+        function render() {
             document.getElementById('displayGoal').innerText = state.goal;
             const grid = document.getElementById('tasksGrid');
             grid.innerHTML = '';
 
-            state.tasks.forEach((task, i) => {
+            state.tasks.forEach((t, i) => {
                 const isDone = state.completed.includes(i);
                 grid.innerHTML += `
-                    <div onclick="toggleTask(${i})" class="glass-card p-4 flex flex-col justify-between min-h-[110px] ${isDone ? 'active-task shadow-[0_0_20px_-5px_#a3e635]' : ''}">
-                        <p class="text-[11px] font-bold leading-tight mb-4 opacity-80">${i+1}. ${task}</p>
-                        <button class="btn-done py-2 w-full rounded-xl">${isDone ? 'Выполнено ✓' : 'Сделать'}</button>
+                    <div class="task-card plexiglass" onclick="toggle(${i})">
+                        <div class="icon-box">${icons[i]}</div>
+                        <p class="text-[12px] font-semibold leading-tight mb-4 h-8">${i+1}. ${t}</p>
+                        <div class="btn-done py-2 rounded-xl flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-wider ${isDone ? 'btn-active' : ''}">
+                            ${isDone ? 'Сделано ✓' : 'Выполнить'}
+                        </div>
                     </div>
                 `;
             });
 
-            const percent = (state.completed.length / 6) * 100;
-            setProgress(percent);
-            
-            // Обновляем очки (пример логики)
-            document.getElementById('pointsText').innerText = (state.completed.length * 150 + 1000) + " ОЧКОВ";
+            const progress = (state.completed.length / 6) * 100;
+            document.getElementById('mainProgress').style.width = progress + '%';
+            document.getElementById('pointsText').innerText = (1000 + state.completed.length * 150) + " ОЧКОВ";
         }
 
-        function openSettings() {
-            if(confirm('Изменить цель и задачи?')) {
-                state.goal = '';
-                init();
+        function resetApp() {
+            if(confirm('Сбросить настройки системы?')) {
+                localStorage.clear();
+                location.reload();
             }
         }
 
