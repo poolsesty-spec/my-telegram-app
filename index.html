@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Eluma Elite Anti-Cheat</title>
+    <title>Eluma Elite Stable</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
@@ -75,7 +75,7 @@
     <div class="grain"></div>
 
     <div id="app">
-        <!-- SETUP SCREEN -->
+        <!-- ЭКРАН НАСТРОЙКИ (SETUP) -->
         <div id="setupScreen" class="p-8 min-h-screen flex flex-col justify-center hidden">
             <div class="plex p-8 text-center shadow-2xl">
                 <h1 class="text-3xl font-black italic mb-6 tracking-tighter accent-text">ELUMA</h1>
@@ -85,15 +85,14 @@
             </div>
         </div>
 
-        <!-- MAIN DASHBOARD -->
-        <div id="mainScreen" class="min-h-screen flex flex-col">
-            
+        <!-- ГЛАВНЫЙ ЭКРАН -->
+        <div id="mainScreen" class="min-h-screen flex flex-col hidden">
             <div class="sticky-header">
                 <div class="plex p-4 flex items-center gap-4">
                     <img id="userAvatar" src="https://via.placeholder.com/100?text=E" class="w-12 h-12 rounded-full border border-white/20 object-cover">
                     <div class="flex-1 overflow-hidden">
-                        <p class="text-[8px] font-bold uppercase tracking-[2px] accent-text mb-1">Главная цель</p>
-                        <h2 id="displayGoal" class="text-sm font-black uppercase tracking-tight truncate mb-2">...</h2>
+                        <p class="text-[8px] font-bold uppercase tracking-[2px] accent-text mb-1 text-left">Главная цель</p>
+                        <h2 id="displayGoal" class="text-sm font-black uppercase tracking-tight truncate mb-2 text-left text-white">...</h2>
                         <div class="w-full h-1 bg-white/10 rounded-full overflow-hidden">
                             <div id="mainProgress" class="h-full bg-lime-400 transition-all duration-1000 shadow-[0_0_10px_#a3e635]" style="width: 0%"></div>
                         </div>
@@ -101,8 +100,8 @@
                 </div>
             </div>
 
-            <div class="p-5 pt-4 flex-1">
-                <!-- СТАТИСТИКА (СИММЕТРИЧНАЯ) -->
+            <div class="p-5 pt-4 flex-1 text-left">
+                <!-- СТАТИСТИКА -->
                 <div class="grid grid-cols-2 gap-3 mb-8">
                     <div class="plex flex flex-col items-center justify-center p-4 min-h-[90px]">
                         <span class="text-[7px] font-bold uppercase tracking-[2px] accent-text mb-2 text-center">Дней на пути</span>
@@ -115,7 +114,7 @@
                     </div>
                 </div>
 
-                <div id="tasksGrid" class="grid grid-cols-2 gap-3 mb-10 text-left"></div>
+                <div id="tasksGrid" class="grid grid-cols-2 gap-3 mb-10"></div>
 
                 <!-- НАВИГАЦИЯ -->
                 <div class="flex justify-center pb-12">
@@ -128,8 +127,8 @@
             </div>
         </div>
 
-        <!-- SETTINGS SCREEN -->
-        <div id="editScreen" class="p-6 hidden">
+        <!-- ЭКРАН РЕДАКТИРОВАНИЯ -->
+        <div id="editScreen" class="p-6 hidden text-left">
             <div class="flex items-center justify-between mb-8">
                 <h2 class="text-xl font-black uppercase italic accent-text">Настройки</h2>
                 <button onclick="backToMain()" class="text-[9px] plex px-4 py-2 rounded-xl font-black accent-text uppercase">Назад</button>
@@ -139,8 +138,8 @@
                     <label class="text-[9px] font-bold text-gray-500 uppercase mb-2 block">Редактировать цель</label>
                     <input id="editGoalInput" type="text" class="w-full bg-transparent border-b border-white/10 p-1 font-bold text-white">
                 </div>
-                <div class="plex p-5 text-left">
-                    <label class="text-[9px] font-bold text-gray-500 uppercase mb-4 block">Задачи (шаги)</label>
+                <div class="plex p-5">
+                    <label class="text-[9px] font-bold text-gray-500 uppercase mb-4 block text-left">Задачи (шаги)</label>
                     <div id="editTasksInputs" class="space-y-3"></div>
                 </div>
                 <button onclick="updateSettings()" class="w-full py-5 rounded-3xl bg-lime-400 text-black font-black uppercase tracking-widest">Применить</button>
@@ -155,7 +154,8 @@
 
         window.addEventListener('scroll', () => {
             const scrollPos = window.pageYOffset;
-            document.getElementById('parallaxBg').style.transform = `translateY(${scrollPos * -0.15}px)`; 
+            const bg = document.getElementById('parallaxBg');
+            if(bg) bg.style.transform = `translateY(${scrollPos * -0.15}px)`; 
         });
 
         if (WebApp.initDataUnsafe?.user?.photo_url) {
@@ -169,7 +169,7 @@
             points: parseInt(localStorage.getItem('el_points')) || 0,
             days: parseInt(localStorage.getItem('el_days')) || 0,
             lastDate: localStorage.getItem('el_last_date') || '',
-            bonusClaimedDate: localStorage.getItem('el_bonus_date') || '' // Защита от накрутки
+            bonusClaimedDate: localStorage.getItem('el_bonus_date') || ''
         };
 
         function getElumaDate() {
@@ -197,8 +197,10 @@
             localStorage.setItem('el_bonus_date', state.bonusClaimedDate);
         }
 
+        // Рендер полей ввода
         const tIn = document.getElementById('tasksInputs');
         const eIn = document.getElementById('editTasksInputs');
+        tIn.innerHTML = ''; eIn.innerHTML = '';
         for (let i = 0; i < 6; i++) {
             tIn.innerHTML += `<input type="text" placeholder="Шаг ${i+1}" class="t-in w-full bg-black/20 border border-white/5 p-3 rounded-xl text-sm mb-1 text-white">`;
             eIn.innerHTML += `<input type="text" class="e-in w-full bg-black/20 border border-white/5 p-3 rounded-xl text-sm text-white">`;
@@ -206,11 +208,14 @@
 
         function init() {
             checkDailyReset();
-            if (!state.goal) {
+            // Скрываем всё перед проверкой
+            document.getElementById('setupScreen').classList.add('hidden');
+            document.getElementById('mainScreen').classList.add('hidden');
+            document.getElementById('editScreen').classList.add('hidden');
+
+            if (!state.goal || state.goal === '') {
                 document.getElementById('setupScreen').classList.remove('hidden');
-                document.getElementById('mainScreen').classList.add('hidden');
             } else {
-                document.getElementById('setupScreen').classList.add('hidden');
                 document.getElementById('mainScreen').classList.remove('hidden');
                 render();
             }
@@ -223,11 +228,10 @@
             state.completed.push(idx);
             state.points += 1;
 
-            // Логика начисления БОНУСА и ДНЯ (только один раз в сутки)
             if (state.completed.length === 6 && state.bonusClaimedDate !== today) {
                 state.points += 6; 
                 state.days += 1;
-                state.bonusClaimedDate = today; // Ставим метку, что за сегодня всё получено
+                state.bonusClaimedDate = today;
             }
             
             saveState();
@@ -238,6 +242,7 @@
         }
 
         function render() {
+            if(!state.goal) return;
             document.getElementById('displayGoal').innerText = state.goal;
             document.getElementById('pointsText').innerText = state.points;
             document.getElementById('daysText').innerText = state.days;
@@ -259,17 +264,19 @@
         }
 
         function saveSettings() {
-            const g = document.getElementById('goalInput').value;
-            const t = Array.from(document.querySelectorAll('.t-in')).map(i => i.value).filter(v => v !== '');
+            const g = document.getElementById('goalInput').value.trim();
+            const t = Array.from(document.querySelectorAll('.t-in')).map(i => i.value.trim()).filter(v => v !== '');
             if (g && t.length === 6) {
                 state.goal = g; state.tasks = t; state.lastDate = getElumaDate();
                 saveState(); init();
+            } else {
+                alert("Заполни цель и все 6 шагов!");
             }
         }
 
         function updateSettings() {
-            const newGoal = document.getElementById('editGoalInput').value;
-            const newTasks = Array.from(document.querySelectorAll('.e-in')).map(i => i.value).filter(v => v !== '');
+            const newGoal = document.getElementById('editGoalInput').value.trim();
+            const newTasks = Array.from(document.querySelectorAll('.e-in')).map(i => i.value.trim()).filter(v => v !== '');
 
             if (newGoal && newTasks.length === 6) {
                 newTasks.forEach((task, i) => {
@@ -298,7 +305,11 @@
         }
 
         function fullReset() {
-            if(confirm('Сбросить весь прогресс?')) { localStorage.clear(); location.reload(); }
+            if(confirm('Сбросить весь прогресс? Это действие нельзя отменить.')) {
+                localStorage.clear();
+                // Используем жесткую перезагрузку через смену URL
+                window.location.replace(window.location.origin + window.location.pathname);
+            }
         }
 
         init();
