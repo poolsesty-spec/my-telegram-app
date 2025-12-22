@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Eluma Elite Ultimate</title>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -25,7 +28,7 @@
             position: fixed;
             top: -10%; left: -10%; width: 120%; height: 120%;
             z-index: -2;
-            background: linear-gradient(135deg, #1a2a2d 0%, #2d4a4d 100%);
+            background-image: url('./background.jpg');
             background-size: cover;
             background-position: center;
             opacity: 0.7;
@@ -147,6 +150,13 @@
     </div>
 
     <script>
+        // Принудительная очистка кеша при первой загрузке
+        if (!sessionStorage.getItem('app_loaded')) {
+            sessionStorage.setItem('app_loaded', 'true');
+            const url = window.location.href.split('?')[0] + '?t=' + Date.now();
+            window.location.replace(url);
+        }
+
         // КРИТИЧНО: Инициализация сразу при загрузке скрипта
         (function() {
             // Состояние
