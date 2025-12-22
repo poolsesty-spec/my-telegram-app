@@ -8,21 +8,24 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --accent: #a3e635; /* Салатовый */
-            --teal: #2dd4bf;   /* Бирюзовый */
+            --accent: #a3e635; 
+            --teal: #2dd4bf;   
             --bg-dark: #121418;
         }
 
+        /* Исправляем скролл: разрешаем вертикальный, запрещаем горизонтальный */
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-dark);
             color: white;
             margin: 0;
-            overflow: hidden;
+            overflow-x: hidden; 
+            overflow-y: auto; 
+            min-height: 100vh;
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* --- Анимированный фон (Градиентные облака) --- */
+        /* Фон теперь зафиксирован и не мешает скроллу */
         .bg-wrapper {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -35,70 +38,66 @@
             position: absolute;
             filter: blur(80px);
             border-radius: 50%;
-            opacity: 0.4;
+            opacity: 0.35;
             animation: move 20s infinite alternate ease-in-out;
         }
-        .cloud-1 { width: 300px; height: 300px; background: var(--teal); top: -50px; left: -100px; animation-duration: 25s; }
-        .cloud-2 { width: 400px; height: 400px; background: var(--accent); bottom: -100px; right: -50px; animation-duration: 18s; }
-        .cloud-3 { width: 250px; height: 250px; background: #4ade80; top: 40%; left: 60%; opacity: 0.2; }
+        .cloud-1 { width: 300px; height: 300px; background: var(--teal); top: -50px; left: -100px; }
+        .cloud-2 { width: 400px; height: 400px; background: var(--accent); bottom: -100px; right: -50px; }
 
         @keyframes move {
             0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(50px, 80px) scale(1.2); }
+            100% { transform: translate(30px, 50px) scale(1.1); }
         }
 
-        /* --- Эффект Plexiglass (Оргстекло) --- */
+        /* Эффект Plexiglass */
         .plexiglass {
             background: rgba(255, 255, 255, 0.04);
-            backdrop-filter: blur(25px) saturate(150%);
-            -webkit-backdrop-filter: blur(25px) saturate(150%);
+            backdrop-filter: blur(20px) saturate(160%);
+            -webkit-backdrop-filter: blur(20px) saturate(160%);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 30px;
         }
 
-        /* --- Кнопки и прогресс-бары --- */
         .neon-progress {
             background: linear-gradient(90deg, var(--teal), var(--accent));
-            box-shadow: 0 0 15px rgba(163, 230, 53, 0.4);
+            box-shadow: 0 0 15px rgba(163, 230, 53, 0.3);
         }
 
         .btn-done {
-            background: rgba(163, 230, 53, 0.15);
-            border: 1px solid rgba(163, 230, 53, 0.3);
+            background: rgba(163, 230, 53, 0.1);
+            border: 1px solid rgba(163, 230, 53, 0.2);
             color: var(--accent);
-            box-shadow: inset 0 0 10px rgba(163, 230, 53, 0.1);
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
         }
 
         .btn-active {
             background: var(--accent);
             color: #000;
-            box-shadow: 0 0 20px rgba(163, 230, 53, 0.5);
+            box-shadow: 0 0 15px rgba(163, 230, 53, 0.4);
+            border: none;
         }
 
-        /* --- Стилизация сетки --- */
         .task-card {
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(255, 255, 255, 0.02);
             border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius: 28px;
             padding: 16px;
-            transition: transform 0.2s ease;
-        }
-        .task-card:active { transform: scale(0.96); }
-
-        .icon-box {
-            width: 48px; height: 48px;
-            border-radius: 14px;
-            background: rgba(0,0,0,0.3);
-            display: flex; items-center; justify-center;
-            border: 1px solid rgba(255,255,255,0.05);
-            margin-bottom: 12px;
         }
 
-        /* --- Экран настроек --- */
-        .screen { transition: 0.5s ease; position: absolute; width: 100%; height: 100%; top: 0; left: 0; padding: 20px; }
-        .hidden-screen { opacity: 0; pointer-events: none; transform: scale(1.05); }
+        /* Контейнеры экранов теперь не абсолютные, чтобы работал естественный скролл */
+        .screen { 
+            width: 100%; 
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .hidden-screen { display: none !important; }
 
+        input {
+            -webkit-appearance: none;
+            border-radius: 12px;
+        }
     </style>
 </head>
 <body>
@@ -106,94 +105,97 @@
     <div class="bg-wrapper">
         <div class="cloud cloud-1"></div>
         <div class="cloud cloud-2"></div>
-        <div class="cloud cloud-3"></div>
     </div>
 
-    <div id="app" class="relative w-full h-screen">
+    <div id="app" class="relative w-full">
         
-        <!-- ЭКРАН 1: НАСТРОЙКА (SETUP) -->
-        <div id="setupScreen" class="screen flex flex-col justify-center items-center">
-            <div class="plexiglass w-full max-w-sm p-8 text-center">
-                <h1 class="text-3xl font-extrabold mb-2 italic">ELUMA</h1>
-                <p class="text-gray-400 text-sm mb-8">Установи свою дисциплину</p>
+        <!-- ЭКРАН 1: НАСТРОЙКА -->
+        <div id="setupScreen" class="screen min-h-screen flex items-center justify-center">
+            <div class="plexiglass w-full max-w-sm p-8">
+                <h1 class="text-3xl font-black mb-1 italic tracking-tighter">ELUMA</h1>
+                <p class="text-gray-400 text-xs mb-8 uppercase tracking-widest">System Setup</p>
                 
-                <input id="goalInput" type="text" placeholder="Главная цель..." class="w-full bg-black/30 border border-white/10 p-4 rounded-2xl mb-4 outline-none focus:border-lime-400">
-                
-                <div id="tasksInputs" class="space-y-2 mb-6">
-                    <!-- Поля для 6 задач -->
-                </div>
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-[10px] font-bold text-lime-400 uppercase mb-2 block">Главная цель</label>
+                        <input id="goalInput" type="text" placeholder="Напр: Фокус" class="w-full bg-black/40 border border-white/10 p-4 rounded-2xl outline-none focus:border-lime-400 text-white">
+                    </div>
+                    
+                    <div id="tasksInputs" class="space-y-2">
+                        <label class="text-[10px] font-bold text-lime-400 uppercase mb-2 block">6 ежедневных задач</label>
+                        <!-- Инпуты -->
+                    </div>
 
-                <button onclick="saveSettings()" class="w-full py-4 rounded-2xl bg-lime-400 text-black font-bold uppercase tracking-widest shadow-lg">Активировать</button>
+                    <button onclick="saveSettings()" class="w-full py-5 rounded-2xl bg-lime-400 text-black font-black uppercase tracking-widest mt-4 active:scale-95 transition-transform">Запустить систему</button>
+                </div>
             </div>
         </div>
 
-        <!-- ЭКРАН 2: ДАШБОРД (DASHBOARD) -->
+        <!-- ЭКРАН 2: ДАШБОРД -->
         <div id="mainScreen" class="screen hidden-screen">
-            <!-- Главная карточка (Цель) -->
-            <div class="plexiglass p-6 mb-6 mt-4 relative overflow-hidden">
-                <div class="flex items-center gap-4 mb-4">
-                    <div class="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center text-2xl">👁️</div>
+            <!-- Цель -->
+            <div class="plexiglass p-6 mb-6 mt-2">
+                <div class="flex items-center gap-4 mb-5">
+                    <div class="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center text-2xl shadow-inner">👁️</div>
                     <div>
-                        <p class="text-[10px] font-bold uppercase tracking-widest text-lime-400 opacity-80">Главная цель:</p>
-                        <h2 id="displayGoal" class="text-xl font-extrabold uppercase tracking-tight">СОСРЕДОТОЧЕННОСТЬ</h2>
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-lime-400">Текущая цель</p>
+                        <h2 id="displayGoal" class="text-xl font-black uppercase tracking-tight">...</h2>
                     </div>
                 </div>
-                <div class="w-full h-2 bg-white/5 rounded-full overflow-hidden">
-                    <div id="mainProgress" class="h-full neon-progress transition-all duration-700" style="width: 45%;"></div>
+                <div class="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
+                    <div id="mainProgress" class="h-full neon-progress transition-all duration-1000" style="width: 0%;"></div>
                 </div>
             </div>
 
-            <!-- Статистика роста -->
-            <div class="px-2 mb-4">
-                <div class="flex justify-between items-center mb-2">
-                    <p class="text-[11px] font-medium text-gray-400 uppercase tracking-wider">Ваш рост: <span class="text-white" id="pointsText">1450 ОЧКОВ</span> | День 12/30</p>
-                    <div class="flex gap-2 text-lime-400">📈 🌿</div>
-                </div>
-                <!-- Сегментированный бар -->
-                <div class="flex gap-1 h-2">
-                    <div class="flex-1 bg-teal-400/80 rounded-full"></div>
-                    <div class="flex-1 bg-teal-400/80 rounded-full"></div>
-                    <div class="flex-1 bg-teal-400/80 rounded-full relative">
-                        <div class="absolute -right-1 -top-1 w-3 h-3 bg-lime-400 rounded-full blur-[2px]"></div>
+            <!-- Рост -->
+            <div class="px-1 mb-6">
+                <div class="flex justify-between items-end mb-3">
+                    <div>
+                        <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Ваш прогресс</p>
+                        <p class="text-lg font-black tracking-tighter" id="pointsText">1450 ОЧКОВ</p>
                     </div>
+                    <p class="text-[10px] font-bold text-lime-400 bg-lime-400/10 px-3 py-1 rounded-full border border-lime-400/20">ДЕНЬ 12/30</p>
+                </div>
+                <div class="flex gap-1.5 h-1.5">
+                    <div class="flex-1 bg-teal-400 rounded-full shadow-[0_0_10px_rgba(45,212,191,0.3)]"></div>
+                    <div class="flex-1 bg-teal-400 rounded-full opacity-60"></div>
+                    <div class="flex-1 bg-white/5 rounded-full"></div>
                     <div class="flex-1 bg-white/5 rounded-full"></div>
                     <div class="flex-1 bg-white/5 rounded-full"></div>
                 </div>
             </div>
 
-            <!-- Сетка задач 2x3 -->
-            <div id="tasksGrid" class="grid grid-cols-2 gap-3 mb-12">
-                <!-- Карточки будут здесь -->
+            <!-- Сетка -->
+            <div id="tasksGrid" class="grid grid-cols-2 gap-3 mb-10">
+                <!-- Карточки -->
             </div>
 
-            <!-- Футер / Настройки -->
-            <div class="text-center">
-                <button onclick="resetApp()" class="text-[10px] text-gray-600 uppercase tracking-[4px] font-bold">Изменить параметры системы</button>
+            <!-- Футер со скроллом -->
+            <div class="pb-12 text-center">
+                <button onclick="resetApp()" class="text-[10px] text-gray-600 font-bold uppercase tracking-[0.3em] hover:text-gray-400 transition-colors">Перенастроить систему</button>
             </div>
         </div>
 
     </div>
 
     <script>
-        // Иконки для задач (эмодзи для простоты, можно заменить на картинки)
         const icons = ["☀️", "🧘", "📚", "💪", "📵", "📋"];
-
         let state = {
             goal: localStorage.getItem('el_goal') || '',
             tasks: JSON.parse(localStorage.getItem('el_tasks')) || [],
             completed: JSON.parse(localStorage.getItem('el_done')) || []
         };
 
-        // Генерация полей ввода
         const inputsDiv = document.getElementById('tasksInputs');
         for (let i = 0; i < 6; i++) {
-            inputsDiv.innerHTML += `<input type="text" placeholder="Действие ${i+1}" class="task-input w-full bg-black/20 border border-white/5 p-3 rounded-xl text-sm outline-none focus:border-teal-500">`;
+            inputsDiv.innerHTML += `<input type="text" placeholder="Задача ${i+1}" class="task-input w-full bg-black/30 border border-white/5 p-3 rounded-xl text-sm outline-none focus:border-lime-500 text-white transition-colors">`;
         }
 
         function init() {
             if (!state.goal) {
                 document.getElementById('setupScreen').classList.remove('hidden-screen');
                 document.getElementById('mainScreen').classList.add('hidden-screen');
+                window.scrollTo(0,0);
             } else {
                 document.getElementById('setupScreen').classList.add('hidden-screen');
                 document.getElementById('mainScreen').classList.remove('hidden-screen');
@@ -213,7 +215,7 @@
                 localStorage.setItem('el_tasks', JSON.stringify(tasks));
                 init();
             } else {
-                alert("Заполни цель и все 6 задач для симметрии!");
+                alert("Пожалуйста, заполните цель и все 6 полей.");
             }
         }
 
@@ -233,10 +235,12 @@
             state.tasks.forEach((t, i) => {
                 const isDone = state.completed.includes(i);
                 grid.innerHTML += `
-                    <div class="task-card plexiglass" onclick="toggle(${i})">
-                        <div class="icon-box">${icons[i]}</div>
-                        <p class="text-[12px] font-semibold leading-tight mb-4 h-8">${i+1}. ${t}</p>
-                        <div class="btn-done py-2 rounded-xl flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-wider ${isDone ? 'btn-active' : ''}">
+                    <div class="task-card plexiglass flex flex-col justify-between" onclick="toggle(${i})">
+                        <div>
+                            <div class="w-10 h-10 bg-black/40 rounded-xl flex items-center justify-center text-lg mb-3 border border-white/5">${icons[i]}</div>
+                            <p class="text-[12px] font-bold leading-tight mb-4 min-h-[32px]">${t}</p>
+                        </div>
+                        <div class="btn-done py-2.5 rounded-xl flex items-center justify-center text-[9px] font-black uppercase tracking-tighter ${isDone ? 'btn-active' : ''}">
                             ${isDone ? 'Сделано ✓' : 'Выполнить'}
                         </div>
                     </div>
@@ -249,7 +253,7 @@
         }
 
         function resetApp() {
-            if(confirm('Сбросить настройки системы?')) {
+            if(confirm('Сбросить данные?')) {
                 localStorage.clear();
                 location.reload();
             }
