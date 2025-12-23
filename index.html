@@ -392,26 +392,31 @@
             <!-- MENTOR LETTER (Hidden by default) -->
             <div id="mentorLetter" class="hidden mb-6">
                 <div class="plex p-5 relative animate-fade-in">
-                    <div class="flex items-start gap-4 mb-3">
-                        <!-- Mentor Avatar (Aligned with User Avatar roughly) -->
+                    <div class="flex items-center gap-4 mb-4">
+                        <!-- Mentor Avatar -->
                         <img src="./background.jpg"
                             class="w-14 h-14 rounded-full border-2 border-[var(--surface-border)] object-cover shadow-sm flex-shrink-0">
                         <div class="text-left">
                             <p class="text-[10px] font-bold uppercase tracking-wider text-[var(--accent)] mb-1">
                                 Наставник</p>
-                            <p id="letterContent"
-                                class="text-[13px] font-medium leading-relaxed opacity-90 text-[var(--text-primary)]">
+                            <p class="text-[13px] font-medium leading-relaxed opacity-90 text-[var(--text-primary)]">
                                 Привет, <span id="playerNameSpan">Игрок</span>! Я твой наставник, помощник — называй как
-                                хочешь.<br><br>
-                                Вот чем ты тут занимаешься: нажимая «Готово», твоя задача — почувствовать радость
-                                приближения к цели и радость от выполнения задачи! Твой мозг запоминает это ощущение и
-                                создаёт ассоциацию: действие приносит радость.<br><br>
-                                Когда настанет время следующего шага, тебе будет проще начать — подсознание уже знает,
-                                что впереди эмоциональная награда. Так работает твоя внутренняя система мотивации. Ты
-                                программируешь себя на достижение целей каждым нажатием кнопки.<br><br>
-                                В процессе верь в себя. Я в тебя верю!
+                                хочешь.
                             </p>
                         </div>
+                    </div>
+
+                    <!-- Full Width Body Text -->
+                    <div class="text-left mb-2">
+                        <p class="text-[13px] font-medium leading-relaxed opacity-90 text-[var(--text-primary)]">
+                            Вот чем ты тут занимаешься: нажимая «Готово», твоя задача — почувствовать радость
+                            приближения к цели и радость от выполнения задачи! Твой мозг запоминает это ощущение и
+                            создаёт ассоциацию: действие приносит радость.<br><br>
+                            Когда настанет время следующего шага, тебе будет проще начать — подсознание уже знает, что
+                            впереди эмоциональная награда. Так работает твоя внутренняя система мотивации. Ты
+                            программируешь себя на достижение целей каждым нажатием кнопки.<br><br>
+                            В процессе верь в себя. Я в тебя верю!
+                        </p>
                     </div>
                     <button onclick="toggleLetter()"
                         class="w-full py-2 mt-2 rounded-[12px] bg-[var(--input-bg)] text-[10px] font-bold uppercase tracking-wider text-[var(--text-secondary)]">Свернуть</button>
