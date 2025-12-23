@@ -8,28 +8,48 @@
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
 
     <style>
         :root {
             --accent: #FF7F50;
             /* Sunset Orange */
+            --salad: #bef264;
+            /* Soft Salad Green */
+
+            /* Light Mode Default */
             --bg: #FDFCF8;
-            /* Cream/Off-White */
             --text-primary: #1A1A1A;
             --text-secondary: #666666;
             --surface: rgba(255, 255, 255, 0.65);
             --surface-border: rgba(255, 255, 255, 0.8);
+            --input-bg: rgba(255, 255, 255, 0.5);
+            --shadow-color: rgba(0, 0, 0, 0.05);
+            --orb-opacity: 0.6;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #0F0F11;
+                --text-primary: #F2F2F2;
+                --text-secondary: #AAAAAA;
+                --surface: rgba(30, 30, 32, 0.60);
+                --surface-border: rgba(255, 255, 255, 0.1);
+                --input-bg: rgba(255, 255, 255, 0.05);
+                --shadow-color: rgba(0, 0, 0, 0.3);
+                --orb-opacity: 0.3;
+            }
         }
 
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Manrope', sans-serif;
             background-color: var(--bg);
             color: var(--text-primary);
             margin: 0;
             overflow-x: hidden;
             -webkit-tap-highlight-color: transparent;
+            min-height: 100vh;
         }
 
         /* Abstract Background Orbs */
@@ -41,20 +61,20 @@
             height: 100%;
             z-index: -2;
             overflow: hidden;
+            pointer-events: none;
         }
 
         .orb {
             position: absolute;
             border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.6;
+            filter: blur(90px);
+            opacity: var(--orb-opacity);
         }
 
         .orb-1 {
             width: 300px;
             height: 300px;
             background: #FFDAB9;
-            /* Peach Puff */
             top: -50px;
             left: -50px;
         }
@@ -63,16 +83,15 @@
             width: 400px;
             height: 400px;
             background: #FFE4E1;
-            /* Misty Rose */
             bottom: -100px;
             right: -100px;
         }
 
         .orb-3 {
-            width: 200px;
-            height: 200px;
-            background: rgba(255, 127, 80, 0.2);
-            /* Soft Accent */
+            width: 250px;
+            height: 250px;
+            background: rgba(190, 242, 100, 0.3);
+            /* Salad hint */
             top: 40%;
             left: 30%;
         }
@@ -86,18 +105,16 @@
             z-index: -1;
             pointer-events: none;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-            opacity: 0.03;
-            /* Subtler grain */
+            opacity: 0.04;
         }
 
         .plex {
             background: var(--surface);
-            backdrop-filter: blur(30px) saturate(120%);
-            -webkit-backdrop-filter: blur(30px) saturate(120%);
-            border: 2px solid var(--surface-border);
-            border-radius: 32px;
-            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.05);
-            /* Soft shadow */
+            backdrop-filter: blur(35px) saturate(140%);
+            -webkit-backdrop-filter: blur(35px) saturate(140%);
+            border: 1px solid var(--surface-border);
+            border-radius: 28px;
+            box-shadow: 0 15px 35px -10px var(--shadow-color);
         }
 
         .sticky-header {
@@ -105,28 +122,30 @@
             top: 0;
             z-index: 100;
             padding: 16px 20px;
-        }
-
-        .accent-text {
-            color: var(--accent);
+            /* Added gentle blur backdrop for header when scrolling over content */
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            margin-bottom: 0;
         }
 
         .btn-primary {
             background: linear-gradient(135deg, #FF7F50, #FF6347);
             color: white;
             box-shadow: 0 10px 20px -5px rgba(255, 99, 71, 0.4);
-            transition: transform 0.2s;
+            transition: transform 0.2s, background 0.3s;
         }
 
         .btn-primary:active {
-            transform: scale(0.96);
+            transform: scale(0.97);
         }
 
-        .btn-locked {
-            background: #E5E5E5;
-            color: #999;
-            box-shadow: none;
+        .btn-done {
+            background: var(--salad);
+            color: #3f6212;
+            /* Dark green text */
+            box-shadow: 0 0 15px rgba(190, 242, 100, 0.5);
             pointer-events: none;
+            border: none;
         }
 
         .hidden {
@@ -142,7 +161,21 @@
         }
 
         input::placeholder {
-            color: #BBB;
+            color: var(--text-secondary);
+            opacity: 0.5;
+        }
+
+        /* Chart Animation */
+        .chart-path {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: dash 2.5s ease-out forwards;
+        }
+
+        @keyframes dash {
+            to {
+                stroke-dashoffset: 0;
+            }
         }
     </style>
 </head>
@@ -156,13 +189,14 @@
     </div>
     <div class="grain"></div>
 
-    <div id="app" class="relative z-10 max-w-md mx-auto h-full">
+    <div id="app" class="relative z-10 max-w-md mx-auto h-full flex flex-col min-h-screen">
 
         <!-- SETUP -->
-        <div id="setupScreen" class="p-8 min-h-screen flex flex-col justify-center hidden">
+        <div id="setupScreen" class="p-6 flex-1 flex flex-col justify-center hidden">
             <div class="plex p-8 text-center">
-                <h1 class="text-4xl font-extrabold mb-8 tracking-tight text-gray-900">ELUMA</h1>
-                <div class="bg-white/50 border border-white/60 p-4 rounded-[24px] mb-6 text-center shadow-sm">
+                <h1 class="text-4xl font-extrabold mb-8 tracking-tight text-[var(--accent)]">ELUMA</h1>
+                <div
+                    class="bg-[var(--input-bg)] border border-[var(--surface-border)] p-4 rounded-[24px] mb-6 text-center shadow-sm">
                     <input id="goalInput" type="text" placeholder="Главная цель..."
                         class="w-full text-center font-bold text-lg">
                 </div>
@@ -173,72 +207,99 @@
         </div>
 
         <!-- MAIN -->
-        <div id="mainScreen" class="min-h-screen flex flex-col hidden">
+        <div id="mainScreen" class="flex-1 flex flex-col hidden">
             <div class="sticky-header">
                 <div class="plex p-3 pr-5 flex items-center gap-4">
                     <img id="userAvatar" src="https://via.placeholder.com/100"
-                        class="w-12 h-12 rounded-full border-2 border-white object-cover shadow-sm">
+                        class="w-12 h-12 rounded-full border-2 border-[var(--surface-border)] object-cover shadow-sm">
                     <div class="flex-1 overflow-hidden">
-                        <p class="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1 text-left">Главная
-                            цель</p>
-                        <h2 id="displayGoal" class="text-base font-bold text-gray-800 truncate mb-2 text-left">...</h2>
-                        <div class="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                            <div id="mainProgress" class="h-full bg-[#FF7F50] transition-all duration-1000 rounded-full"
+                        <div class="flex justify-between items-center mb-1">
+                            <p
+                                class="text-[10px] font-bold uppercase tracking-wider text-[var(--text-secondary)] text-left">
+                                Главная цель</p>
+                            <div
+                                class="flex items-center gap-1 bg-[var(--input-bg)] px-2 py-0.5 rounded-full border border-[var(--surface-border)]">
+                                <span
+                                    class="text-[9px] font-bold uppercase tracking-wider text-[var(--salad)]">Фокус</span>
+                                <span id="pointsHeader" class="text-[10px] font-black text-[var(--text-primary)]">0
+                                    XP</span>
+                            </div>
+                        </div>
+                        <h2 id="displayGoal"
+                            class="text-base font-bold text-[var(--text-primary)] truncate mb-2 text-left">...</h2>
+                        <div class="w-full h-1.5 bg-[var(--input-bg)] rounded-full overflow-hidden">
+                            <div id="mainProgress"
+                                class="h-full bg-[var(--accent)] transition-all duration-1000 rounded-full"
                                 style="width: 0%"></div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="p-5 pt-2 flex-1 flex flex-col">
-                <div class="grid grid-cols-2 gap-4 mb-8">
-                    <div class="plex flex flex-col items-center justify-center p-5 min-h-[110px]">
-                        <span class="text-[9px] font-bold uppercase tracking-wider text-gray-400 mb-2 text-center">Дни в
-                            потоке</span>
-                        <span id="daysText" class="text-3xl font-extrabold text-[#1A1A1A] leading-none">0</span>
+            <div class="p-5 pt-0 flex-1 flex flex-col">
+                <!-- Days Chart Card -->
+                <div class="plex p-0 mb-6 relative overflow-hidden h-[120px] flex items-end">
+                    <div class="absolute top-4 left-5 z-10">
+                        <span
+                            class="text-[10px] font-bold uppercase tracking-wider text-[var(--text-secondary)] block mb-0.5">Дни
+                            в потоке</span>
+                        <span id="daysText"
+                            class="text-4xl font-extrabold text-[var(--text-primary)] leading-none">0</span>
                     </div>
-                    <div class="plex flex flex-col items-center justify-center p-5 min-h-[110px]">
-                        <span class="text-[9px] font-bold uppercase tracking-wider text-gray-400 mb-2 text-center">Очки
-                            фокуса</span>
-                        <span id="pointsText" class="text-3xl font-extrabold text-[#1A1A1A] leading-none">0</span>
-                    </div>
+
+                    <!-- Decorative Chart SVG -->
+                    <svg class="w-full h-[80%] opacity-80" viewBox="0 0 300 100" preserveAspectRatio="none">
+                        <defs>
+                            <linearGradient id="saladGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:var(--salad);stop-opacity:0.4" />
+                                <stop offset="100%" style="stop-color:var(--salad);stop-opacity:0" />
+                            </linearGradient>
+                        </defs>
+                        <path d="M0,100 L0,70 Q30,60 60,80 T120,50 T180,60 T240,20 L300,10 L300,100 Z"
+                            fill="url(#saladGradient)" />
+                        <path class="chart-path" d="M0,70 Q30,60 60,80 T120,50 T180,60 T240,20 L300,10" fill="none"
+                            stroke="var(--salad)" stroke-width="3" stroke-linecap="round" />
+                    </svg>
                 </div>
 
                 <div id="tasksGrid" class="grid grid-cols-2 gap-4 mb-8 text-left flex-1 content-start"></div>
 
                 <div class="flex justify-center pb-10">
                     <button onclick="goToSettings()"
-                        class="plex w-14 h-14 rounded-full flex items-center justify-center active:scale-90 transition-transform bg-white/80">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-400" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        class="plex w-14 h-14 rounded-full flex items-center justify-center active:scale-90 transition-transform bg-[var(--surface)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
                         </svg>
                     </button>
                 </div>
 
-                <div class="text-center pb-8 opacity-30 text-[9px] tracking-[3px] uppercase font-bold text-gray-500">
-                    System Build: v.2.0.0
+                <div
+                    class="text-center pb-8 opacity-30 text-[9px] tracking-[3px] uppercase font-bold text-[var(--text-secondary)]">
+                    System Build: v.2.1.0
                 </div>
             </div>
         </div>
 
         <!-- SETTINGS -->
-        <div id="editScreen" class="p-6 hidden text-left min-h-screen flex flex-col">
+        <div id="editScreen" class="p-6 hidden text-left flex-1 flex flex-col">
             <div class="flex items-center justify-between mb-8 pt-4">
-                <h2 class="text-2xl font-bold text-gray-900">Настройки</h2>
+                <h2 class="text-2xl font-bold text-[var(--text-primary)]">Настройки</h2>
                 <button onclick="backToMain()"
-                    class="text-xs plex px-5 py-3 rounded-[18px] font-bold text-gray-500 bg-white/60">Закрыть</button>
+                    class="text-xs plex px-5 py-3 rounded-[18px] font-bold text-[var(--text-secondary)] bg-[var(--surface)]">Закрыть</button>
             </div>
             <div class="space-y-6 flex-1">
                 <div class="plex p-6 text-left">
-                    <label class="text-[10px] font-bold text-gray-400 uppercase mb-3 block tracking-wider">Редактировать
+                    <label
+                        class="text-[10px] font-bold text-[var(--text-secondary)] uppercase mb-3 block tracking-wider">Редактировать
                         цель</label>
                     <input id="editGoalInput" type="text"
-                        class="w-full border-b-2 border-gray-100 focus:border-[#FF7F50] transition-colors p-2 font-bold text-lg text-gray-800 placeholder-gray-300">
+                        class="w-full border-b-2 border-[var(--surface-border)] focus:border-[var(--accent)] transition-colors p-2 font-bold text-lg text-[var(--text-primary)]">
                 </div>
                 <div class="plex p-6 text-left">
-                    <label class="text-[10px] font-bold text-gray-400 uppercase mb-5 block tracking-wider">Ваши
+                    <label
+                        class="text-[10px] font-bold text-[var(--text-secondary)] uppercase mb-5 block tracking-wider">Ваши
                         шаги</label>
                     <div id="editTasksInputs" class="space-y-4"></div>
                 </div>
@@ -252,9 +313,17 @@
         const tg = window.Telegram.WebApp;
         tg.ready();
         tg.expand();
-        // Force light status bar
-        tg.setHeaderColor('#FDFCF8');
-        tg.setBackgroundColor('#FDFCF8');
+
+        // Dynamic Theme Handling
+        function updateTheme() {
+            const isDark = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            if (tg) {
+                tg.setHeaderColor(isDark ? '#0F0F11' : '#FDFCF8');
+                tg.setBackgroundColor(isDark ? '#0F0F11' : '#FDFCF8');
+            }
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateTheme);
+        updateTheme();
 
         if (tg.initDataUnsafe?.user?.photo_url) {
             document.getElementById('userAvatar').src = tg.initDataUnsafe.user.photo_url;
@@ -290,8 +359,8 @@
         const eIn = document.getElementById('editTasksInputs');
         tIn.innerHTML = ''; eIn.innerHTML = '';
         for (let i = 0; i < 6; i++) {
-            tIn.innerHTML += `<div class="bg-white/50 border border-white/60 p-4 rounded-[20px] shadow-sm"><input type="text" placeholder="Шаг ${i + 1}" class="t-in w-full text-gray-800 font-medium text-sm placeholder-gray-400"></div>`;
-            eIn.innerHTML += `<div class="bg-gray-50/50 border border-gray-100 p-3 rounded-[16px]"><input type="text" class="e-in w-full text-gray-700 font-medium text-sm bg-transparent"></div>`;
+            tIn.innerHTML += `<div class="bg-[var(--input-bg)] border border-[var(--surface-border)] p-4 rounded-[20px] shadow-sm"><input type="text" placeholder="Шаг ${i + 1}" class="t-in w-full text-[var(--text-primary)] font-medium text-sm"></div>`;
+            eIn.innerHTML += `<div class="bg-[var(--input-bg)] border border-[var(--surface-border)] p-3 rounded-[16px]"><input type="text" class="e-in w-full text-[var(--text-primary)] font-medium text-sm bg-transparent"></div>`;
         }
 
         function init() {
@@ -332,17 +401,17 @@
 
         function render() {
             document.getElementById('displayGoal').innerText = state.goal;
-            document.getElementById('pointsText').innerText = state.points;
+            document.getElementById('pointsHeader').innerText = state.points + ' XP';
             document.getElementById('daysText').innerText = state.days;
             const grid = document.getElementById('tasksGrid');
             grid.innerHTML = '';
             state.tasks.forEach((t, i) => {
                 const isDone = state.completed.includes(i);
                 grid.innerHTML += `
-                    <div class="plex p-5 flex flex-col justify-between items-center text-center min-h-[140px] active:scale-95 transition-all cursor-pointer relative overflow-hidden" onclick="toggleTask(${i})">
-                        ${isDone ? '<div class="absolute inset-0 bg-[#FF7F50]/5 z-0"></div>' : ''}
-                        <p class="text-[12px] font-semibold leading-snug mb-3 flex-1 flex items-center justify-center text-gray-700 z-10">${t}</p>
-                        <div class="w-full py-3 rounded-[16px] text-[9px] font-extrabold uppercase tracking-wider z-10 ${isDone ? 'btn-locked bg-gray-100 text-gray-400' : 'bg-[#FF7F50]/10 text-[#FF7F50]'}">
+                    <div class="plex p-5 flex flex-col justify-between items-center text-center min-h-[140px] active:scale-95 transition-all cursor-pointer relative overflow-hidden group" onclick="toggleTask(${i})">
+                        ${isDone ? '<div class="absolute inset-0 bg-[#bef264]/10 z-0"></div>' : ''}
+                        <p class="text-[13px] font-semibold leading-snug mb-3 flex-1 flex items-center justify-center text-[var(--text-primary)] z-10">${t}</p>
+                        <div class="w-full py-3 rounded-[16px] text-[10px] font-extrabold uppercase tracking-wider z-10 transition-all ${isDone ? 'btn-done' : 'bg-[var(--input-bg)] text-[var(--accent)]'}">
                             ${isDone ? 'ГОТОВО' : 'ВЫПОЛНИТЬ'}
                         </div>
                     </div>
@@ -394,10 +463,10 @@
             render();
         }
 
+        // Parallax Effect
         window.addEventListener('scroll', () => {
             const scrollPos = window.pageYOffset;
             const bg = document.getElementById('background');
-            // Slight parallax for the orbs
             bg.style.transform = `translate3d(0, ${scrollPos * -0.05}px, 0)`;
         });
 
