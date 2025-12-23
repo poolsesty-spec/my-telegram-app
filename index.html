@@ -213,10 +213,16 @@
 
         .skill-track {
             height: 10px;
-            background: var(--input-bg);
+            background: rgba(0, 0, 0, 0.08);
             border-radius: 99px;
             overflow: hidden;
             position: relative;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        :root.dark .skill-track {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.06);
         }
 
         .skill-fill {
