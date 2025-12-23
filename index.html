@@ -26,18 +26,16 @@
             --lock-color: #A0A0A0;
         }
 
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --bg: #0F0F11;
-                --text-primary: #F2F2F2;
-                --text-secondary: #AAAAAA;
-                --surface: rgba(30, 30, 32, 0.60);
-                --surface-border: rgba(255, 255, 255, 0.1);
-                --input-bg: rgba(255, 255, 255, 0.05);
-                --shadow-color: rgba(0, 0, 0, 0.3);
-                --orb-opacity: 0.3;
-                --lock-color: #555555;
-            }
+        :root.dark {
+            --bg: #0F0F11;
+            --text-primary: #F2F2F2;
+            --text-secondary: #AAAAAA;
+            --surface: rgba(30, 30, 32, 0.60);
+            --surface-border: rgba(255, 255, 255, 0.1);
+            --input-bg: rgba(255, 255, 255, 0.05);
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            --orb-opacity: 0.3;
+            --lock-color: #555555;
         }
 
         body {
