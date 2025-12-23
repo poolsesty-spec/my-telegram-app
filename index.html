@@ -679,15 +679,7 @@
         function closeApp() { tg.close(); }
 
         function init() {
-            // RESET Logic: If no intro flag, wipe data to ensure fresh start test
-            if (!localStorage.getItem('el_intro_seen')) {
-                localStorage.clear();
-                state = {
-                    theme: 'auto',
-                    goal: '', tasks: [], completed: [], rewardedSlots: [], points: 0, days: 0,
-                    lastDate: getElumaDate(), bonusClaimedDate: '', dayIncrementedDate: ''
-                };
-            }
+            // RESET Logic Removed (User requested persistence)
 
             const today = getElumaDate();
             if (state.lastDate !== today) {
@@ -726,7 +718,7 @@
             const today = getElumaDate();
             state.completed.push(idx);
             if (!state.rewardedSlots.includes(idx)) {
-                state.points += 1;
+                state.points += 2;
                 state.rewardedSlots.push(idx);
             }
             if (state.completed.length === 6 && state.bonusClaimedDate !== today) {
