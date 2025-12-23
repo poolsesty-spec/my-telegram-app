@@ -279,27 +279,33 @@
     <div id="app" class="relative z-10 max-w-md mx-auto min-h-screen">
 
         <!-- ЭКРАН 0: INTRO (First Launch) -->
+        <!-- ЭКРАН 0: INTRO (First Launch) -->
         <div id="introScreen" class="p-6 flex flex-col justify-center min-h-screen hidden">
-            <div class="plex p-8 text-center flex flex-col items-center">
+            <div class="plex p-8 text-center flex flex-col items-center h-full justify-between min-h-[500px]">
                 <img src="./background.jpg"
-                    class="w-24 h-24 rounded-full border-4 border-[var(--surface-border)] object-cover shadow-lg mb-6">
+                    class="w-24 h-24 rounded-full border-4 border-[var(--surface-border)] object-cover shadow-lg mb-4">
 
-                <p class="text-[14px] leading-relaxed font-medium opacity-90 text-[var(--text-primary)] mb-6 text-left">
-                    <span class="font-bold text-[var(--accent)] block mb-2 text-center text-lg">Ты вступаешь в
-                        игру...</span>
-                    ...которая изменит твою жизнь.<br><br>
-                    В следующем окне ты поставишь цель, которой хочешь добиться, и выберешь 6 заданий, которые приведут
-                    тебя к ней. Задания могут быть любой сложности — главное, чтобы ты мог выполнять их каждый день и
-                    они реально приближали твою цель.<br><br>
-                    На этом этапе ты тренируешь навык фокусировки и зарабатываешь токены для следующих уровней игры.
-                    Готов начать?
-                </p>
+                <div class="flex-1 flex flex-col justify-center space-y-4 w-full">
+                    <p class="text-[15px] leading-loose font-medium opacity-90 text-[var(--text-primary)] text-justify">
+                        <span class="font-bold text-[var(--accent)] block mb-4 text-center text-xl">Ты вступаешь в
+                            игру...</span>
+                        ...которая изменит твою жизнь.<br><br>
+                        В следующем окне ты поставишь цель, которой хочешь добиться, и выберешь 6 заданий, которые
+                        приведут тебя к ней. Задания могут быть любой сложности — главное, чтобы ты мог выполнять их
+                        каждый день и они реально приближали твою цель.<br><br>
+                        На этом этапе ты тренируешь навык фокусировки и зарабатываешь токены для следующих уровней игры.
+                    </p>
 
-                <div class="w-full space-y-3">
-                    <button onclick="startSetup()"
-                        class="w-full py-4 rounded-[20px] bg-[var(--salad)] text-[#3f6212] font-black uppercase tracking-widest shadow-[0_0_20px_rgba(190,242,100,0.4)] active:scale-95 transition-all">ДА</button>
+                    <h2
+                        class="text-2xl font-black uppercase tracking-widest text-[var(--text-primary)] py-4 text-center">
+                        Готов начать?</h2>
+                </div>
+
+                <div class="w-full flex gap-4 mt-4">
                     <button onclick="closeApp()"
-                        class="w-full py-4 rounded-[20px] bg-[var(--accent)] text-white font-black uppercase tracking-widest shadow-[0_0_20px_rgba(255,127,80,0.4)] active:scale-95 transition-all">НЕТ</button>
+                        class="flex-1 py-4 rounded-[20px] bg-[var(--accent)] text-white font-black uppercase tracking-widest shadow-[0_0_20px_rgba(255,127,80,0.4)] active:scale-95 transition-all">НЕТ</button>
+                    <button onclick="startSetup()"
+                        class="flex-1 py-4 rounded-[20px] bg-[var(--salad)] text-[#3f6212] font-black uppercase tracking-widest shadow-[0_0_20px_rgba(190,242,100,0.4)] active:scale-95 transition-all">ДА</button>
                 </div>
             </div>
         </div>
