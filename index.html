@@ -23,6 +23,7 @@
             --input-bg: rgba(255, 255, 255, 0.5);
             --shadow-color: rgba(0, 0, 0, 0.05);
             --orb-opacity: 0.6;
+            --lock-color: #A0A0A0;
         }
 
         @media (prefers-color-scheme: dark) {
@@ -35,6 +36,7 @@
                 --input-bg: rgba(255, 255, 255, 0.05);
                 --shadow-color: rgba(0, 0, 0, 0.3);
                 --orb-opacity: 0.3;
+                --lock-color: #555555;
             }
         }
 
@@ -161,6 +163,80 @@
             display: none !important;
         }
 
+        /* Animation Classes */
+        .expand-enter {
+            animation: expandIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            transform-origin: top center;
+        }
+
+        @keyframes expandIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        /* Skill Bars */
+        .skill-container {
+            margin-bottom: 20px;
+        }
+
+        .skill-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .skill-title {
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+        }
+
+        .skill-val {
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .skill-track {
+            height: 10px;
+            background: var(--input-bg);
+            border-radius: 99px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .skill-fill {
+            height: 100%;
+            border-radius: 99px;
+            transition: width 1s ease-out;
+        }
+
+        .skill-locked .skill-track {
+            opacity: 0.5;
+        }
+
+        .skill-locked .skill-fill {
+            background: var(--lock-color);
+            width: 0%;
+        }
+
+        .lock-icon {
+            margin-right: 6px;
+            width: 12px;
+            height: 12px;
+            color: var(--text-secondary);
+        }
+
         input {
             outline: none;
             border: none;
@@ -214,8 +290,10 @@
 
         <!-- ЭКРАН 2: MAIN -->
         <div id="mainScreen" class="flex flex-col hidden">
-            <div class="sticky-header">
-                <div class="plex p-3 pr-5 flex items-center gap-4 cursor-pointer active:scale-[0.98] transition-all"
+            <!-- Header serves as the 'Card' to expand -->
+            <div class="sticky-header z-50">
+                <div id="mainHeaderCard"
+                    class="plex p-3 pr-5 flex items-center gap-4 cursor-pointer active:scale-[0.98] transition-all"
                     onclick="goToCabinet()">
                     <img id="userAvatar" src="https://via.placeholder.com/100"
                         class="w-12 h-12 rounded-full border-2 border-[var(--surface-border)] object-cover shadow-sm">
@@ -250,7 +328,7 @@
                             в потоке</span>
                         <span id="daysText" class="text-4xl font-extrabold text-[var(--text-primary)]">0</span>
                     </div>
-                    <svg class="w-full h-[80%] opacity-80" viewBox="0 0 300 100" preserveAspectRatio="none">
+                    <svg class="w-full h-[80%] opacity-90" viewBox="0 0 300 100" preserveAspectRatio="none">
                         <defs>
                             <linearGradient id="g1" x1="0%" y1="0%" x2="0%" y2="100%">
                                 <stop offset="0%" style="stop-color:var(--salad);stop-opacity:0.4" />
@@ -280,52 +358,97 @@
             </div>
         </div>
 
-        <!-- ЭКРАН 3: CABINET -->
-        <div id="cabinetScreen" class="flex flex-col hidden w-full p-5 pt-2 space-y-4">
-            <div class="plex p-3 pr-5 flex items-center gap-4 relative">
+        <!-- ЭКРАН 3: CABINET V2 -->
+        <div id="cabinetScreen" class="flex flex-col hidden w-full p-5 pt-0 min-h-screen">
+            <!-- Expanded Header with Mail -->
+            <div class="plex p-4 mb-8 mt-5 flex items-center justify-between relative shadow-lg">
                 <button onclick="backToMain()"
-                    class="absolute -top-2 -right-2 plex w-8 h-8 flex items-center justify-center rounded-full font-bold text-[var(--text-secondary)] bg-[var(--surface)] shadow-md z-20">✕</button>
-                <img id="cabUserAvatar" src="https://via.placeholder.com/100"
-                    class="w-12 h-12 rounded-full border-2 border-[var(--surface-border)] object-cover shadow-sm">
-                <div class="flex-1 overflow-hidden text-left">
-                    <div class="flex justify-between items-center mb-1">
-                        <p class="text-[10px] font-bold uppercase tracking-wider text-[var(--text-secondary)]">Ваш
-                            прогресс</p>
-                        <div
-                            class="bg-[var(--input-bg)] px-2 py-0.5 rounded-full border border-[var(--surface-border)]">
-                            <span id="cabPointsHeader" class="text-[10px] font-black">0 XP</span>
-                        </div>
+                    class="absolute -top-3 -left-3 plex w-8 h-8 flex items-center justify-center rounded-full font-bold text-[var(--text-secondary)] bg-[var(--surface)] shadow-sm z-20">✕</button>
+
+                <div class="flex items-center gap-4">
+                    <img id="cabUserAvatar" src="https://via.placeholder.com/100"
+                        class="w-14 h-14 rounded-full border-2 border-[var(--surface-border)] object-cover shadow-sm">
+                    <div class="text-left">
+                        <p class="text-[10px] font-bold uppercase tracking-wider text-[var(--text-secondary)] mb-1">Ваш
+                            профиль</p>
+                        <h2 id="cabDisplayGoal" class="text-lg font-black leading-tight max-w-[150px] truncate">...</h2>
                     </div>
-                    <h2 id="cabDisplayGoal" class="text-base font-bold truncate">...</h2>
-                    <div class="w-full h-1.5 bg-[var(--input-bg)] rounded-full overflow-hidden">
-                        <div id="cabMainProgress" class="h-full bg-[var(--accent)] rounded-full" style="width: 0%">
-                        </div>
+                </div>
+
+                <!-- Incoming Mail Icon -->
+                <div class="relative p-2 rounded-full bg-[var(--input-bg)] active:scale-95 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-[var(--accent)]" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                    <div class="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></div>
+                </div>
+            </div>
+
+            <!-- SKILLS SECTION -->
+            <div class="plex p-6 text-left flex-1 mb-6">
+                <h3 class="text-sm font-black uppercase tracking-widest mb-6 opacity-40">Навыки</h3>
+
+                <!-- FOCUS (Active) -->
+                <div class="skill-container">
+                    <div class="skill-header">
+                        <span class="skill-title text-[var(--accent)]">Фокус</span>
+                        <span class="skill-val" id="cabPointsSkill">0 XP</span>
+                    </div>
+                    <div class="skill-track">
+                        <div id="skillFocus" class="skill-fill bg-[var(--accent)]" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- MONEY (Locked) -->
+                <div class="skill-container skill-locked">
+                    <div class="skill-header">
+                        <span class="skill-title flex items-center"><svg class="lock-icon" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg> Деньги</span>
+                        <span class="skill-val text-[var(--lock-color)]">0 / 100</span>
+                    </div>
+                    <div class="skill-track">
+                        <div class="skill-fill"></div>
+                    </div>
+                </div>
+
+                <!-- COMMUNICATION (Locked) -->
+                <div class="skill-container skill-locked">
+                    <div class="skill-header">
+                        <span class="skill-title flex items-center"><svg class="lock-icon" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg> Коммуникация</span>
+                        <span class="skill-val text-[var(--lock-color)]">0 / 100</span>
+                    </div>
+                    <div class="skill-track">
+                        <div class="skill-fill"></div>
+                    </div>
+                </div>
+
+                <!-- ATTRACTIVENESS (Locked) -->
+                <div class="skill-container skill-locked">
+                    <div class="skill-header">
+                        <span class="skill-title flex items-center"><svg class="lock-icon" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg> Привлекательность</span>
+                        <span class="skill-val text-[var(--lock-color)]">0 / 100</span>
+                    </div>
+                    <div class="skill-track">
+                        <div class="skill-fill"></div>
                     </div>
                 </div>
             </div>
 
-            <div class="plex p-0 relative overflow-hidden h-[140px] flex items-end">
-                <div class="absolute top-4 left-5 z-10 text-left">
-                    <span
-                        class="text-[10px] font-bold uppercase tracking-wider text-[var(--text-secondary)] block">Активность</span>
-                    <span id="cabDaysTextChart" class="text-4xl font-extrabold">0</span>
-                </div>
-                <svg class="w-full h-[70%] opacity-90" viewBox="0 0 300 100" preserveAspectRatio="none">
-                    <path d="M0,100 L0,60 Q30,50 60,70 T120,40 T180,50 T240,10 L300,5 L300,100 Z" fill="url(#g1)" />
-                    <path class="chart-path" d="M0,60 Q30,50 60,70 T120,40 T180,50 T240,10 L300,5" fill="none"
-                        stroke="var(--salad)" stroke-width="3" stroke-linecap="round" />
-                </svg>
-            </div>
-
-            <div class="plex p-6 text-left">
-                <p class="text-[11px] font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-3">Мотивация
-                </p>
-                <p class="text-[14px] leading-relaxed font-medium opacity-90">
-                    Нажимай «Готово» и чувствуй радость приближения цели. Твой мозг запоминает это ощущение и создаёт
-                    ассоциацию: действие приносит радость. Каждое нажатие кнопки — это программирование себя на успех.
-                </p>
-            </div>
-            <div class="text-center opacity-20 text-[9px] tracking-[3px] uppercase font-bold py-4">Eluma Elite v.2.4.0
+            <div class="text-center opacity-20 text-[9px] tracking-[3px] uppercase font-bold py-4">Eluma Elite v.2.5.0
             </div>
         </div>
 
@@ -393,7 +516,6 @@
                 const val = typeof state[key] === 'object' ? JSON.stringify(state[key]) : state[key];
                 localStorage.setItem('el_' + key.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`), val);
             });
-            // Manual sync for some keys because of key naming history
             localStorage.setItem('el_goal', state.goal);
             localStorage.setItem('el_tasks', JSON.stringify(state.tasks));
             localStorage.setItem('el_points', state.points);
@@ -401,11 +523,21 @@
         }
 
         function switchScreen(screenId) {
-            // Скрываем все экраны
-            document.querySelectorAll('#setupScreen, #mainScreen, #cabinetScreen, #editScreen').forEach(s => s.classList.add('hidden'));
-            // Показываем нужный
-            document.getElementById(screenId).classList.remove('hidden');
-            // Мгновенный сброс скролла на самый верх
+            const screens = document.querySelectorAll('#setupScreen, #mainScreen, #cabinetScreen, #editScreen');
+
+            // Animation for Cabinet
+            if (screenId === 'cabinetScreen') {
+                document.getElementById('cabinetScreen').classList.remove('hidden');
+                document.getElementById('cabinetScreen').classList.add('expand-enter');
+                setTimeout(() => {
+                    screens.forEach(s => { if (s.id !== screenId) s.classList.add('hidden'); });
+                    document.getElementById('cabinetScreen').classList.remove('expand-enter'); // Clean up
+                }, 400);
+            } else {
+                // Instant Switch for others
+                screens.forEach(s => s.classList.add('hidden'));
+                document.getElementById(screenId).classList.remove('hidden');
+            }
             window.scrollTo({ top: 0, behavior: 'instant' });
         }
 
@@ -418,7 +550,6 @@
                 saveState();
             }
 
-            // Рендер полей ввода
             const eIn = document.getElementById('editTasksInputs');
             const tIn = document.getElementById('tasksInputs');
             eIn.innerHTML = ''; tIn.innerHTML = '';
@@ -458,14 +589,20 @@
         function render() {
             const updates = {
                 displayGoal: state.goal, cabDisplayGoal: state.goal,
-                pointsHeader: state.points + ' XP', cabPointsHeader: state.points + ' XP',
+                pointsHeader: state.points + ' XP', cabPointsSkill: state.points + ' XP',
                 daysText: state.days, cabDaysTextChart: state.days
             };
-            Object.keys(updates).forEach(id => document.getElementById(id).innerText = updates[id]);
+            Object.keys(updates).forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.innerText = updates[id];
+            });
 
             const p = (state.completed.length / 6 * 100) + '%';
             document.getElementById('mainProgress').style.width = p;
-            document.getElementById('cabMainProgress').style.width = p;
+
+            // Skill Bar (Max 100 for example)
+            const skillP = Math.min(state.points, 100) + '%';
+            if (document.getElementById('skillFocus')) document.getElementById('skillFocus').style.width = skillP;
 
             const grid = document.getElementById('tasksGrid');
             grid.innerHTML = '';
@@ -524,7 +661,6 @@
         });
 
         init();
+        render(); // Ensure initial render
     </script>
 </body>
-
-</html>
