@@ -134,9 +134,9 @@
         }
 
         .btn-execute {
-            background: rgba(255, 127, 80, 0.15);
-            color: var(--accent);
-            box-shadow: 0 0 15px rgba(255, 127, 80, 0.15);
+            background: var(--accent);
+            color: #ffffff;
+            box-shadow: 0 0 15px rgba(255, 127, 80, 0.4);
         }
 
         .btn-done {
@@ -148,7 +148,7 @@
 
         .huge-check {
             position: absolute;
-            top: 50%;
+            top: 40%;
             left: 50%;
             transform: translate(-50%, -50%) rotate(-10deg);
             width: 80%;
@@ -625,7 +625,7 @@
         function render() {
             const updates = {
                 displayGoal: state.goal, cabDisplayGoal: state.goal,
-                pointsHeader: state.points + ' XP', cabPointsSkill: state.points + ' XP',
+                pointsHeader: state.points + ' XP', cabPointsSkill: state.points + ' / 360 XP',
                 daysText: state.days, cabDaysTextChart: state.days
             };
             Object.keys(updates).forEach(id => {
@@ -636,8 +636,8 @@
             const p = (state.completed.length / 6 * 100) + '%';
             document.getElementById('mainProgress').style.width = p;
 
-            // Skill Bar (Max 100 for example)
-            const skillP = Math.min(state.points, 100) + '%';
+            // Skill Bar (Max 360) 
+            const skillP = Math.min(state.points / 360 * 100, 100) + '%';
             if (document.getElementById('skillFocus')) document.getElementById('skillFocus').style.width = skillP;
 
             const grid = document.getElementById('tasksGrid');
@@ -649,7 +649,7 @@
                         ${done ? '<div class="absolute inset-0 bg-[#bef264]/10 z-0"></div><svg class="huge-check" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 13L9 17L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>' : ''}
                         <p class="text-[13px] font-bold leading-snug mb-3 flex-1 flex items-center justify-center z-10">${t}</p>
                         <div class="w-full py-3 rounded-[16px] text-[10px] font-black uppercase tracking-wider z-10 transition-all ${done ? 'btn-done' : 'btn-execute'}">
-                            ${done ? 'ГОТОВО' : 'ВЫПОЛНИТЬ'}
+                            ГОТОВО
                         </div>
                     </div>
                 `;
