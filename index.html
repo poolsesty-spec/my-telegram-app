@@ -148,15 +148,20 @@
 
         .huge-check {
             position: absolute;
-            top: 40%;
+            bottom: 60px;
+            /* Position above button */
             left: 50%;
-            transform: translate(-50%, -50%) rotate(-10deg);
-            width: 80%;
-            height: 80%;
-            opacity: 0.1;
+            transform: translateX(-50%) rotate(-10deg);
+            width: 40px;
+            height: 40px;
+            opacity: 1;
             pointer-events: none;
-            z-index: 0;
+            z-index: 20;
             color: var(--salad);
+        }
+
+        .neon-bar {
+            box-shadow: 0 0 10px var(--accent), 0 0 20px var(--accent);
         }
 
         .hidden {
@@ -272,6 +277,32 @@
     <div class="grain"></div>
 
     <div id="app" class="relative z-10 max-w-md mx-auto min-h-screen">
+
+        <!-- ЭКРАН 0: INTRO (First Launch) -->
+        <div id="introScreen" class="p-6 flex flex-col justify-center min-h-screen hidden">
+            <div class="plex p-8 text-center flex flex-col items-center">
+                <img src="./background.jpg"
+                    class="w-24 h-24 rounded-full border-4 border-[var(--surface-border)] object-cover shadow-lg mb-6">
+
+                <p class="text-[14px] leading-relaxed font-medium opacity-90 text-[var(--text-primary)] mb-6 text-left">
+                    <span class="font-bold text-[var(--accent)] block mb-2 text-center text-lg">Ты вступаешь в
+                        игру...</span>
+                    ...которая изменит твою жизнь.<br><br>
+                    В следующем окне ты поставишь цель, которой хочешь добиться, и выберешь 6 заданий, которые приведут
+                    тебя к ней. Задания могут быть любой сложности — главное, чтобы ты мог выполнять их каждый день и
+                    они реально приближали твою цель.<br><br>
+                    На этом этапе ты тренируешь навык фокусировки и зарабатываешь токены для следующих уровней игры.
+                    Готов начать?
+                </p>
+
+                <div class="w-full space-y-3">
+                    <button onclick="startSetup()"
+                        class="w-full py-4 rounded-[20px] bg-[var(--salad)] text-[#3f6212] font-black uppercase tracking-widest shadow-[0_0_20px_rgba(190,242,100,0.4)] active:scale-95 transition-all">ДА</button>
+                    <button onclick="closeApp()"
+                        class="w-full py-4 rounded-[20px] bg-[var(--accent)] text-white font-black uppercase tracking-widest shadow-[0_0_20px_rgba(255,127,80,0.4)] active:scale-95 transition-all">НЕТ</button>
+                </div>
+            </div>
+        </div>
 
         <!-- ЭКРАН 1: SETUP -->
         <div id="setupScreen" class="p-6 flex flex-col justify-center min-h-screen hidden">
@@ -577,7 +608,23 @@
             window.scrollTo({ top: 0, behavior: 'instant' });
         }
 
+        function startSetup() {
+            localStorage.setItem('el_intro_seen', 'true');
+            switchScreen('setupScreen');
+        }
+
+        function closeApp() { tg.close(); }
+
         function init() {
+            // RESET Logic: If no intro flag, wipe data to ensure fresh start test
+            if (!localStorage.getItem('el_intro_seen')) {
+                localStorage.clear();
+                state = {
+                    goal: '', tasks: [], completed: [], rewardedSlots: [], points: 0, days: 0,
+                    lastDate: getElumaDate(), bonusClaimedDate: '', dayIncrementedDate: ''
+                };
+            }
+
             const today = getElumaDate();
             if (state.lastDate !== today) {
                 state.completed = [];
@@ -594,12 +641,21 @@
                 eIn.innerHTML += `<div class="bg-[var(--input-bg)] border border-[var(--surface-border)] p-3 rounded-[16px]"><input type="text" class="e-in w-full font-medium text-sm bg-transparent"></div>`;
             }
 
-            if (!state.goal) switchScreen('setupScreen');
-            else {
+            // Flow Logic
+            if (!localStorage.getItem('el_intro_seen')) {
+                switchScreen('introScreen');
+            } else if (!state.goal) {
+                switchScreen('setupScreen');
+            } else {
                 switchScreen('mainScreen');
                 render();
             }
+
+            // Neon Effect
+            const mp = document.getElementById('mainProgress');
+            if (mp) mp.classList.add('neon-bar');
         }
+
 
         function toggleTask(idx) {
             if (state.completed.includes(idx)) return;
