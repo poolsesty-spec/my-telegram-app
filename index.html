@@ -361,7 +361,7 @@
         <!-- ЭКРАН 3: CABINET V2 -->
         <div id="cabinetScreen" class="flex flex-col hidden w-full p-5 pt-0 min-h-screen">
             <!-- Expanded Header with Mail -->
-            <div class="plex p-4 mb-8 mt-5 flex items-center justify-between relative shadow-lg">
+            <div class="plex p-4 mb-4 mt-5 flex items-center justify-between relative shadow-lg z-30">
                 <button onclick="backToMain()"
                     class="absolute -top-3 -left-3 plex w-8 h-8 flex items-center justify-center rounded-full font-bold text-[var(--text-secondary)] bg-[var(--surface)] shadow-sm z-20">✕</button>
 
@@ -376,14 +376,45 @@
                 </div>
 
                 <!-- Incoming Mail Icon -->
-                <div class="relative p-2 rounded-full bg-[var(--input-bg)] active:scale-95 transition">
+                <div onclick="toggleLetter()"
+                    class="relative p-2 rounded-full bg-[var(--input-bg)] active:scale-95 transition cursor-pointer">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-[var(--accent)]" viewBox="0 0 24 24"
                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                         stroke-linejoin="round">
                         <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                         <polyline points="22,6 12,13 2,6"></polyline>
                     </svg>
-                    <div class="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></div>
+                    <div id="mailDot"
+                        class="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></div>
+                </div>
+            </div>
+
+            <!-- MENTOR LETTER (Hidden by default) -->
+            <div id="mentorLetter" class="hidden mb-6 px-4">
+                <div class="plex p-5 relative animate-fade-in">
+                    <div class="flex items-start gap-4 mb-3">
+                        <!-- Mentor Avatar (Aligned with User Avatar roughly) -->
+                        <img src="./background.jpg"
+                            class="w-14 h-14 rounded-full border-2 border-[var(--surface-border)] object-cover shadow-sm flex-shrink-0">
+                        <div class="text-left">
+                            <p class="text-[10px] font-bold uppercase tracking-wider text-[var(--accent)] mb-1">
+                                Наставник</p>
+                            <p id="letterContent"
+                                class="text-[13px] font-medium leading-relaxed opacity-90 text-[var(--text-primary)]">
+                                Привет, <span id="playerNameSpan">Игрок</span>! Я твой наставник, помощник — называй как
+                                хочешь.<br><br>
+                                Вот чем ты тут занимаешься: нажимая «Готово», твоя задача — почувствовать радость
+                                приближения к цели и радость от выполнения задачи! Твой мозг запоминает это ощущение и
+                                создаёт ассоциацию: действие приносит радость.<br><br>
+                                Когда настанет время следующего шага, тебе будет проще начать — подсознание уже знает,
+                                что впереди эмоциональная награда. Так работает твоя внутренняя система мотивации. Ты
+                                программируешь себя на достижение целей каждым нажатием кнопки.<br><br>
+                                В процессе верь в себя. Я в тебя верю!
+                            </p>
+                        </div>
+                    </div>
+                    <button onclick="toggleLetter()"
+                        class="w-full py-2 mt-2 rounded-[12px] bg-[var(--input-bg)] text-[10px] font-bold uppercase tracking-wider text-[var(--text-secondary)]">Свернуть</button>
                 </div>
             </div>
 
@@ -654,6 +685,23 @@
 
         function goToCabinet() { switchScreen('cabinetScreen'); }
         function backToMain() { switchScreen('mainScreen'); render(); }
+
+        function toggleLetter() {
+            const letter = document.getElementById('mentorLetter');
+            const dot = document.getElementById('mailDot');
+            const isHidden = letter.classList.contains('hidden');
+
+            if (isHidden) {
+                letter.classList.remove('hidden');
+                if (dot) dot.classList.add('hidden'); // Remove dot when opened
+
+                // Inject name
+                const name = (tg.initDataUnsafe?.user?.first_name) ? tg.initDataUnsafe.user.first_name : 'Игрок';
+                document.getElementById('playerNameSpan').innerText = name;
+            } else {
+                letter.classList.add('hidden');
+            }
+        }
 
         window.addEventListener('scroll', () => {
             const s = window.pageYOffset;
