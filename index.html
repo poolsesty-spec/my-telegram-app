@@ -315,40 +315,80 @@
     </div>
 
     <!-- CABINET SCREEN -->
-    <div id="cabinetScreen" class="p-6 hidden text-left flex-1 flex flex-col min-h-screen">
-        <div class="flex items-center justify-between mb-8 pt-4">
-            <h2 class="text-2xl font-bold text-[var(--text-primary)]">Кабинет</h2>
+    <div id="cabinetScreen" class="hidden text-left flex-1 flex flex-col min-h-screen bg-[var(--bg)]">
+        <!-- Header (Cloned for Cabinet) -->
+        <div class="plex m-5 mb-2 p-3 pr-5 flex items-center gap-4 relative">
             <button onclick="backToMainFromCabinet()"
-                class="text-xs plex px-5 py-3 rounded-[18px] font-bold text-[var(--text-secondary)] bg-[var(--surface)]">Назад</button>
+                class="absolute -top-2 -right-2 text-[10px] plex w-8 h-8 flex items-center justify-center rounded-full font-bold text-[var(--text-secondary)] bg-[var(--surface)] shadow-md z-20">
+                ✕
+            </button>
+            <img id="cabUserAvatar" src="https://via.placeholder.com/100"
+                class="w-12 h-12 rounded-full border-2 border-[var(--surface-border)] object-cover shadow-sm">
+            <div class="flex-1 overflow-hidden">
+                <div class="flex justify-between items-center mb-1">
+                    <p class="text-[10px] font-bold uppercase tracking-wider text-[var(--text-secondary)] text-left">
+                        Главная цель</p>
+                    <div
+                        class="flex items-center gap-1 bg-[var(--input-bg)] px-2 py-0.5 rounded-full border border-[var(--surface-border)]">
+                        <span class="text-[9px] font-bold uppercase tracking-wider text-[var(--salad)]">Фокус</span>
+                        <span id="cabPointsHeader" class="text-[10px] font-black text-[var(--text-primary)]">0 XP</span>
+                    </div>
+                </div>
+                <h2 id="cabDisplayGoal" class="text-base font-bold text-[var(--text-primary)] truncate mb-2 text-left">
+                    ...</h2>
+                <div class="w-full h-1.5 bg-[var(--input-bg)] rounded-full overflow-hidden">
+                    <div id="cabMainProgress"
+                        class="h-full bg-[var(--accent)] transition-all duration-1000 rounded-full box-shadow-[0_0_10px_var(--accent)]"
+                        style="width: 0%"></div>
+                </div>
+            </div>
         </div>
 
-        <div class="space-y-6 flex-1 overflow-y-auto pb-10">
-            <!-- Achievements Reuse -->
-            <div class="grid grid-cols-2 gap-4">
-                <div class="plex flex flex-col items-center justify-center p-5 min-h-[110px]">
+        <div class="space-y-4 flex-1 overflow-y-auto p-5 pt-0">
+
+            <!-- Activity Chart -->
+            <div class="plex p-0 relative overflow-hidden h-[140px] flex items-end">
+                <div class="absolute top-4 left-5 z-10">
                     <span
-                        class="text-[9px] font-bold uppercase tracking-wider text-[var(--text-secondary)] mb-2 text-center">Дни
-                        в потоке</span>
-                    <span id="cabDaysText"
-                        class="text-3xl font-extrabold text-[var(--text-primary)] leading-none">0</span>
+                        class="text-[10px] font-bold uppercase tracking-wider text-[var(--text-secondary)] block mb-0.5">Активность</span>
+                    <div class="flex items-baseline gap-2">
+                        <span id="cabDaysTextChart"
+                            class="text-4xl font-extrabold text-[var(--text-primary)] leading-none">0</span>
+                        <span class="text-[10px] font-bold text-[var(--text-secondary)] uppercase">Дней в потоке</span>
+                    </div>
                 </div>
-                <div class="plex flex flex-col items-center justify-center p-5 min-h-[110px]">
-                    <span
-                        class="text-[9px] font-bold uppercase tracking-wider text-[var(--text-secondary)] mb-2 text-center">Очки
-                        фокуса</span>
-                    <span id="cabPointsText"
-                        class="text-3xl font-extrabold text-[var(--text-primary)] leading-none">0</span>
-                </div>
+
+                <!-- Chart SVG -->
+                <svg class="w-full h-[70%] opacity-90" viewBox="0 0 300 100" preserveAspectRatio="none">
+                    <defs>
+                        <linearGradient id="saladGradient2" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:var(--salad);stop-opacity:0.6" />
+                            <stop offset="100%" style="stop-color:var(--salad);stop-opacity:0" />
+                        </linearGradient>
+                    </defs>
+                    <path d="M0,100 L0,60 Q30,50 60,70 T120,40 T180,50 T240,10 L300,5 L300,100 Z"
+                        fill="url(#saladGradient2)" />
+                    <path class="chart-path" d="M0,60 Q30,50 60,70 T120,40 T180,50 T240,10 L300,5" fill="none"
+                        stroke="var(--salad)" stroke-width="3" stroke-linecap="round" />
+                </svg>
             </div>
 
             <!-- Motivation Text -->
             <div class="plex p-6">
+                <p class="text-[13px] font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-2 opacity-70">
+                    Мотивация</p>
                 <p class="text-[14px] leading-relaxed font-medium text-[var(--text-primary)] opacity-90">
-                    Нажимай «Готово» и чувствуй радость приближения цели. Твой мозг запоминает это ощущение и
-                    создаёт ассоциацию: действие приносит радость. Когда настанет время следующего шага, тебе будет
-                    проще начать, подсознание уже знает, что впереди награда. Так работает твоя внутренняя система
-                    мотивации. Ты программируешь себя на достижение целей каждым нажатием кнопки.
+                    Нажимай «Готово» и чувствуй радость приближения цели. Твой мозг запоминает это ощущение и создаёт
+                    ассоциацию: действие приносит радость. Когда настанет время следующего шага, тебе будет проще
+                    начать, подсознание уже знает, что впереди награда. Так работает твоя внутренняя система мотивации.
+                    Ты программируешь себя на достижение целей каждым нажатием кнопки.
                 </p>
+            </div>
+
+
+            <div
+                class="px-4 py-8 text-center opacity-30 text-[9px] tracking-[3px] uppercase font-bold text-[var(--text-secondary)]">
+                Eluma Elite v.2.4.0
             </div>
         </div>
     </div>
@@ -398,6 +438,7 @@
 
         if (tg.initDataUnsafe?.user?.photo_url) {
             document.getElementById('userAvatar').src = tg.initDataUnsafe.user.photo_url;
+            document.getElementById('cabUserAvatar').src = tg.initDataUnsafe.user.photo_url;
         }
 
         let state = {
@@ -474,7 +515,7 @@
 
             // Logic: Bonus (Total 12 max implied: 6 tasks + 6 bonus = 12)
             if (state.completed.length === 6 && state.bonusClaimedDate !== today) {
-                state.points += 6;
+                state.points += 6; state.days += 1;
                 state.bonusClaimedDate = today;
             }
 
@@ -483,7 +524,6 @@
                 state.days += 1;
                 state.dayIncrementedDate = today;
             }
-
             saveState();
             render();
             tg.HapticFeedback.impactOccurred('medium');
@@ -491,15 +531,18 @@
         }
 
         function render() {
-            document.getElementById('displayGoal').innerText = state.goal;
-            document.getElementById('pointsHeader').innerText = state.points + ' XP';
+            // Main Screen Update
             document.getElementById('displayGoal').innerText = state.goal;
             document.getElementById('pointsHeader').innerText = state.points + ' XP';
             document.getElementById('daysText').innerText = state.days;
+            document.getElementById('mainProgress').style.width = (state.completed.length / 6 * 100) + '%';
 
-            // Sync Cabinet Data
-            document.getElementById('cabDaysText').innerText = state.days;
-            document.getElementById('cabPointsText').innerText = state.points;
+            // Cabinet Screen Update (Sync)
+            document.getElementById('cabDisplayGoal').innerText = state.goal;
+            document.getElementById('cabPointsHeader').innerText = state.points + ' XP';
+            document.getElementById('cabMainProgress').style.width = (state.completed.length / 6 * 100) + '%';
+            document.getElementById('cabDaysTextChart').innerText = state.days;
+
             const grid = document.getElementById('tasksGrid');
             grid.innerHTML = '';
             state.tasks.forEach((t, i) => {
@@ -514,7 +557,6 @@
                     </div>
                 `;
             });
-            document.getElementById('mainProgress').style.width = (state.completed.length / 6 * 100) + '%';
         }
 
         function saveSettings() {
