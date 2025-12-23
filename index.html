@@ -149,15 +149,34 @@
             -webkit-backdrop-filter: blur(5px);
         }
 
+        /* Active/Completed state: Salad Green "Done" */
         .btn-done {
             background: var(--salad);
             color: #3f6212;
-            /* Dark green text */
-            box-shadow: 0 0 15px rgba(190, 242, 100, 0.5);
+            box-shadow: 0 0 20px rgba(190, 242, 100, 0.6);
             pointer-events: none;
             border: none;
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
+        }
+
+        /* Neon Progress & Checkmarks */
+        #mainProgress {
+            box-shadow: 0 0 10px var(--accent), 0 0 20px var(--accent);
+        }
+
+        .huge-check {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-10deg);
+            width: 80%;
+            height: 80%;
+            opacity: 0.1;
+            pointer-events: none;
+            filter: blur(1px);
+            z-index: 0;
+            color: var(--salad);
         }
 
         .hidden {
@@ -220,7 +239,7 @@
 
         <!-- MAIN -->
         <div id="mainScreen" class="flex-1 flex flex-col hidden">
-            <div class="sticky-header">
+            <div class="sticky-header cursor-pointer active:scale-[0.99] transition-transform" onclick="goToCabinet()">
                 <div class="plex p-3 pr-5 flex items-center gap-4">
                     <img id="userAvatar" src="https://via.placeholder.com/100"
                         class="w-12 h-12 rounded-full border-2 border-[var(--surface-border)] object-cover shadow-sm">
@@ -277,7 +296,7 @@
                 <div id="tasksGrid" class="grid grid-cols-2 gap-4 mb-8 text-left flex-1 content-start"></div>
 
                 <div class="flex justify-center pb-10">
-                    <button onclick="goToSettings()"
+                    <button onclick="goToSettings(event)"
                         class="plex w-14 h-14 rounded-full flex items-center justify-center active:scale-90 transition-transform bg-[var(--surface)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor" stroke-width="2">
@@ -293,32 +312,72 @@
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- SETTINGS -->
-        <div id="editScreen" class="p-6 hidden text-left flex-1 flex flex-col">
-            <div class="flex items-center justify-between mb-8 pt-4">
-                <h2 class="text-2xl font-bold text-[var(--text-primary)]">Настройки</h2>
-                <button onclick="backToMain()"
-                    class="text-xs plex px-5 py-3 rounded-[18px] font-bold text-[var(--text-secondary)] bg-[var(--surface)]">Закрыть</button>
-            </div>
-            <div class="space-y-6 flex-1">
-                <div class="plex p-6 text-left">
-                    <label
-                        class="text-[10px] font-bold text-[var(--text-secondary)] uppercase mb-3 block tracking-wider">Редактировать
-                        цель</label>
-                    <input id="editGoalInput" type="text"
-                        class="w-full border-b-2 border-[var(--surface-border)] focus:border-[var(--accent)] transition-colors p-2 font-bold text-lg text-[var(--text-primary)]">
-                </div>
-                <div class="plex p-6 text-left">
-                    <label
-                        class="text-[10px] font-bold text-[var(--text-secondary)] uppercase mb-5 block tracking-wider">Ваши
-                        шаги</label>
-                    <div id="editTasksInputs" class="space-y-4"></div>
-                </div>
-            </div>
-            <button onclick="updateSettings()"
-                class="w-full py-5 rounded-[24px] btn-primary font-bold text-lg uppercase tracking-wide mt-6 mb-8">Сохранить</button>
+    <!-- CABINET SCREEN -->
+    <div id="cabinetScreen" class="p-6 hidden text-left flex-1 flex flex-col min-h-screen">
+        <div class="flex items-center justify-between mb-8 pt-4">
+            <h2 class="text-2xl font-bold text-[var(--text-primary)]">Кабинет</h2>
+            <button onclick="backToMainFromCabinet()"
+                class="text-xs plex px-5 py-3 rounded-[18px] font-bold text-[var(--text-secondary)] bg-[var(--surface)]">Назад</button>
         </div>
+
+        <div class="space-y-6 flex-1 overflow-y-auto pb-10">
+            <!-- Achievements Reuse -->
+            <div class="grid grid-cols-2 gap-4">
+                <div class="plex flex flex-col items-center justify-center p-5 min-h-[110px]">
+                    <span
+                        class="text-[9px] font-bold uppercase tracking-wider text-[var(--text-secondary)] mb-2 text-center">Дни
+                        в потоке</span>
+                    <span id="cabDaysText"
+                        class="text-3xl font-extrabold text-[var(--text-primary)] leading-none">0</span>
+                </div>
+                <div class="plex flex flex-col items-center justify-center p-5 min-h-[110px]">
+                    <span
+                        class="text-[9px] font-bold uppercase tracking-wider text-[var(--text-secondary)] mb-2 text-center">Очки
+                        фокуса</span>
+                    <span id="cabPointsText"
+                        class="text-3xl font-extrabold text-[var(--text-primary)] leading-none">0</span>
+                </div>
+            </div>
+
+            <!-- Motivation Text -->
+            <div class="plex p-6">
+                <p class="text-[14px] leading-relaxed font-medium text-[var(--text-primary)] opacity-90">
+                    Нажимай «Готово» и чувствуй радость приближения цели. Твой мозг запоминает это ощущение и
+                    создаёт ассоциацию: действие приносит радость. Когда настанет время следующего шага, тебе будет
+                    проще начать, подсознание уже знает, что впереди награда. Так работает твоя внутренняя система
+                    мотивации. Ты программируешь себя на достижение целей каждым нажатием кнопки.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div id="editScreen" class="p-6 hidden text-left flex-1 flex flex-col">
+        <div class="flex items-center justify-between mb-8 pt-4">
+            <h2 class="text-2xl font-bold text-[var(--text-primary)]">Настройки</h2>
+            <button onclick="backToMain()"
+                class="text-xs plex px-5 py-3 rounded-[18px] font-bold text-[var(--text-secondary)] bg-[var(--surface)]">Закрыть</button>
+        </div>
+        <div class="space-y-6 flex-1">
+            <div class="plex p-6 text-left">
+                <label
+                    class="text-[10px] font-bold text-[var(--text-secondary)] uppercase mb-3 block tracking-wider">Редактировать
+                    цель</label>
+                <input id="editGoalInput" type="text"
+                    class="w-full border-b-2 border-[var(--surface-border)] focus:border-[var(--accent)] transition-colors p-2 font-bold text-lg text-[var(--text-primary)]">
+            </div>
+            <div class="plex p-6 text-left">
+                <label
+                    class="text-[10px] font-bold text-[var(--text-secondary)] uppercase mb-5 block tracking-wider">Ваши
+                    шаги</label>
+                <div id="editTasksInputs" class="space-y-4"></div>
+            </div>
+        </div>
+        <button onclick="updateSettings()"
+            class="w-full py-5 rounded-[24px] btn-primary font-bold text-lg uppercase tracking-wide mt-6 mb-8">Сохранить</button>
+    </div>
     </div>
 
     <script>
@@ -391,6 +450,7 @@
             document.getElementById('setupScreen').classList.add('hidden');
             document.getElementById('mainScreen').classList.add('hidden');
             document.getElementById('editScreen').classList.add('hidden');
+            document.getElementById('cabinetScreen').classList.add('hidden');
 
             if (!state.goal) {
                 document.getElementById('setupScreen').classList.remove('hidden');
@@ -433,17 +493,23 @@
         function render() {
             document.getElementById('displayGoal').innerText = state.goal;
             document.getElementById('pointsHeader').innerText = state.points + ' XP';
+            document.getElementById('displayGoal').innerText = state.goal;
+            document.getElementById('pointsHeader').innerText = state.points + ' XP';
             document.getElementById('daysText').innerText = state.days;
+
+            // Sync Cabinet Data
+            document.getElementById('cabDaysText').innerText = state.days;
+            document.getElementById('cabPointsText').innerText = state.points;
             const grid = document.getElementById('tasksGrid');
             grid.innerHTML = '';
             state.tasks.forEach((t, i) => {
                 const isDone = state.completed.includes(i);
                 grid.innerHTML += `
                     <div class="plex p-5 flex flex-col justify-between items-center text-center min-h-[140px] active:scale-95 transition-all cursor-pointer relative overflow-hidden group" onclick="toggleTask(${i})">
-                        ${isDone ? '<div class="absolute inset-0 bg-[#bef264]/10 z-0"></div>' : ''}
+                        ${isDone ? '<div class="absolute inset-0 bg-[#bef264]/10 z-0"></div><svg class="huge-check" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 13L9 17L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>' : ''}
                         <p class="text-[13px] font-semibold leading-snug mb-3 flex-1 flex items-center justify-center text-[var(--text-primary)] z-10">${t}</p>
                         <div class="w-full py-3 rounded-[16px] text-[10px] font-extrabold uppercase tracking-wider z-10 transition-all ${isDone ? 'btn-done' : 'btn-execute'}">
-                            ${isDone ? 'ГОТОВО' : 'ВЫПОЛНИТЬ'}
+                            ГОТОВО
                         </div>
                     </div>
                 `;
@@ -481,12 +547,24 @@
             }
         }
 
-        function goToSettings() {
+        function goToSettings(e) {
+            e.stopPropagation(); // Prevent bubbling to header click
             document.getElementById('mainScreen').classList.add('hidden');
             document.getElementById('editScreen').classList.remove('hidden');
             document.getElementById('editGoalInput').value = state.goal;
             const inputs = document.querySelectorAll('.e-in');
             state.tasks.forEach((t, i) => inputs[i].value = t);
+        }
+
+        function goToCabinet() {
+            document.getElementById('mainScreen').classList.add('hidden');
+            document.getElementById('cabinetScreen').classList.remove('hidden');
+        }
+
+        function backToMainFromCabinet() {
+            document.getElementById('cabinetScreen').classList.add('hidden');
+            document.getElementById('mainScreen').classList.remove('hidden');
+            render();
         }
 
         function backToMain() {
