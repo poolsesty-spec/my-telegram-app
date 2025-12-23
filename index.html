@@ -387,7 +387,7 @@
 
             <div
                 class="px-4 py-8 text-center opacity-30 text-[9px] tracking-[3px] uppercase font-bold text-[var(--text-secondary)]">
-                Eluma Corp v.2.4.0
+                Eluma Elite v.2.4.0
             </div>
         </div>
     </div>
@@ -590,6 +590,7 @@
 
         function goToSettings(e) {
             e.stopPropagation(); // Prevent bubbling to header click
+            window.scrollTo(0, 0);
             document.getElementById('mainScreen').classList.add('hidden');
             document.getElementById('editScreen').classList.remove('hidden');
             document.getElementById('editGoalInput').value = state.goal;
@@ -598,17 +599,20 @@
         }
 
         function goToCabinet() {
+            window.scrollTo(0, 0);
             document.getElementById('mainScreen').classList.add('hidden');
             document.getElementById('cabinetScreen').classList.remove('hidden');
         }
 
         function backToMainFromCabinet() {
+            window.scrollTo(0, 0);
             document.getElementById('cabinetScreen').classList.add('hidden');
             document.getElementById('mainScreen').classList.remove('hidden');
             render();
         }
 
         function backToMain() {
+            window.scrollTo(0, 0);
             document.getElementById('editScreen').classList.add('hidden');
             document.getElementById('mainScreen').classList.remove('hidden');
             render();
