@@ -313,7 +313,7 @@
         <!-- ЭКРАН 1: SETUP -->
         <div id="setupScreen" class="p-6 flex flex-col justify-center min-h-screen hidden">
             <div class="plex p-8 text-center">
-                <h1 class="text-4xl font-extrabold mb-8 tracking-tight text-[var(--accent)] italic">ELUMA</h1>
+                <!-- Removed Title -->
                 <div
                     class="bg-[var(--input-bg)] border border-[var(--surface-border)] p-4 rounded-[24px] mb-6 shadow-sm">
                     <input id="goalInput" type="text" placeholder="Главная цель..."
@@ -322,6 +322,8 @@
                 <div id="tasksInputs" class="space-y-3 mb-10"></div>
                 <button onclick="saveSettings()"
                     class="w-full py-5 rounded-[24px] btn-primary font-bold text-lg uppercase">Активировать</button>
+                <p class="text-[10px] uppercase tracking-wide text-[var(--text-secondary)] mt-6 opacity-70 font-bold">
+                    Будь смелей, изменить сможешь в любое время</p>
             </div>
         </div>
 
