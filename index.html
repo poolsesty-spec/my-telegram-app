@@ -214,10 +214,10 @@
         .skill-track {
             height: 10px;
             background: rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.06);
             border-radius: 99px;
             overflow: hidden;
             position: relative;
-            border: 1px solid rgba(0, 0, 0, 0.06);
         }
 
         :root.dark .skill-track {
@@ -724,7 +724,7 @@
             const today = getElumaDate();
             state.completed.push(idx);
             if (!state.rewardedSlots.includes(idx)) {
-                state.points += 2;
+                state.points += 1;
                 state.rewardedSlots.push(idx);
             }
             if (state.completed.length === 6 && state.bonusClaimedDate !== today) {
