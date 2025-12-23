@@ -152,12 +152,13 @@
             /* Position above button */
             left: 50%;
             transform: translateX(-50%) rotate(-10deg);
-            width: 40px;
-            height: 40px;
-            opacity: 1;
+            width: 52px;
+            height: 52px;
+            opacity: 0.6;
             pointer-events: none;
             z-index: 20;
             color: var(--salad);
+            filter: blur(4px);
         }
 
         .neon-bar {
@@ -521,6 +522,37 @@
                         <div class="skill-fill"></div>
                     </div>
                 </div>
+
+                <!-- THEME SWITCHER -->
+                <div class="mt-8 flex justify-center">
+                    <div
+                        class="bg-[var(--input-bg)] p-1 rounded-full flex gap-1 border border-[var(--surface-border)] shadow-sm">
+                        <button onclick="setTheme('light')" id="themeBtnLight"
+                            class="w-10 h-10 rounded-full flex items-center justify-center transition-all text-[var(--text-secondary)]">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="5"></circle>
+                                <line x1="12" y1="1" x2="12" y2="3"></line>
+                                <line x1="12" y1="21" x2="12" y2="23"></line>
+                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                                <line x1="1" y1="12" x2="3" y2="12"></line>
+                                <line x1="21" y1="12" x2="23" y2="12"></line>
+                                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                            </svg>
+                        </button>
+                        <button onclick="setTheme('auto')" id="themeBtnAuto"
+                            class="w-10 h-10 rounded-full flex items-center justify-center transition-all text-xs font-bold text-[var(--text-secondary)]">A</button>
+                        <button onclick="setTheme('dark')" id="themeBtnDark"
+                            class="w-10 h-10 rounded-full flex items-center justify-center transition-all text-[var(--text-secondary)]">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <div class="text-center opacity-20 text-[9px] tracking-[3px] uppercase font-bold py-4">Eluma Elite v.2.5.0
@@ -556,19 +588,42 @@
         tg.ready();
         tg.expand();
 
+        function setTheme(mode) {
+            state.theme = mode;
+            saveState();
+            updateTheme();
+        }
+
         function updateTheme() {
-            const isDark = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
-            tg.setHeaderColor(isDark ? '#0F0F11' : '#FDFCF8');
-            tg.setBackgroundColor(isDark ? '#0F0F11' : '#FDFCF8');
+            const btns = { light: 'themeBtnLight', auto: 'themeBtnAuto', dark: 'themeBtnDark' };
+            Object.values(btns).forEach(id => document.getElementById(id).classList.remove('text-[var(--accent)]', 'bg-[var(--surface-border)]'));
+
+            const activeBtn = document.getElementById(btns[state.theme] || btns['auto']);
+            if (activeBtn) activeBtn.classList.add('text-[var(--accent)]', 'bg-[var(--surface-border)]');
+
+            let isDark = false;
+            if (state.theme === 'auto') {
+                isDark = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            } else {
+                isDark = (state.theme === 'dark');
+            }
+
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+                tg.setHeaderColor('#0F0F11'); tg.setBackgroundColor('#0F0F11');
+            } else {
+                document.documentElement.classList.remove('dark');
+                tg.setHeaderColor('#FDFCF8'); tg.setBackgroundColor('#FDFCF8');
+            }
         }
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateTheme);
-        updateTheme();
 
         if (tg.initDataUnsafe?.user?.photo_url) {
             document.querySelectorAll('#userAvatar, #cabUserAvatar').forEach(img => img.src = tg.initDataUnsafe.user.photo_url);
         }
 
         let state = {
+            theme: localStorage.getItem('el_theme') || 'auto',
             goal: localStorage.getItem('el_goal') || '',
             tasks: JSON.parse(localStorage.getItem('el_tasks')) || [],
             completed: JSON.parse(localStorage.getItem('el_completed_today')) || [],
@@ -579,6 +634,7 @@
             bonusClaimedDate: localStorage.getItem('el_bonus_date') || '',
             dayIncrementedDate: localStorage.getItem('el_day_inc_date') || ''
         };
+        updateTheme();
 
         function getElumaDate() {
             let now = new Date();
@@ -628,6 +684,7 @@
             if (!localStorage.getItem('el_intro_seen')) {
                 localStorage.clear();
                 state = {
+                    theme: 'auto',
                     goal: '', tasks: [], completed: [], rewardedSlots: [], points: 0, days: 0,
                     lastDate: getElumaDate(), bonusClaimedDate: '', dayIncrementedDate: ''
                 };
