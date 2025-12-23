@@ -220,10 +220,10 @@
     </div>
     <div class="grain"></div>
 
-    <div id="app" class="relative z-10 max-w-md mx-auto h-full flex flex-col min-h-screen">
+    <div id="app" class="relative z-10 max-w-md mx-auto block">
 
         <!-- SETUP -->
-        <div id="setupScreen" class="p-6 flex-1 flex flex-col justify-center hidden">
+        <div id="setupScreen" class="p-6 min-h-screen flex flex-col justify-center hidden">
             <div class="plex p-8 text-center">
                 <h1 class="text-4xl font-extrabold mb-8 tracking-tight text-[var(--accent)]">ELUMA</h1>
                 <div
@@ -238,7 +238,7 @@
         </div>
 
         <!-- MAIN -->
-        <div id="mainScreen" class="flex flex-col hidden w-full">
+        <div id="mainScreen" class="hidden w-full min-h-screen">
             <div class="sticky-header cursor-pointer active:scale-[0.99] transition-transform" onclick="goToCabinet()">
                 <div class="plex p-3 pr-5 flex items-center gap-4">
                     <img id="userAvatar" src="https://via.placeholder.com/100"
@@ -315,7 +315,7 @@
     </div>
 
     <!-- CABINET SCREEN -->
-    <div id="cabinetScreen" class="hidden text-left flex flex-col bg-[var(--bg)] w-full">
+    <div id="cabinetScreen" class="hidden text-left bg-[var(--bg)] w-full min-h-screen pt-0">
         <!-- Header (Cloned for Cabinet) -->
         <div class="plex m-5 mb-2 p-3 pr-5 flex items-center gap-4 relative">
             <button onclick="backToMainFromCabinet()"
@@ -393,7 +393,7 @@
     </div>
 
     <!-- SETTINGS -->
-    <div id="editScreen" class="p-6 hidden text-left flex flex-col">
+    <div id="editScreen" class="p-6 hidden text-left flex flex-col min-h-screen">
         <div class="flex items-center justify-between mb-8 pt-4">
             <h2 class="text-2xl font-bold text-[var(--text-primary)]">Настройки</h2>
             <button onclick="backToMain()"
