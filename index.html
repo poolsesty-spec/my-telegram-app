@@ -593,6 +593,7 @@
             window.scrollTo(0, 0);
             document.getElementById('mainScreen').classList.add('hidden');
             document.getElementById('editScreen').classList.remove('hidden');
+            requestAnimationFrame(() => window.scrollTo(0, 0));
             document.getElementById('editGoalInput').value = state.goal;
             const inputs = document.querySelectorAll('.e-in');
             state.tasks.forEach((t, i) => inputs[i].value = t);
@@ -602,12 +603,14 @@
             window.scrollTo(0, 0);
             document.getElementById('mainScreen').classList.add('hidden');
             document.getElementById('cabinetScreen').classList.remove('hidden');
+            requestAnimationFrame(() => window.scrollTo(0, 0));
         }
 
         function backToMainFromCabinet() {
             window.scrollTo(0, 0);
             document.getElementById('cabinetScreen').classList.add('hidden');
             document.getElementById('mainScreen').classList.remove('hidden');
+            requestAnimationFrame(() => window.scrollTo(0, 0));
             render();
         }
 
@@ -615,6 +618,7 @@
             window.scrollTo(0, 0);
             document.getElementById('editScreen').classList.add('hidden');
             document.getElementById('mainScreen').classList.remove('hidden');
+            requestAnimationFrame(() => window.scrollTo(0, 0));
             render();
         }
 
