@@ -139,6 +139,16 @@
             transform: scale(0.97);
         }
 
+        .btn-execute {
+            background: rgba(255, 127, 80, 0.15);
+            /* Soft Orange */
+            color: var(--accent);
+            box-shadow: 0 0 15px rgba(255, 127, 80, 0.3);
+            border: none;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
         .btn-done {
             background: var(--salad);
             color: #3f6212;
@@ -146,6 +156,8 @@
             box-shadow: 0 0 15px rgba(190, 242, 100, 0.5);
             pointer-events: none;
             border: none;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
         }
 
         .hidden {
@@ -277,7 +289,7 @@
 
                 <div
                     class="text-center pb-8 opacity-30 text-[9px] tracking-[3px] uppercase font-bold text-[var(--text-secondary)]">
-                    System Build: v.2.1.0
+                    System Build: v.2.2.0
                 </div>
             </div>
         </div>
@@ -333,10 +345,12 @@
             goal: localStorage.getItem('el_goal') || '',
             tasks: JSON.parse(localStorage.getItem('el_tasks')) || [],
             completed: JSON.parse(localStorage.getItem('el_completed_today')) || [],
+            rewardedSlots: JSON.parse(localStorage.getItem('el_rewarded_today')) || [],
             points: parseInt(localStorage.getItem('el_points')) || 0,
             days: parseInt(localStorage.getItem('el_days')) || 0,
             lastDate: localStorage.getItem('el_last_date') || '',
-            bonusClaimedDate: localStorage.getItem('el_bonus_date') || ''
+            bonusClaimedDate: localStorage.getItem('el_bonus_date') || '',
+            dayIncrementedDate: localStorage.getItem('el_day_inc_date') || ''
         };
 
         function getElumaDate() {
@@ -349,10 +363,12 @@
             localStorage.setItem('el_goal', state.goal);
             localStorage.setItem('el_tasks', JSON.stringify(state.tasks));
             localStorage.setItem('el_completed_today', JSON.stringify(state.completed));
+            localStorage.setItem('el_rewarded_today', JSON.stringify(state.rewardedSlots));
             localStorage.setItem('el_points', state.points);
             localStorage.setItem('el_days', state.days);
             localStorage.setItem('el_last_date', state.lastDate);
             localStorage.setItem('el_bonus_date', state.bonusClaimedDate);
+            localStorage.setItem('el_day_inc_date', state.dayIncrementedDate);
         }
 
         const tIn = document.getElementById('tasksInputs');
@@ -367,6 +383,7 @@
             const today = getElumaDate();
             if (state.lastDate !== today) {
                 state.completed = [];
+                state.rewardedSlots = [];
                 state.lastDate = today;
                 saveState();
             }
@@ -386,13 +403,27 @@
         function toggleTask(idx) {
             if (state.completed.includes(idx)) return;
             const today = getElumaDate();
+
             state.completed.push(idx);
-            state.points += 1;
+
+            // Logic: Award point only if this slot hasn't been rewarded today
+            if (!state.rewardedSlots.includes(idx)) {
+                state.points += 1;
+                state.rewardedSlots.push(idx);
+            }
+
+            // Logic: Bonus (Total 12 max implied: 6 tasks + 6 bonus = 12)
             if (state.completed.length === 6 && state.bonusClaimedDate !== today) {
                 state.points += 6;
-                state.days += 1;
                 state.bonusClaimedDate = today;
             }
+
+            // Logic: Day increment on FIRST task
+            if (state.completed.length >= 1 && state.dayIncrementedDate !== today) {
+                state.days += 1;
+                state.dayIncrementedDate = today;
+            }
+
             saveState();
             render();
             tg.HapticFeedback.impactOccurred('medium');
@@ -411,7 +442,7 @@
                     <div class="plex p-5 flex flex-col justify-between items-center text-center min-h-[140px] active:scale-95 transition-all cursor-pointer relative overflow-hidden group" onclick="toggleTask(${i})">
                         ${isDone ? '<div class="absolute inset-0 bg-[#bef264]/10 z-0"></div>' : ''}
                         <p class="text-[13px] font-semibold leading-snug mb-3 flex-1 flex items-center justify-center text-[var(--text-primary)] z-10">${t}</p>
-                        <div class="w-full py-3 rounded-[16px] text-[10px] font-extrabold uppercase tracking-wider z-10 transition-all ${isDone ? 'btn-done' : 'bg-[var(--input-bg)] text-[var(--accent)]'}">
+                        <div class="w-full py-3 rounded-[16px] text-[10px] font-extrabold uppercase tracking-wider z-10 transition-all ${isDone ? 'btn-done' : 'btn-execute'}">
                             ${isDone ? 'ГОТОВО' : 'ВЫПОЛНИТЬ'}
                         </div>
                     </div>
@@ -438,6 +469,7 @@
             if (nGoal && nTasks.length === 6) {
                 nTasks.forEach((task, i) => {
                     if (task !== state.tasks[i]) {
+                        // Logic: Changing task removes "done" state, but logic above prevents RE-AWARDING points for this slot if already rewarded.
                         const idx = state.completed.indexOf(i);
                         if (idx !== -1) state.completed.splice(idx, 1);
                     }
