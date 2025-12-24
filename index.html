@@ -8,7 +8,8 @@
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
 
     <style>
         :root {
@@ -46,15 +47,57 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        #background { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; overflow: hidden; pointer-events: none; }
-        .orb { position: absolute; border-radius: 50%; filter: blur(90px); opacity: var(--orb-opacity); }
-        .orb-1 { width: 300px; height: 300px; background: #FFDAB9; top: -50px; left: -50px; }
-        .orb-2 { width: 400px; height: 400px; background: #FFE4E1; bottom: -100px; right: -100px; }
-        .orb-3 { width: 250px; height: 250px; background: rgba(190, 242, 100, 0.3); top: 40%; left: 30%; }
+        #background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(90px);
+            opacity: var(--orb-opacity);
+        }
+
+        .orb-1 {
+            width: 300px;
+            height: 300px;
+            background: #FFDAB9;
+            top: -50px;
+            left: -50px;
+        }
+
+        .orb-2 {
+            width: 400px;
+            height: 400px;
+            background: #FFE4E1;
+            bottom: -100px;
+            right: -100px;
+        }
+
+        .orb-3 {
+            width: 250px;
+            height: 250px;
+            background: rgba(190, 242, 100, 0.3);
+            top: 40%;
+            left: 30%;
+        }
 
         .grain {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-            pointer-events: none; opacity: 0.04;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.04;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
 
@@ -67,40 +110,166 @@
             box-shadow: 0 15px 35px -10px var(--shadow-color);
         }
 
-        .sticky-header { position: sticky; top: 0; z-index: 100; padding: 16px 20px; backdrop-filter: blur(10px); }
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 16px 20px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
 
         .btn-primary {
             background: linear-gradient(135deg, #FF7F50, #FF6347);
-            color: white; box-shadow: 0 10px 20px -5px rgba(255, 99, 71, 0.4);
+            color: white;
+            box-shadow: 0 10px 20px -5px rgba(255, 99, 71, 0.4);
             transition: all 0.2s;
         }
 
-        .btn-execute { background: var(--accent); color: #ffffff; box-shadow: 0 0 15px rgba(255, 127, 80, 0.4); }
-        .btn-done { background: var(--salad); color: #3f6212; box-shadow: 0 0 20px rgba(190, 242, 100, 0.4); pointer-events: none; }
-
-        .huge-check {
-            position: absolute; bottom: 60px; left: 50%; transform: translateX(-50%) rotate(-10deg);
-            width: 52px; height: 52px; opacity: 0.6; pointer-events: none; z-index: 20; color: var(--salad); filter: blur(4px);
+        .btn-primary:active {
+            transform: scale(0.97);
+            opacity: 0.9;
         }
 
-        /* Skill Bars Reverted Style */
-        .skill-container { margin-bottom: 20px; }
-        .skill-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .skill-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); }
-        .skill-val { font-size: 11px; font-weight: 800; color: var(--text-primary); }
-        .skill-track { height: 10px; background: rgba(0, 0, 0, 0.08); border: 1px solid rgba(0, 0, 0, 0.06); border-radius: 99px; overflow: hidden; position: relative; }
-        :root.dark .skill-track { background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.06); }
-        .skill-fill { height: 100%; border-radius: 99px; transition: width 1s ease-out; }
-        .skill-locked .skill-track { opacity: 0.5; }
-        .lock-icon { margin-right: 6px; width: 12px; height: 12px; color: var(--text-secondary); }
+        .btn-execute {
+            background: var(--accent);
+            color: #ffffff;
+            box-shadow: 0 0 15px rgba(255, 127, 80, 0.4);
+        }
 
-        .hidden { display: none !important; }
-        input { outline: none; border: none; background: transparent; color: var(--text-primary); }
-        .chart-path { stroke-dasharray: 1000; stroke-dashoffset: 1000; animation: dash 2.5s ease-out forwards; }
-        @keyframes dash { to { stroke-dashoffset: 0; } }
+        .btn-done {
+            background: var(--salad);
+            color: #3f6212;
+            box-shadow: 0 0 20px rgba(190, 242, 100, 0.4);
+            pointer-events: none;
+        }
 
-        .expand-enter { animation: expandIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        @keyframes expandIn { from { opacity: 0; transform: scale(0.9) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        .huge-check {
+            position: absolute;
+            bottom: 60px;
+            /* Position above button */
+            left: 50%;
+            transform: translateX(-50%) rotate(-10deg);
+            width: 52px;
+            height: 52px;
+            opacity: 0.6;
+            pointer-events: none;
+            z-index: 20;
+            color: var(--salad);
+            filter: blur(4px);
+        }
+
+        .neon-bar {
+            box-shadow: 0 0 10px var(--accent), 0 0 20px var(--accent);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Animation Classes */
+        .expand-enter {
+            animation: expandIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            transform-origin: top center;
+        }
+
+        @keyframes expandIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        /* Skill Bars */
+        .skill-container {
+            margin-bottom: 20px;
+        }
+
+        .skill-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .skill-title {
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+        }
+
+        .skill-val {
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .skill-track {
+            height: 10px;
+            background: rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            border-radius: 99px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        :root.dark .skill-track {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .skill-fill {
+            height: 100%;
+            border-radius: 99px;
+            transition: width 1s ease-out;
+        }
+
+        .skill-locked .skill-track {
+            opacity: 0.5;
+        }
+
+        .skill-locked .skill-fill {
+            background: var(--lock-color);
+            width: 0%;
+        }
+
+        .lock-icon {
+            margin-right: 6px;
+            width: 12px;
+            height: 12px;
+            color: var(--text-secondary);
+        }
+
+        input {
+            outline: none;
+            border: none;
+            background: transparent;
+            color: var(--text-primary);
+        }
+
+        input::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.5;
+        }
+
+        .chart-path {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: dash 2.5s ease-out forwards;
+        }
+
+        @keyframes dash {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
     </style>
 </head>
 
@@ -114,20 +283,34 @@
 
     <div id="app" class="relative z-10 max-w-md mx-auto min-h-screen">
 
-        <!-- ЭКРАН 0: INTRO -->
+        <!-- ЭКРАН 0: INTRO (First Launch) -->
+        <!-- ЭКРАН 0: INTRO (First Launch) -->
         <div id="introScreen" class="p-6 flex flex-col justify-center min-h-screen hidden">
-            <div class="plex p-8 text-center flex flex-col items-center justify-between min-h-[500px]">
-                <img src="./background.jpg" class="w-24 h-24 rounded-full border-4 border-[var(--surface-border)] object-cover shadow-lg mb-4">
-                <div class="flex-1 flex flex-col justify-center space-y-4 w-full text-justify">
-                    <p class="text-[15px] leading-loose font-medium">
-                        <span class="font-bold text-[var(--accent)] block mb-4 text-center text-xl">Ты вступаешь в игру...</span>
-                        Которая изменит твою жизнь. Поставь цель и выбери 6 шагов. Тренируй навык фокусировки и зарабатывай токены.
+            <div class="plex p-8 text-center flex flex-col items-center h-full justify-between min-h-[500px]">
+                <img src="./background.jpg"
+                    class="w-24 h-24 rounded-full border-4 border-[var(--surface-border)] object-cover shadow-lg mb-4">
+
+                <div class="flex-1 flex flex-col justify-center space-y-4 w-full">
+                    <p class="text-[15px] leading-loose font-medium opacity-90 text-[var(--text-primary)] text-justify">
+                        <span class="font-bold text-[var(--accent)] block mb-4 text-center text-xl">Ты вступаешь в
+                            игру...</span>
+                        ...которая изменит твою жизнь.<br><br>
+                        В следующем окне ты поставишь цель, которой хочешь добиться, и выберешь 6 заданий, которые
+                        приведут тебя к ней. Задания могут быть любой сложности — главное, чтобы ты мог выполнять их
+                        каждый день и они реально приближали твою цель.<br><br>
+                        На этом этапе ты тренируешь навык фокусировки и зарабатываешь токены для следующих уровней игры.
                     </p>
-                    <h2 class="text-2xl font-black uppercase tracking-widest text-center py-4">Готов начать?</h2>
+
+                    <h2
+                        class="text-2xl font-black uppercase tracking-widest text-[var(--text-primary)] py-4 text-center">
+                        Готов начать?</h2>
                 </div>
+
                 <div class="w-full flex gap-4 mt-4">
-                    <button onclick="tg.close()" class="flex-1 py-4 rounded-[20px] bg-[var(--accent)] text-white font-black uppercase tracking-widest">НЕТ</button>
-                    <button onclick="startSetup()" class="flex-1 py-4 rounded-[20px] bg-[var(--salad)] text-[#3f6212] font-black uppercase tracking-widest">ДА</button>
+                    <button onclick="closeApp()"
+                        class="flex-1 py-4 rounded-[20px] bg-[var(--accent)] text-white font-black uppercase tracking-widest shadow-[0_0_20px_rgba(255,127,80,0.4)] active:scale-95 transition-all">НЕТ</button>
+                    <button onclick="startSetup()"
+                        class="flex-1 py-4 rounded-[20px] bg-[var(--salad)] text-[#3f6212] font-black uppercase tracking-widest shadow-[0_0_20px_rgba(190,242,100,0.4)] active:scale-95 transition-all">ДА</button>
                 </div>
             </div>
         </div>
@@ -135,30 +318,46 @@
         <!-- ЭКРАН 1: SETUP -->
         <div id="setupScreen" class="p-6 flex flex-col justify-center min-h-screen hidden">
             <div class="plex p-8 text-center">
-                <div class="bg-[var(--input-bg)] border border-[var(--surface-border)] p-4 rounded-[24px] mb-6 shadow-sm">
-                    <input id="goalInput" type="text" placeholder="Главная цель..." class="w-full text-center font-bold text-lg">
+                <!-- Removed Title -->
+                <div
+                    class="bg-[var(--input-bg)] border border-[var(--surface-border)] p-4 rounded-[24px] mb-6 shadow-sm">
+                    <input id="goalInput" type="text" placeholder="Главная цель..."
+                        class="w-full text-center font-bold text-lg">
                 </div>
                 <div id="tasksInputs" class="space-y-3 mb-10"></div>
-                <button onclick="saveSettings()" class="w-full py-5 rounded-[24px] btn-primary font-bold text-lg uppercase tracking-wider">Активировать</button>
+                <button onclick="saveSettings()"
+                    class="w-full py-5 rounded-[24px] btn-primary font-bold text-lg uppercase">Активировать</button>
+                <p class="text-[10px] uppercase tracking-wide text-[var(--text-secondary)] mt-6 opacity-70 font-bold">
+                    Будь смелей, изменить сможешь в любое время</p>
             </div>
         </div>
 
         <!-- ЭКРАН 2: MAIN -->
         <div id="mainScreen" class="flex flex-col hidden">
-            <div class="sticky-header">
-                <div id="mainHeaderCard" class="plex p-3 pr-5 flex items-center gap-4 cursor-pointer active:scale-[0.98] transition-all" onclick="goToCabinet()">
-                    <img id="userAvatar" src="https://via.placeholder.com/100" class="w-12 h-12 rounded-full border-2 border-[var(--surface-border)] object-cover shadow-sm">
+            <!-- Header serves as the 'Card' to expand -->
+            <div class="sticky-header z-50">
+                <div id="mainHeaderCard"
+                    class="plex p-3 pr-5 flex items-center gap-4 cursor-pointer active:scale-[0.98] transition-all"
+                    onclick="goToCabinet()">
+                    <img id="userAvatar" src="https://via.placeholder.com/100"
+                        class="w-12 h-12 rounded-full border-2 border-[var(--surface-border)] object-cover shadow-sm">
                     <div class="flex-1 overflow-hidden text-left">
                         <div class="flex justify-between items-center mb-1">
-                            <p class="text-[10px] font-bold uppercase tracking-wider text-[var(--text-secondary)]">Главная цель</p>
-                            <div class="flex items-center gap-1 bg-[var(--input-bg)] px-2 py-0.5 rounded-full border border-[var(--surface-border)]">
-                                <span class="text-[9px] font-bold uppercase tracking-wider text-[var(--salad)]">Фокус</span>
-                                <span id="pointsHeader" class="text-[10px] font-black">0 XP</span>
+                            <p class="text-[10px] font-bold uppercase tracking-wider text-[var(--text-secondary)]">
+                                Главная цель</p>
+                            <div
+                                class="flex items-center gap-1 bg-[var(--input-bg)] px-2 py-0.5 rounded-full border border-[var(--surface-border)]">
+                                <span
+                                    class="text-[9px] font-bold uppercase tracking-wider text-[var(--salad)]">Фокус</span>
+                                <span id="pointsHeader" class="text-[10px] font-black text-[var(--text-primary)]">0
+                                    XP</span>
                             </div>
                         </div>
                         <h2 id="displayGoal" class="text-base font-bold truncate mb-2">...</h2>
                         <div class="w-full h-1.5 bg-[var(--input-bg)] rounded-full overflow-hidden">
-                            <div id="mainProgress" class="h-full bg-[var(--accent)] transition-all duration-1000 rounded-full" style="width: 0%"></div>
+                            <div id="mainProgress"
+                                class="h-full bg-[var(--accent)] transition-all duration-1000 rounded-full"
+                                style="width: 0%"></div>
                         </div>
                     </div>
                 </div>
@@ -168,103 +367,265 @@
                 <!-- Дни в потоке -->
                 <div class="plex p-0 relative overflow-hidden h-[120px] flex items-end">
                     <div class="absolute top-4 left-5 z-10 text-left">
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-[var(--text-secondary)] block">Дни в потоке</span>
+                        <span
+                            class="text-[10px] font-bold uppercase tracking-wider text-[var(--text-secondary)] block">Дни
+                            в потоке</span>
                         <span id="daysText" class="text-4xl font-extrabold text-[var(--text-primary)]">0</span>
                     </div>
                     <svg class="w-full h-[80%] opacity-90" viewBox="0 0 300 100" preserveAspectRatio="none">
-                        <defs><linearGradient id="g1" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:var(--salad);stop-opacity:0.4"/><stop offset="100%" style="stop-color:var(--salad);stop-opacity:0"/></linearGradient></defs>
-                        <path d="M0,100 L0,70 Q30,60 60,80 T120,50 T180,60 T240,20 L300,10 L300,100 Z" fill="url(#g1)" />
-                        <path class="chart-path" d="M0,70 Q30,60 60,80 T120,50 T180,60 T240,20 L300,10" fill="none" stroke="var(--salad)" stroke-width="3" stroke-linecap="round" />
+                        <defs>
+                            <linearGradient id="g1" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:var(--salad);stop-opacity:0.4" />
+                                <stop offset="100%" style="stop-color:var(--salad);stop-opacity:0" />
+                            </linearGradient>
+                        </defs>
+                        <path d="M0,100 L0,70 Q30,60 60,80 T120,50 T180,60 T240,20 L300,10 L300,100 Z"
+                            fill="url(#g1)" />
+                        <path class="chart-path" d="M0,70 Q30,60 60,80 T120,50 T180,60 T240,20 L300,10" fill="none"
+                            stroke="var(--salad)" stroke-width="3" stroke-linecap="round" />
                     </svg>
                 </div>
 
                 <div id="tasksGrid" class="grid grid-cols-2 gap-4 text-left"></div>
 
+                <!-- Кнопка настроек -->
                 <div class="flex justify-center py-4">
-                    <button onclick="goToSettings(event)" class="plex w-14 h-14 rounded-full flex items-center justify-center active:scale-90 transition-all text-[var(--text-secondary)]">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                            <path d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                    <button onclick="goToSettings(event)"
+                        class="plex w-14 h-14 rounded-full flex items-center justify-center active:scale-90 transition-all text-[var(--text-secondary)]">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
                         </svg>
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- ЭКРАН 3: CABINET -->
-        <div id="cabinetScreen" class="flex flex-col hidden w-full p-5 pt-0 space-y-4">
-            <div class="plex p-4 mb-4 mt-5 flex items-center justify-between relative shadow-lg">
-                <button onclick="backToMain()" class="absolute -top-3 -left-3 plex w-8 h-8 flex items-center justify-center rounded-full font-bold text-[var(--text-secondary)] bg-[var(--surface)] shadow-sm z-20">✕</button>
+        <!-- ЭКРАН 3: CABINET V2 -->
+        <div id="cabinetScreen" class="flex flex-col hidden w-full p-5 pt-0 min-h-screen">
+            <!-- Expanded Header with Mail -->
+            <div class="plex p-4 mb-4 mt-5 flex items-center justify-between relative shadow-lg z-30">
+                <button onclick="backToMain()"
+                    class="absolute -top-3 -left-3 plex w-8 h-8 flex items-center justify-center rounded-full font-bold text-[var(--text-secondary)] bg-[var(--surface)] shadow-sm z-20">✕</button>
+
                 <div class="flex items-center gap-4">
-                    <img id="cabUserAvatar" src="https://via.placeholder.com/100" class="w-14 h-14 rounded-full border-2 border-[var(--surface-border)] object-cover shadow-sm">
+                    <img id="cabUserAvatar" src="https://via.placeholder.com/100"
+                        class="w-14 h-14 rounded-full border-2 border-[var(--surface-border)] object-cover shadow-sm">
                     <div class="text-left">
-                        <p class="text-[10px] font-bold uppercase tracking-wider text-[var(--text-secondary)] mb-1">Ваш профиль</p>
+                        <p class="text-[10px] font-bold uppercase tracking-wider text-[var(--text-secondary)] mb-1">Ваш
+                            профиль</p>
                         <h2 id="cabDisplayGoal" class="text-lg font-black leading-tight max-w-[150px] truncate">...</h2>
                     </div>
                 </div>
-                <div onclick="toggleLetter()" class="relative p-2 rounded-full bg-[var(--input-bg)] active:scale-95 transition cursor-pointer">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-[var(--accent)]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-                    <div id="mailDot" class="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></div>
+
+                <!-- Incoming Mail Icon -->
+                <div onclick="toggleLetter()"
+                    class="relative p-2 rounded-full bg-[var(--input-bg)] active:scale-95 transition cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-[var(--accent)]" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                    <div id="mailDot"
+                        class="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></div>
                 </div>
             </div>
 
+            <!-- MENTOR LETTER (Hidden by default) -->
             <div id="mentorLetter" class="hidden mb-6">
-                <div class="plex p-5 text-left">
-                    <p class="text-[13px] leading-relaxed opacity-90">
-                        Привет, <span id="playerNameSpan">Игрок</span>! Твоя задача — через нажатие «Готово» программировать себя на успех. Вперед!
-                    </p>
-                    <button onclick="toggleLetter()" class="w-full py-2 mt-4 rounded-xl bg-[var(--input-bg)] text-[10px] font-bold uppercase opacity-60">Закрыть</button>
+                <div class="plex p-5 relative animate-fade-in">
+                    <div class="flex items-center gap-4 mb-4">
+                        <!-- Mentor Avatar -->
+                        <img src="./background.jpg"
+                            class="w-14 h-14 rounded-full border-2 border-[var(--surface-border)] object-cover shadow-sm flex-shrink-0">
+                        <div class="text-left">
+                            <p class="text-[10px] font-bold uppercase tracking-wider text-[var(--accent)] mb-1">
+                                Наставник</p>
+                            <p class="text-[13px] font-medium leading-relaxed opacity-90 text-[var(--text-primary)]">
+                                Привет, <span id="playerNameSpan">Игрок</span>! Я твой наставник, помощник, называй как
+                                хочешь.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Full Width Body Text -->
+                    <div class="text-left mb-2">
+                        <p class="text-[13px] font-medium leading-relaxed opacity-90 text-[var(--text-primary)]">
+                            Вот чем ты тут занимаешься: нажимая «Готово», твоя задача почувствовать радость
+                            приближения к цели и радость от выполнения задачи! Твой мозг запоминает это ощущение и
+                            создаёт ассоциацию: действие приносит радость.<br><br>
+                            Когда настанет время следующего шага, тебе будет проще начать, ведь подсознание уже знает,
+                            что
+                            впереди эмоциональная награда. Так работает твоя внутренняя система мотивации. Ты
+                            программируешь себя на достижение целей каждым нажатием кнопки.<br><br>
+                            В процессе верь в себя. Я в тебя верю!
+                        </p>
+                    </div>
+                    <button onclick="toggleLetter()"
+                        class="w-full py-2 mt-2 rounded-[12px] bg-[var(--input-bg)] text-[10px] font-bold uppercase tracking-wider text-[var(--text-secondary)]">Свернуть</button>
                 </div>
             </div>
 
-            <div class="plex p-6 text-left space-y-6">
-                <h3 class="text-sm font-black uppercase tracking-widest opacity-40">Навыки</h3>
+            <!-- SKILLS SECTION -->
+            <div class="plex p-6 text-left flex-1 mb-6">
+                <h3 class="text-sm font-black uppercase tracking-widest mb-6 opacity-40">Навыки</h3>
+
+                <!-- FOCUS (Active) -->
                 <div class="skill-container">
-                    <div class="skill-header"><span class="skill-title text-[var(--accent)]">Фокус</span><span class="skill-val" id="cabPointsSkill">0 XP</span></div>
-                    <div class="skill-track"><div id="skillFocus" class="skill-fill bg-[var(--accent)]" style="width: 0%"></div></div>
-                </div>
-                <div class="skill-container skill-locked">
-                    <div class="skill-header"><span class="skill-title flex items-center"><svg class="lock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> Деньги</span><span class="skill-val text-[var(--lock-color)]">0 / 100</span></div>
-                    <div class="skill-track"><div class="skill-fill"></div></div>
-                </div>
-                <div class="skill-container skill-locked">
-                    <div class="skill-header"><span class="skill-title flex items-center"><svg class="lock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> Коммуникация</span><span class="skill-val text-[var(--lock-color)]">0 / 100</span></div>
-                    <div class="skill-track"><div class="skill-fill"></div></div>
+                    <div class="skill-header">
+                        <span class="skill-title text-[var(--accent)]">Фокус</span>
+                        <span class="skill-val" id="cabPointsSkill">0 XP</span>
+                    </div>
+                    <div class="skill-track">
+                        <div id="skillFocus" class="skill-fill bg-[var(--accent)]" style="width: 0%"></div>
+                    </div>
                 </div>
 
-                <!-- Theme Toggle -->
-                <div class="flex justify-center pt-4">
-                    <div class="bg-[var(--input-bg)] p-1 rounded-full flex gap-1 border border-[var(--surface-border)]">
-                        <button onclick="setTheme('light')" id="themeBtnLight" class="w-10 h-10 rounded-full flex items-center justify-center transition-all text-[var(--text-secondary)]"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"></circle><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path></svg></button>
-                        <button onclick="setTheme('auto')" id="themeBtnAuto" class="w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold transition-all text-[var(--text-secondary)]">A</button>
-                        <button onclick="setTheme('dark')" id="themeBtnDark" class="w-10 h-10 rounded-full flex items-center justify-center transition-all text-[var(--text-secondary)]"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></button>
+                <!-- MONEY (Locked) -->
+                <div class="skill-container skill-locked">
+                    <div class="skill-header">
+                        <span class="skill-title flex items-center"><svg class="lock-icon" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg> Деньги</span>
+                        <span class="skill-val text-[var(--lock-color)]">0 / 100</span>
+                    </div>
+                    <div class="skill-track">
+                        <div class="skill-fill"></div>
+                    </div>
+                </div>
+
+                <!-- COMMUNICATION (Locked) -->
+                <div class="skill-container skill-locked">
+                    <div class="skill-header">
+                        <span class="skill-title flex items-center"><svg class="lock-icon" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg> Коммуникация</span>
+                        <span class="skill-val text-[var(--lock-color)]">0 / 100</span>
+                    </div>
+                    <div class="skill-track">
+                        <div class="skill-fill"></div>
+                    </div>
+                </div>
+
+                <!-- ATTRACTIVENESS (Locked) -->
+                <div class="skill-container skill-locked">
+                    <div class="skill-header">
+                        <span class="skill-title flex items-center"><svg class="lock-icon" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg> Привлекательность</span>
+                        <span class="skill-val text-[var(--lock-color)]">0 / 100</span>
+                    </div>
+                    <div class="skill-track">
+                        <div class="skill-fill"></div>
+                    </div>
+                </div>
+
+                <!-- THEME SWITCHER -->
+                <div class="mt-8 flex justify-center">
+                    <div
+                        class="bg-[var(--input-bg)] p-1 rounded-full flex gap-1 border border-[var(--surface-border)] shadow-sm">
+                        <button onclick="setTheme('light')" id="themeBtnLight"
+                            class="w-10 h-10 rounded-full flex items-center justify-center transition-all text-[var(--text-secondary)]">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="5"></circle>
+                                <line x1="12" y1="1" x2="12" y2="3"></line>
+                                <line x1="12" y1="21" x2="12" y2="23"></line>
+                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                                <line x1="1" y1="12" x2="3" y2="12"></line>
+                                <line x1="21" y1="12" x2="23" y2="12"></line>
+                                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                            </svg>
+                        </button>
+                        <button onclick="setTheme('auto')" id="themeBtnAuto"
+                            class="w-10 h-10 rounded-full flex items-center justify-center transition-all text-xs font-bold text-[var(--text-secondary)]">A</button>
+                        <button onclick="setTheme('dark')" id="themeBtnDark"
+                            class="w-10 h-10 rounded-full flex items-center justify-center transition-all text-[var(--text-secondary)]">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                            </svg>
+                        </button>
                     </div>
                 </div>
             </div>
-            <div class="text-center opacity-20 text-[9px] tracking-[3px] uppercase font-bold py-4">Eluma Elite v.2.5.5</div>
+
+            <div class="text-center opacity-20 text-[9px] tracking-[3px] uppercase font-bold py-4">Eluma Elite v.2.5.0
+            </div>
         </div>
 
         <!-- ЭКРАН 4: SETTINGS -->
         <div id="editScreen" class="flex flex-col hidden w-full p-6 space-y-6">
             <div class="flex items-center justify-between pt-2">
                 <h2 class="text-2xl font-bold">Настройки</h2>
-                <button onclick="backToMain()" class="plex px-5 py-2.5 rounded-[18px] font-bold text-[var(--text-secondary)]">Назад</button>
+                <button onclick="backToMain()"
+                    class="plex px-5 py-2.5 rounded-[18px] font-bold text-[var(--text-secondary)]">Назад</button>
             </div>
             <div class="plex p-6 text-left space-y-4">
-                <label class="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-wider block">Главная цель</label>
-                <input id="editGoalInput" type="text" class="w-full border-b-2 border-[var(--surface-border)] focus:border-[var(--accent)] transition-all p-2 font-bold text-lg">
+                <label class="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-wider block">Главная
+                    цель</label>
+                <input id="editGoalInput" type="text"
+                    class="w-full border-b-2 border-[var(--surface-border)] focus:border-[var(--accent)] transition-all p-2 font-bold text-lg">
             </div>
             <div class="plex p-6 text-left space-y-5">
-                <label class="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-wider block">Ваши шаги (6 задач)</label>
+                <label class="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-wider block">Ваши
+                    шаги (6 задач)</label>
                 <div id="editTasksInputs" class="space-y-4"></div>
             </div>
-            <button onclick="updateSettings()" class="w-full py-5 rounded-[24px] btn-primary font-bold text-lg uppercase tracking-wider">Сохранить</button>
+            <button onclick="updateSettings()"
+                class="w-full py-5 rounded-[24px] btn-primary font-bold text-lg uppercase">Сохранить</button>
         </div>
 
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
-        tg.ready(); tg.expand();
+        tg.ready();
+        tg.expand();
+
+        function setTheme(mode) {
+            state.theme = mode;
+            saveState();
+            updateTheme();
+        }
+
+        function updateTheme() {
+            const btns = { light: 'themeBtnLight', auto: 'themeBtnAuto', dark: 'themeBtnDark' };
+            Object.values(btns).forEach(id => document.getElementById(id).classList.remove('text-[var(--accent)]', 'bg-[var(--surface-border)]'));
+
+            const activeBtn = document.getElementById(btns[state.theme] || btns['auto']);
+            if (activeBtn) activeBtn.classList.add('text-[var(--accent)]', 'bg-[var(--surface-border)]');
+
+            let isDark = false;
+            if (state.theme === 'auto') {
+                isDark = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            } else {
+                isDark = (state.theme === 'dark');
+            }
+
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+                tg.setHeaderColor('#0F0F11'); tg.setBackgroundColor('#0F0F11');
+            } else {
+                document.documentElement.classList.remove('dark');
+                tg.setHeaderColor('#FDFCF8'); tg.setBackgroundColor('#FDFCF8');
+            }
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateTheme);
+
+        if (tg.initDataUnsafe?.user?.photo_url) {
+            document.querySelectorAll('#userAvatar, #cabUserAvatar').forEach(img => img.src = tg.initDataUnsafe.user.photo_url);
+        }
 
         let state = {
             theme: localStorage.getItem('el_theme') || 'auto',
@@ -278,139 +639,202 @@
             bonusClaimedDate: localStorage.getItem('el_bonus_date') || '',
             dayIncrementedDate: localStorage.getItem('el_day_inc_date') || ''
         };
+        updateTheme();
+
+        function getElumaDate() {
+            let now = new Date();
+            now.setHours(now.getHours() - 3);
+            return now.toDateString();
+        }
 
         function saveState() {
+            // Явное сохранение каждого ключа с унифицированными именами
             localStorage.setItem('el_theme', state.theme);
             localStorage.setItem('el_goal', state.goal);
             localStorage.setItem('el_tasks', JSON.stringify(state.tasks));
             localStorage.setItem('el_completed', JSON.stringify(state.completed));
             localStorage.setItem('el_rewarded_slots', JSON.stringify(state.rewardedSlots));
-            localStorage.setItem('el_points', state.points.toString());
-            localStorage.setItem('el_days', state.days.toString());
+            localStorage.setItem('el_points', state.points);
+            localStorage.setItem('el_days', state.days);
             localStorage.setItem('el_last_date', state.lastDate);
             localStorage.setItem('el_bonus_date', state.bonusClaimedDate);
             localStorage.setItem('el_day_inc_date', state.dayIncrementedDate);
         }
 
-        function setTheme(mode) { state.theme = mode; saveState(); updateTheme(); }
-
-        function updateTheme() {
-            const btns = { light: 'themeBtnLight', auto: 'themeBtnAuto', dark: 'themeBtnDark' };
-            Object.values(btns).forEach(id => {
-                const el = document.getElementById(id);
-                if(el) el.classList.remove('text-[var(--accent)]', 'bg-[var(--surface-border)]');
-            });
-            const activeBtn = document.getElementById(btns[state.theme]);
-            if (activeBtn) activeBtn.classList.add('text-[var(--accent)]', 'bg-[var(--surface-border)]');
-
-            let isDark = state.theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches) : (state.theme === 'dark');
-            document.documentElement.classList.toggle('dark', isDark);
-            tg.setHeaderColor(isDark ? '#0F0F11' : '#FDFCF8');
-            tg.setBackgroundColor(isDark ? '#0F0F11' : '#FDFCF8');
-        }
-
-        function getElumaDate() { let now = new Date(); now.setHours(now.getHours() - 3); return now.toDateString(); }
-
         function switchScreen(screenId) {
-            document.querySelectorAll('#introScreen, #setupScreen, #mainScreen, #cabinetScreen, #editScreen').forEach(s => s.classList.add('hidden'));
-            document.getElementById(screenId).classList.remove('hidden');
-            if (screenId === 'cabinetScreen') document.getElementById('cabinetScreen').classList.add('expand-enter');
+            const screens = document.querySelectorAll('#setupScreen, #mainScreen, #cabinetScreen, #editScreen');
+
+            // Animation for Cabinet
+            if (screenId === 'cabinetScreen') {
+                document.getElementById('cabinetScreen').classList.remove('hidden');
+                document.getElementById('cabinetScreen').classList.add('expand-enter');
+                setTimeout(() => {
+                    screens.forEach(s => { if (s.id !== screenId) s.classList.add('hidden'); });
+                    document.getElementById('cabinetScreen').classList.remove('expand-enter'); // Clean up
+                }, 400);
+            } else {
+                // Instant Switch for others
+                screens.forEach(s => s.classList.add('hidden'));
+                document.getElementById(screenId).classList.remove('hidden');
+            }
             window.scrollTo({ top: 0, behavior: 'instant' });
         }
 
+        function startSetup() {
+            localStorage.setItem('el_intro_seen', 'true');
+            switchScreen('setupScreen');
+        }
+
+        function closeApp() { tg.close(); }
+
         function init() {
+            // RESET Logic Removed (User requested persistence)
+
             const today = getElumaDate();
             if (state.lastDate !== today) {
-                state.completed = []; state.rewardedSlots = []; state.lastDate = today; saveState();
+                state.completed = [];
+                state.rewardedSlots = [];
+                state.lastDate = today;
+                saveState();
             }
 
             const eIn = document.getElementById('editTasksInputs');
             const tIn = document.getElementById('tasksInputs');
             eIn.innerHTML = ''; tIn.innerHTML = '';
             for (let i = 0; i < 6; i++) {
-                tIn.innerHTML += `<div class="bg-[var(--input-bg)] border border-[var(--surface-border)] p-4 rounded-[20px] shadow-sm"><input type="text" placeholder="Шаг ${i + 1}" class="t-in w-full text-center font-medium"></div>`;
-                eIn.innerHTML += `<div class="bg-[var(--input-bg)] border border-[var(--surface-border)] p-3 rounded-[16px]"><input type="text" class="e-in w-full font-medium bg-transparent"></div>`;
+                tIn.innerHTML += `<div class="bg-[var(--input-bg)] border border-[var(--surface-border)] p-4 rounded-[20px] shadow-sm"><input type="text" placeholder="Шаг ${i + 1}" class="t-in w-full font-medium text-sm"></div>`;
+                eIn.innerHTML += `<div class="bg-[var(--input-bg)] border border-[var(--surface-border)] p-3 rounded-[16px]"><input type="text" class="e-in w-full font-medium text-sm bg-transparent"></div>`;
             }
 
-            if (!localStorage.getItem('el_intro_seen')) switchScreen('introScreen');
-            else if (!state.goal) switchScreen('setupScreen');
-            else { switchScreen('mainScreen'); render(); }
-            updateTheme();
+            // Flow Logic
+            if (!localStorage.getItem('el_intro_seen')) {
+                switchScreen('introScreen');
+            } else if (!state.goal) {
+                switchScreen('setupScreen');
+            } else {
+                switchScreen('mainScreen');
+                render();
+            }
+
+            // Neon Effect
+            const mp = document.getElementById('mainProgress');
+            if (mp) mp.classList.add('neon-bar');
         }
+
 
         function toggleTask(idx) {
             if (state.completed.includes(idx)) return;
             const today = getElumaDate();
             state.completed.push(idx);
-
             if (!state.rewardedSlots.includes(idx)) {
-                state.points += 1; state.rewardedSlots.push(idx);
+                state.points += 1;
+                state.rewardedSlots.push(idx);
             }
             if (state.completed.length === 6 && state.bonusClaimedDate !== today) {
-                state.points += 6; state.bonusClaimedDate = today;
+                state.points += 6;
+                state.bonusClaimedDate = today;
             }
             if (state.completed.length >= 1 && state.dayIncrementedDate !== today) {
-                state.days += 1; state.dayIncrementedDate = today;
+                state.days += 1;
+                state.dayIncrementedDate = today;
             }
-            saveState(); render();
+            saveState();
+            render();
             tg.HapticFeedback.impactOccurred('medium');
         }
 
         function render() {
-            const updates = { 
+            const updates = {
                 displayGoal: state.goal, cabDisplayGoal: state.goal,
                 pointsHeader: state.points + ' XP', cabPointsSkill: state.points + ' / 360 XP',
-                daysText: state.days, cabDaysTextChart: state.days 
+                daysText: state.days, cabDaysTextChart: state.days
             };
-            Object.keys(updates).forEach(id => { if(document.getElementById(id)) document.getElementById(id).innerText = updates[id]; });
-            
+            Object.keys(updates).forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.innerText = updates[id];
+            });
+
             const p = (state.completed.length / 6 * 100) + '%';
             document.getElementById('mainProgress').style.width = p;
-            if(document.getElementById('skillFocus')) document.getElementById('skillFocus').style.width = Math.min(state.points / 360 * 100, 100) + '%';
+
+            // Skill Bar (Max 360) 
+            const skillP = Math.min(state.points / 360 * 100, 100) + '%';
+            if (document.getElementById('skillFocus')) document.getElementById('skillFocus').style.width = skillP;
 
             const grid = document.getElementById('tasksGrid');
             grid.innerHTML = '';
             state.tasks.forEach((t, i) => {
                 const done = state.completed.includes(i);
                 grid.innerHTML += `
-                    <div class="plex p-5 flex flex-col justify-between items-center text-center min-h-[140px] active:scale-95 transition-all relative overflow-hidden" onclick="toggleTask(${i})">
-                        ${done ? '<div class="absolute inset-0 bg-[#bef264]/10 z-0"></div><svg class="huge-check" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="position:absolute; top:20px; left:50%; transform:translateX(-50%); width:40px; height:40px; opacity:0.1; color:var(--salad);"><path d="M5 13L9 17L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>' : ''}
+                    <div class="plex p-5 flex flex-col justify-between items-center text-center min-h-[140px] active:scale-95 transition-all cursor-pointer relative overflow-hidden" onclick="toggleTask(${i})">
+                        ${done ? '<div class="absolute inset-0 bg-[#bef264]/10 z-0"></div><svg class="huge-check" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 13L9 17L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>' : ''}
                         <p class="text-[13px] font-bold leading-snug mb-3 flex-1 flex items-center justify-center z-10">${t}</p>
-                        <div class="w-full py-3 rounded-[16px] text-[10px] font-black uppercase z-10 ${done ? 'btn-done' : 'btn-execute'}">ГОТОВО</div>
+                        <div class="w-full py-3 rounded-[16px] text-[10px] font-black uppercase tracking-wider z-10 transition-all ${done ? 'btn-done' : 'btn-execute'}">
+                            ГОТОВО
+                        </div>
                     </div>
                 `;
             });
         }
 
-        function startSetup() { localStorage.setItem('el_intro_seen', 'true'); switchScreen('setupScreen'); }
         function saveSettings() {
             const g = document.getElementById('goalInput').value.trim();
             const t = Array.from(document.querySelectorAll('.t-in')).map(i => i.value.trim()).filter(v => v !== '');
-            if (g && t.length === 6) { state.goal = g; state.tasks = t; state.lastDate = getElumaDate(); saveState(); init(); }
+            if (g && t.length === 6) {
+                state.goal = g; state.tasks = t; state.lastDate = getElumaDate();
+                saveState(); init();
+            }
         }
+
         function updateSettings() {
             const nG = document.getElementById('editGoalInput').value.trim();
             const nT = Array.from(document.querySelectorAll('.e-in')).map(i => i.value.trim()).filter(v => v !== '');
             if (nG && nT.length === 6) {
-                nT.forEach((task, i) => { if (task !== state.tasks[i]) { const idx = state.completed.indexOf(i); if (idx !== -1) state.completed.splice(idx, 1); } });
-                state.goal = nG; state.tasks = nT; saveState(); backToMain();
+                nT.forEach((task, i) => {
+                    if (task !== state.tasks[i]) {
+                        const idx = state.completed.indexOf(i);
+                        if (idx !== -1) state.completed.splice(idx, 1);
+                    }
+                });
+                state.goal = nG; state.tasks = nT;
+                saveState(); backToMain();
             }
         }
 
-        function goToSettings(e) { e.stopPropagation(); switchScreen('editScreen'); document.getElementById('editGoalInput').value = state.goal; const inputs = document.querySelectorAll('.e-in'); state.tasks.forEach((t, i) => inputs[i].value = t); }
-        function goToCabinet() { switchScreen('cabinetScreen'); }
-        function backToMain() { switchScreen('mainScreen'); render(); }
-        function toggleLetter() { 
-            const l = document.getElementById('mentorLetter'); document.getElementById('mailDot').classList.add('hidden');
-            l.classList.toggle('hidden'); document.getElementById('playerNameSpan').innerText = tg.initDataUnsafe?.user?.first_name || 'Игрок';
+        function goToSettings(e) {
+            e.stopPropagation();
+            switchScreen('editScreen');
+            document.getElementById('editGoalInput').value = state.goal;
+            const inputs = document.querySelectorAll('.e-in');
+            state.tasks.forEach((t, i) => inputs[i].value = t);
         }
 
-        if (tg.initDataUnsafe?.user?.photo_url) { document.querySelectorAll('#userAvatar, #cabUserAvatar').forEach(img => img.src = tg.initDataUnsafe.user.photo_url); }
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateTheme);
-        window.addEventListener('scroll', () => { document.getElementById('background').style.transform = `translate3d(0, ${window.pageYOffset * -0.05}px, 0)`; });
+        function goToCabinet() { switchScreen('cabinetScreen'); }
+        function backToMain() { switchScreen('mainScreen'); render(); }
+
+        function toggleLetter() {
+            const letter = document.getElementById('mentorLetter');
+            const dot = document.getElementById('mailDot');
+            const isHidden = letter.classList.contains('hidden');
+
+            if (isHidden) {
+                letter.classList.remove('hidden');
+                if (dot) dot.classList.add('hidden'); // Remove dot when opened
+
+                // Inject name
+                const name = (tg.initDataUnsafe?.user?.first_name) ? tg.initDataUnsafe.user.first_name : 'Игрок';
+                document.getElementById('playerNameSpan').innerText = name;
+            } else {
+                letter.classList.add('hidden');
+            }
+        }
+
+        window.addEventListener('scroll', () => {
+            const s = window.pageYOffset;
+            document.getElementById('background').style.transform = `translate3d(0, ${s * -0.05}px, 0)`;
+        });
 
         init();
+        render(); // Ensure initial render
     </script>
 </body>
-
-</html>
