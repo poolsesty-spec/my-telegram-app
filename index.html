@@ -270,6 +270,26 @@
                 stroke-dashoffset: 0;
             }
         }
+
+        /* Confetti Animation */
+        @keyframes confetti {
+            0% {
+                transform: translateY(0) rotate(0deg) scale(1);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-150px) rotate(720deg) scale(0.3);
+                opacity: 0;
+            }
+        }
+
+        .confetti-particle {
+            position: absolute;
+            pointer-events: none;
+            z-index: 1000;
+            animation: confetti 1s ease-out forwards;
+        }
     </style>
 </head>
 
@@ -560,7 +580,7 @@
                 </div>
             </div>
 
-            <div class="text-center opacity-20 text-[9px] tracking-[3px] uppercase font-bold py-4">Eluma Elite v.2.5.0
+            <div class="text-center opacity-20 text-[9px] tracking-[3px] uppercase font-bold py-4">Eluma Corp v 1.0
             </div>
         </div>
 
@@ -597,6 +617,7 @@
         const SUPABASE_URL = 'https://chlwkfoqpnbugwyfrqho.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_WgeagJ_Jpcnk_1PoV9rv_g_TSUr80a_'; // ВСТАВЬ СЮДА ВЕСЬ КЛЮЧ ИЗ СКРИНШОТА
         const USER_ID = tg.initDataUnsafe?.user?.id || 'guest_user'; // ID пользователя из Телеграм
+        const APP_VERSION = '1.0'; // Текущая версия приложения
 
         // 1. Изначальное состояние (пустое)
         let state = {
@@ -740,6 +761,33 @@
         function closeApp() { tg.close(); }
 
         async function init() {
+            // Проверка версии и сброс данных при обновлении
+            const savedVersion = localStorage.getItem('el_version');
+            if (savedVersion !== APP_VERSION) {
+                // Очистка всех данных при новой версии
+                const keysToRemove = ['el_theme', 'el_goal', 'el_tasks', 'el_completed', 'el_rewarded_slots',
+                    'el_points', 'el_days', 'el_last_date', 'el_bonus_date', 'el_day_inc_date'];
+                keysToRemove.forEach(key => localStorage.removeItem(key));
+
+                // Сброс состояния
+                state = {
+                    theme: 'auto',
+                    goal: '',
+                    tasks: [],
+                    completed: [],
+                    rewardedSlots: [],
+                    points: 0,
+                    days: 0,
+                    lastDate: '',
+                    bonusClaimedDate: '',
+                    dayIncrementedDate: ''
+                };
+
+                // Сохранение новой версии
+                localStorage.setItem('el_version', APP_VERSION);
+                console.log(`Обновление до версии ${APP_VERSION}: данные сброшены`);
+            }
+
             updateTheme();
 
             // Сначала загружаем из облака
@@ -778,8 +826,59 @@
             if (mp) mp.classList.add('neon-bar');
         }
 
+        // Функция создания конфетти из галочек
+        function spawnConfetti(element) {
+            const rect = element.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+
+            // Создаём 10 частиц конфетти
+            for (let i = 0; i < 10; i++) {
+                const particle = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                particle.setAttribute('viewBox', '0 0 24 24');
+                particle.setAttribute('fill', 'none');
+                particle.classList.add('confetti-particle');
+
+                // Случайный размер от 15px до 35px
+                const size = 15 + Math.random() * 20;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+
+                // Позиция от центра кнопки
+                particle.style.left = centerX + 'px';
+                particle.style.top = centerY + 'px';
+
+                // Случайное смещение в стороны
+                const offsetX = (Math.random() - 0.5) * 100;
+                particle.style.setProperty('--offset-x', offsetX + 'px');
+
+                // SVG галочка
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                path.setAttribute('d', 'M5 13L9 17L19 7');
+                path.setAttribute('stroke', 'var(--salad)');
+                path.setAttribute('stroke-width', '3');
+                path.setAttribute('stroke-linecap', 'round');
+                path.setAttribute('stroke-linejoin', 'round');
+                particle.appendChild(path);
+
+                // Модифицируем анимацию для учёта бокового смещения
+                particle.style.animation = `confetti 1s ease-out forwards`;
+                particle.style.transform = `translateX(${offsetX}px)`;
+
+                document.body.appendChild(particle);
+
+                // Удаляем через 1 секунду
+                setTimeout(() => particle.remove(), 1000);
+            }
+        }
+
         function toggleTask(idx) {
             if (state.completed.includes(idx)) return;
+
+            // Находим элемент кнопки для конфетти
+            const taskCards = document.querySelectorAll('#tasksGrid > div');
+            const taskCard = taskCards[idx];
+
             const today = getElumaDate();
             state.completed.push(idx);
             if (!state.rewardedSlots.includes(idx)) {
@@ -794,6 +893,12 @@
                 state.days += 1;
                 state.dayIncrementedDate = today;
             }
+
+            // Запускаем конфетти!
+            if (taskCard) {
+                spawnConfetti(taskCard);
+            }
+
             saveState();
             render();
             tg.HapticFeedback.impactOccurred('medium');
