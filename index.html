@@ -304,7 +304,6 @@
     <div id="app" class="relative z-10 max-w-md mx-auto min-h-screen">
 
         <!-- ЭКРАН 0: INTRO (First Launch) -->
-        <!-- ЭКРАН 0: INTRO (First Launch) -->
         <div id="introScreen" class="p-6 flex flex-col justify-center min-h-screen hidden">
             <div class="plex p-8 text-center flex flex-col items-center h-full justify-between min-h-[500px]">
                 <img src="./background.jpg"
@@ -338,7 +337,6 @@
         <!-- ЭКРАН 1: SETUP -->
         <div id="setupScreen" class="p-6 flex flex-col justify-center min-h-screen hidden">
             <div class="plex p-8 text-center">
-                <!-- Removed Title -->
                 <div
                     class="bg-[var(--input-bg)] border border-[var(--surface-border)] p-4 rounded-[24px] mb-6 shadow-sm">
                     <input id="goalInput" type="text" placeholder="Главная цель..."
@@ -354,7 +352,6 @@
 
         <!-- ЭКРАН 2: MAIN -->
         <div id="mainScreen" class="flex flex-col hidden">
-            <!-- Header serves as the 'Card' to expand -->
             <div class="sticky-header z-50">
                 <div id="mainHeaderCard"
                     class="plex p-3 pr-5 flex items-center gap-4 cursor-pointer active:scale-[0.98] transition-all"
@@ -384,7 +381,6 @@
             </div>
 
             <div class="p-5 pt-0 space-y-6">
-                <!-- Дни в потоке -->
                 <div class="plex p-0 relative overflow-hidden h-[120px] flex items-end">
                     <div class="absolute top-4 left-5 z-10 text-left">
                         <span
@@ -408,7 +404,6 @@
 
                 <div id="tasksGrid" class="grid grid-cols-2 gap-4 text-left"></div>
 
-                <!-- Кнопка настроек -->
                 <div class="flex justify-center py-4">
                     <button onclick="goToSettings(event)"
                         class="plex w-14 h-14 rounded-full flex items-center justify-center active:scale-90 transition-all text-[var(--text-secondary)]">
@@ -424,7 +419,6 @@
 
         <!-- ЭКРАН 3: CABINET V2 -->
         <div id="cabinetScreen" class="flex flex-col hidden w-full p-5 pt-0 min-h-screen">
-            <!-- Expanded Header with Mail -->
             <div class="plex p-4 mb-4 mt-5 flex items-center justify-between relative shadow-lg z-30">
                 <button onclick="backToMain()"
                     class="absolute -top-3 -left-3 plex w-8 h-8 flex items-center justify-center rounded-full font-bold text-[var(--text-secondary)] bg-[var(--surface)] shadow-sm z-20">✕</button>
@@ -439,7 +433,6 @@
                     </div>
                 </div>
 
-                <!-- Incoming Mail Icon -->
                 <div onclick="toggleLetter()"
                     class="relative p-2 rounded-full bg-[var(--input-bg)] active:scale-95 transition cursor-pointer">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-[var(--accent)]" viewBox="0 0 24 24"
@@ -453,11 +446,9 @@
                 </div>
             </div>
 
-            <!-- MENTOR LETTER (Hidden by default) -->
             <div id="mentorLetter" class="hidden mb-6">
                 <div class="plex p-5 relative animate-fade-in">
                     <div class="flex items-center gap-4 mb-4">
-                        <!-- Mentor Avatar -->
                         <img src="./background.jpg"
                             class="w-14 h-14 rounded-full border-2 border-[var(--surface-border)] object-cover shadow-sm flex-shrink-0">
                         <div class="text-left">
@@ -470,7 +461,6 @@
                         </div>
                     </div>
 
-                    <!-- Full Width Body Text -->
                     <div class="text-left mb-2">
                         <p class="text-[13px] font-medium leading-relaxed opacity-90 text-[var(--text-primary)]">
                             Вот чем ты тут занимаешься: нажимая «Готово», твоя задача почувствовать радость
@@ -488,11 +478,9 @@
                 </div>
             </div>
 
-            <!-- SKILLS SECTION -->
             <div class="plex p-6 text-left flex-1 mb-6">
                 <h3 class="text-sm font-black uppercase tracking-widest mb-6 opacity-40">Навыки</h3>
 
-                <!-- FOCUS (Active) -->
                 <div class="skill-container">
                     <div class="skill-header">
                         <span class="skill-title text-[var(--accent)]">Фокус</span>
@@ -503,7 +491,6 @@
                     </div>
                 </div>
 
-                <!-- MONEY (Locked) -->
                 <div class="skill-container skill-locked">
                     <div class="skill-header">
                         <span class="skill-title flex items-center"><svg class="lock-icon" viewBox="0 0 24 24"
@@ -518,7 +505,6 @@
                     </div>
                 </div>
 
-                <!-- COMMUNICATION (Locked) -->
                 <div class="skill-container skill-locked">
                     <div class="skill-header">
                         <span class="skill-title flex items-center"><svg class="lock-icon" viewBox="0 0 24 24"
@@ -533,7 +519,6 @@
                     </div>
                 </div>
 
-                <!-- ATTRACTIVENESS (Locked) -->
                 <div class="skill-container skill-locked">
                     <div class="skill-header">
                         <span class="skill-title flex items-center"><svg class="lock-icon" viewBox="0 0 24 24"
@@ -548,7 +533,6 @@
                     </div>
                 </div>
 
-                <!-- THEME SWITCHER -->
                 <div class="mt-8 flex justify-center">
                     <div
                         class="bg-[var(--input-bg)] p-1 rounded-full flex gap-1 border border-[var(--surface-border)] shadow-sm">
@@ -604,9 +588,6 @@
             </div>
             <button onclick="updateSettings()"
                 class="w-full py-5 rounded-[24px] btn-primary font-bold text-lg uppercase">Сохранить</button>
-            <button onclick="resetApp()"
-                class="w-full py-3 rounded-[20px] text-[10px] font-bold uppercase tracking-[2px] opacity-40 hover:opacity-100 transition-all text-red-500">Сбросить
-                прогресс</button>
         </div>
 
     </div>
@@ -619,10 +600,9 @@
         // --- НАСТРОЙКИ ОБЛАКА ---
         const SUPABASE_URL = 'https://chlwkfoqpnbugwyfrqho.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_WgeagJ_Jpcnk_1PoV9rv_g_TSUr8...'; // ВСТАВЬ СЮДА ВЕСЬ КЛЮЧ ИЗ СКРИНШОТА
-        const USER_ID = tg.initDataUnsafe?.user?.id || 'guest_user'; // ID пользователя из Телеграм
-        const APP_VERSION = '1.0'; // Текущая версия приложения
+        const USER_ID = tg.initDataUnsafe?.user?.id || 'guest_user';
+        const APP_VERSION = '1.0';
 
-        // 1. Изначальное состояние (пустое)
         let state = {
             theme: localStorage.getItem('el_theme') || 'auto',
             goal: localStorage.getItem('el_goal') || '',
@@ -637,30 +617,24 @@
         };
 
         // --- ФУНКЦИИ ОБЛАКА ---
-
-        // Сохранение в облако
         async function saveToCloud() {
             try {
-                const response = await fetch(`${SUPABASE_URL}/rest/v1/users_data`, {
+                await fetch(`${SUPABASE_URL}/rest/v1/users_data`, {
                     method: 'POST',
                     headers: {
                         'apikey': SUPABASE_KEY,
                         'Authorization': `Bearer ${SUPABASE_KEY}`,
                         'Content-Type': 'application/json',
-                        'Prefer': 'resolution=merge-duplicates' // Обновить если уже есть, или создать новый
+                        'Prefer': 'resolution=merge-duplicates'
                     },
                     body: JSON.stringify({
                         user_id: USER_ID,
                         game_state: state
                     })
                 });
-                console.log('Облако синхронизировано');
-            } catch (e) {
-                console.error('Ошибка сохранения в облако:', e);
-            }
+            } catch (e) { console.error(e); }
         }
 
-        // Загрузка из облака
         async function loadFromCloud() {
             try {
                 const response = await fetch(`${SUPABASE_URL}/rest/v1/users_data?user_id=eq.${USER_ID}&select=game_state`, {
@@ -673,15 +647,10 @@
                 const data = await response.json();
                 if (data && data.length > 0) {
                     state = data[0].game_state;
-                    saveState(false); // Сохраняем в локалку, но не шлем обратно в облако
-                    console.log('Данные из облака загружены');
+                    saveState(false);
                 }
-            } catch (e) {
-                console.error('Ошибка загрузки из облака:', e);
-            }
+            } catch (e) { console.error(e); }
         }
-
-        // --- СТАНДАРТНЫЕ ФУНКЦИИ (ОБНОВЛЕННЫЕ) ---
 
         function saveState(syncWithCloud = true) {
             localStorage.setItem('el_theme', state.theme);
@@ -694,7 +663,6 @@
             localStorage.setItem('el_last_date', state.lastDate);
             localStorage.setItem('el_bonus_date', state.bonusClaimedDate);
             localStorage.setItem('el_day_inc_date', state.dayIncrementedDate);
-
             if (syncWithCloud) saveToCloud();
         }
 
@@ -710,12 +678,9 @@
                 const el = document.getElementById(id);
                 if (el) el.classList.remove('text-[var(--accent)]', 'bg-[var(--surface-border)]');
             });
-
             const activeBtn = document.getElementById(btns[state.theme] || btns['auto']);
             if (activeBtn) activeBtn.classList.add('text-[var(--accent)]', 'bg-[var(--surface-border)]');
-
             let isDark = state.theme === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : state.theme === 'dark';
-
             if (isDark) {
                 document.documentElement.classList.add('dark');
                 tg.setHeaderColor('#0F0F11'); tg.setBackgroundColor('#0F0F11');
@@ -727,10 +692,6 @@
 
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateTheme);
 
-        if (tg.initDataUnsafe?.user?.photo_url) {
-            document.querySelectorAll('#userAvatar, #cabUserAvatar').forEach(img => img.src = tg.initDataUnsafe.user.photo_url);
-        }
-
         function getElumaDate() {
             let now = new Date();
             now.setHours(now.getHours() - 3);
@@ -738,73 +699,17 @@
         }
 
         function switchScreen(screenId) {
-            const screens = document.querySelectorAll('#setupScreen, #mainScreen, #cabinetScreen, #editScreen');
-
-            // Animation for Cabinet
-            if (screenId === 'cabinetScreen') {
-                document.getElementById('cabinetScreen').classList.remove('hidden');
-                document.getElementById('cabinetScreen').classList.add('expand-enter');
-                setTimeout(() => {
-                    screens.forEach(s => { if (s.id !== screenId) s.classList.add('hidden'); });
-                    document.getElementById('cabinetScreen').classList.remove('expand-enter');
-                }, 400);
-            } else {
-                // Instant Switch for others
-                screens.forEach(s => s.classList.add('hidden'));
-                document.getElementById(screenId).classList.remove('hidden');
+            const screens = document.querySelectorAll('#setupScreen, #mainScreen, #cabinetScreen, #editScreen, #introScreen');
+            screens.forEach(s => s.classList.add('hidden'));
+            const target = document.getElementById(screenId);
+            if (target) {
+                target.classList.remove('hidden');
+                if (screenId === 'cabinetScreen') target.classList.add('expand-enter');
             }
             window.scrollTo({ top: 0, behavior: 'instant' });
         }
 
-        function startSetup() {
-            localStorage.setItem('el_intro_seen', 'true');
-            switchScreen('setupScreen');
-        }
-
-        function closeApp() { tg.close(); }
-
-        async function init() {
-            // Проверка версии и сброс данных при обновлении
-            const savedVersion = localStorage.getItem('el_version');
-            if (savedVersion !== APP_VERSION) {
-                // Очистка всех данных при новой версии
-                const keysToRemove = ['el_theme', 'el_goal', 'el_tasks', 'el_completed', 'el_rewarded_slots',
-                    'el_points', 'el_days', 'el_last_date', 'el_bonus_date', 'el_day_inc_date'];
-                keysToRemove.forEach(key => localStorage.removeItem(key));
-
-                // Сброс состояния
-                state = {
-                    theme: 'auto',
-                    goal: '',
-                    tasks: [],
-                    completed: [],
-                    rewardedSlots: [],
-                    points: 0,
-                    days: 0,
-                    lastDate: '',
-                    bonusClaimedDate: '',
-                    dayIncrementedDate: ''
-                };
-
-                // Сохранение новой версии
-                localStorage.setItem('el_version', APP_VERSION);
-                console.log(`Обновление до версии ${APP_VERSION}: данные сброшены`);
-            }
-
-            updateTheme();
-
-            // Сначала загружаем из облака
-            await loadFromCloud();
-
-            const today = getElumaDate();
-            if (state.lastDate !== today) {
-                state.completed = [];
-                state.rewardedSlots = [];
-                state.lastDate = today;
-                saveState();
-            }
-
-            // Подготовка инпутов
+        function renderInputFields() {
             const eIn = document.getElementById('editTasksInputs');
             const tIn = document.getElementById('tasksInputs');
             if (eIn && tIn) {
@@ -814,7 +719,52 @@
                     eIn.innerHTML += `<div class="bg-[var(--input-bg)] border border-[var(--surface-border)] p-3 rounded-[16px]"><input type="text" class="e-in w-full font-medium text-sm bg-transparent"></div>`;
                 }
             }
+        }
 
+        // --- ИЗМЕНЕННЫЕ ФУНКЦИИ ДЛЯ ПЕРЕХОДА ---
+        function startSetup() {
+            localStorage.setItem('el_intro_seen', 'true');
+            renderInputFields();
+            switchScreen('setupScreen');
+        }
+
+        function saveSettings() {
+            const g = document.getElementById('goalInput').value.trim();
+            const t = Array.from(document.querySelectorAll('.t-in')).map(i => i.value.trim()).filter(v => v !== '');
+            if (g && t.length === 6) {
+                state.goal = g;
+                state.tasks = t;
+                state.lastDate = getElumaDate();
+                saveState(true);
+                render();
+                switchScreen('mainScreen');
+                tg.HapticFeedback.notificationOccurred('success');
+            } else {
+                alert("Пожалуйста, заполни цель и все 6 шагов!");
+            }
+        }
+        // ---------------------------------------
+
+        function closeApp() { tg.close(); }
+
+        async function init() {
+            const savedVersion = localStorage.getItem('el_version');
+            if (savedVersion !== APP_VERSION) {
+                localStorage.clear();
+                localStorage.setItem('el_version', APP_VERSION);
+                location.reload();
+                return;
+            }
+            updateTheme();
+            renderInputFields();
+            await loadFromCloud();
+            const today = getElumaDate();
+            if (state.lastDate !== today) {
+                state.completed = [];
+                state.rewardedSlots = [];
+                state.lastDate = today;
+                saveState(true);
+            }
             if (!localStorage.getItem('el_intro_seen')) {
                 switchScreen('introScreen');
             } else if (!state.goal) {
@@ -823,39 +773,25 @@
                 switchScreen('mainScreen');
                 render();
             }
-
-            // Neon Effect
-            const mp = document.getElementById('mainProgress');
-            if (mp) mp.classList.add('neon-bar');
+            if (tg.initDataUnsafe?.user?.photo_url) {
+                document.querySelectorAll('#userAvatar, #cabUserAvatar').forEach(img => img.src = tg.initDataUnsafe.user.photo_url);
+            }
         }
 
-        // Функция создания конфетти из галочек
         function spawnConfetti(element) {
             const rect = element.getBoundingClientRect();
             const centerX = rect.left + rect.width / 2;
             const centerY = rect.top + rect.height / 2;
-
-            // Создаём 10 частиц конфетти
             for (let i = 0; i < 10; i++) {
                 const particle = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
                 particle.setAttribute('viewBox', '0 0 24 24');
-                particle.setAttribute('fill', 'none');
                 particle.classList.add('confetti-particle');
-
-                // Случайный размер от 15px до 35px
                 const size = 15 + Math.random() * 20;
                 particle.style.width = size + 'px';
                 particle.style.height = size + 'px';
-
-                // Позиция от центра кнопки
                 particle.style.left = centerX + 'px';
                 particle.style.top = centerY + 'px';
-
-                // Случайное смещение в стороны
                 const offsetX = (Math.random() - 0.5) * 100;
-                particle.style.setProperty('--offset-x', offsetX + 'px');
-
-                // SVG галочка
                 const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
                 path.setAttribute('d', 'M5 13L9 17L19 7');
                 path.setAttribute('stroke', 'var(--salad)');
@@ -863,25 +799,16 @@
                 path.setAttribute('stroke-linecap', 'round');
                 path.setAttribute('stroke-linejoin', 'round');
                 particle.appendChild(path);
-
-                // Модифицируем анимацию для учёта бокового смещения
-                particle.style.animation = `confetti 1s ease-out forwards`;
                 particle.style.transform = `translateX(${offsetX}px)`;
-
                 document.body.appendChild(particle);
-
-                // Удаляем через 1 секунду
                 setTimeout(() => particle.remove(), 1000);
             }
         }
 
         function toggleTask(idx) {
             if (state.completed.includes(idx)) return;
-
-            // Находим элемент кнопки для конфетти
             const taskCards = document.querySelectorAll('#tasksGrid > div');
             const taskCard = taskCards[idx];
-
             const today = getElumaDate();
             state.completed.push(idx);
             if (!state.rewardedSlots.includes(idx)) {
@@ -896,12 +823,7 @@
                 state.days += 1;
                 state.dayIncrementedDate = today;
             }
-
-            // Запускаем конфетти!
-            if (taskCard) {
-                spawnConfetti(taskCard);
-            }
-
+            if (taskCard) spawnConfetti(taskCard);
             saveState();
             render();
             tg.HapticFeedback.impactOccurred('medium');
@@ -911,22 +833,16 @@
             const updates = {
                 displayGoal: state.goal, cabDisplayGoal: state.goal,
                 pointsHeader: state.points + ' XP', cabPointsSkill: state.points + ' / 360 XP',
-                daysText: state.days, cabDaysTextChart: state.days
+                daysText: state.days
             };
             Object.keys(updates).forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.innerText = updates[id];
             });
-
             const p = (state.completed.length / 6 * 100) + '%';
-            const mainProgress = document.getElementById('mainProgress');
-            if (mainProgress) mainProgress.style.width = p;
-
-            // Skill Bar (Max 360) 
+            if (document.getElementById('mainProgress')) document.getElementById('mainProgress').style.width = p;
             const skillP = Math.min(state.points / 360 * 100, 100) + '%';
-            const skillFocus = document.getElementById('skillFocus');
-            if (skillFocus) skillFocus.style.width = skillP;
-
+            if (document.getElementById('skillFocus')) document.getElementById('skillFocus').style.width = skillP;
             const grid = document.getElementById('tasksGrid');
             if (!grid) return;
             grid.innerHTML = '';
@@ -942,15 +858,6 @@
                     </div>
                 `;
             });
-        }
-
-        function saveSettings() {
-            const g = document.getElementById('goalInput').value.trim();
-            const t = Array.from(document.querySelectorAll('.t-in')).map(i => i.value.trim()).filter(v => v !== '');
-            if (g && t.length === 6) {
-                state.goal = g; state.tasks = t; state.lastDate = getElumaDate();
-                saveState(); init();
-            }
         }
 
         function updateSettings() {
@@ -979,23 +886,14 @@
         function goToCabinet() { switchScreen('cabinetScreen'); }
         function backToMain() { switchScreen('mainScreen'); render(); }
 
-        function resetApp() {
-            if (confirm('Вы уверены, что хотите сбросить весь прогресс? Это действие нельзя отменить.')) {
-                localStorage.clear();
-                location.reload();
-            }
-        }
-
         function toggleLetter() {
             const letter = document.getElementById('mentorLetter');
             const dot = document.getElementById('mailDot');
+            if (!letter) return;
             const isHidden = letter.classList.contains('hidden');
-
             if (isHidden) {
                 letter.classList.remove('hidden');
                 if (dot) dot.classList.add('hidden');
-
-                // Inject name
                 const name = (tg.initDataUnsafe?.user?.first_name) ? tg.initDataUnsafe.user.first_name : 'Игрок';
                 document.getElementById('playerNameSpan').innerText = name;
             } else {
@@ -1012,3 +910,5 @@
         init();
     </script>
 </body>
+
+</html>
