@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Eluma</title>
+    <title>Eluma Elite</title>
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -604,6 +604,9 @@
             </div>
             <button onclick="updateSettings()"
                 class="w-full py-5 rounded-[24px] btn-primary font-bold text-lg uppercase">Сохранить</button>
+            <button onclick="resetApp()"
+                class="w-full py-3 rounded-[20px] text-[10px] font-bold uppercase tracking-[2px] opacity-40 hover:opacity-100 transition-all text-red-500">Сбросить
+                прогресс</button>
         </div>
 
     </div>
@@ -975,6 +978,13 @@
 
         function goToCabinet() { switchScreen('cabinetScreen'); }
         function backToMain() { switchScreen('mainScreen'); render(); }
+
+        function resetApp() {
+            if (confirm('Вы уверены, что хотите сбросить весь прогресс? Это действие нельзя отменить.')) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
 
         function toggleLetter() {
             const letter = document.getElementById('mentorLetter');
