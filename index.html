@@ -599,7 +599,7 @@
 
         // --- НАСТРОЙКИ ОБЛАКА ---
         const SUPABASE_URL = 'https://chlwkfoqpnbugwyfrqho.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_WgeagJ_Jpcnk_1PoV9rv_g_TSUr80a_'; // ВСТАВЬ СЮДА ВЕСЬ КЛЮЧ ИЗ СКРИНШОТА
+        const SUPABASE_KEY = 'sb_publishable_WgeagJ_Jpcnk_1PoV9rv_g_TSUr80a_'; 
         const USER_ID = tg.initDataUnsafe?.user?.id || 'guest_user';
         const APP_VERSION = '1.0';
 
@@ -647,12 +647,19 @@
                 const data = await response.json();
                 if (data && data.length > 0) {
                     state = data[0].game_state;
-                    saveState(false);
+                    // Сохраняем загруженные данные в локальное хранилище
+                    saveStateLocalOnly();
+                    return true;
                 }
-            } catch (e) { console.error(e); }
+                return false;
+            } catch (e) { 
+                console.error(e); 
+                return false;
+            }
         }
 
-        function saveState(syncWithCloud = true) {
+        // Вспомогательная функция для сохранения ТОЛЬКО локально (чтобы избежать зацикливания)
+        function saveStateLocalOnly() {
             localStorage.setItem('el_theme', state.theme);
             localStorage.setItem('el_goal', state.goal);
             localStorage.setItem('el_tasks', JSON.stringify(state.tasks));
@@ -663,6 +670,11 @@
             localStorage.setItem('el_last_date', state.lastDate);
             localStorage.setItem('el_bonus_date', state.bonusClaimedDate);
             localStorage.setItem('el_day_inc_date', state.dayIncrementedDate);
+            if (state.goal) localStorage.setItem('el_intro_seen', 'true');
+        }
+
+        function saveState(syncWithCloud = true) {
+            saveStateLocalOnly();
             if (syncWithCloud) saveToCloud();
         }
 
@@ -721,7 +733,6 @@
             }
         }
 
-        // --- ИЗМЕНЕННЫЕ ФУНКЦИИ ДЛЯ ПЕРЕХОДА ---
         function startSetup() {
             localStorage.setItem('el_intro_seen', 'true');
             renderInputFields();
@@ -735,6 +746,7 @@
                 state.goal = g;
                 state.tasks = t;
                 state.lastDate = getElumaDate();
+                localStorage.setItem('el_intro_seen', 'true');
                 saveState(true);
                 render();
                 switchScreen('mainScreen');
@@ -743,7 +755,6 @@
                 alert("Пожалуйста, заполни цель и все 6 шагов!");
             }
         }
-        // ---------------------------------------
 
         function closeApp() { tg.close(); }
 
@@ -755,9 +766,14 @@
                 location.reload();
                 return;
             }
+
             updateTheme();
             renderInputFields();
-            await loadFromCloud();
+
+            // 1. Пытаемся загрузить данные из облака
+            const hasCloudData = await loadFromCloud();
+
+            // 2. После загрузки из облака проверяем дату (сброс ежедневных задач)
             const today = getElumaDate();
             if (state.lastDate !== today) {
                 state.completed = [];
@@ -765,14 +781,20 @@
                 state.lastDate = today;
                 saveState(true);
             }
-            if (!localStorage.getItem('el_intro_seen')) {
-                switchScreen('introScreen');
-            } else if (!state.goal) {
-                switchScreen('setupScreen');
-            } else {
+
+            // 3. Решаем, какой экран показать
+            if (state.goal) {
+                // Если цель есть (загружена из облака или была локально)
                 switchScreen('mainScreen');
                 render();
+            } else if (!localStorage.getItem('el_intro_seen')) {
+                // Если устройства новое и в облаке пусто
+                switchScreen('introScreen');
+            } else {
+                // Если интро видели, но цель не поставили
+                switchScreen('setupScreen');
             }
+
             if (tg.initDataUnsafe?.user?.photo_url) {
                 document.querySelectorAll('#userAvatar, #cabUserAvatar').forEach(img => img.src = tg.initDataUnsafe.user.photo_url);
             }
